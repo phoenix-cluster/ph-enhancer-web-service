@@ -1,4 +1,4 @@
-package com.khoubyari.example.domain;
+package org.ncpsb.phoenixcluster.enhancer.webservice.domain;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

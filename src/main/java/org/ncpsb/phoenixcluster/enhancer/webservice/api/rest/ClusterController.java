@@ -1,8 +1,7 @@
-package com.khoubyari.example.api.rest;
+package org.ncpsb.phoenixcluster.enhancer.webservice.api.rest;
 
-import com.khoubyari.example.api.rest.AbstractRestHandler;
-import com.khoubyari.example.domain.Cluster;
-import com.khoubyari.example.service.ClusterService;
+import org.ncpsb.phoenixcluster.enhancer.webservice.domain.Cluster;
+import org.ncpsb.phoenixcluster.enhancer.webservice.service.ClusterService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;

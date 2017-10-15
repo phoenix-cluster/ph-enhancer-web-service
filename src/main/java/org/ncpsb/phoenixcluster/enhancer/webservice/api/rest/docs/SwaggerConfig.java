@@ -1,4 +1,4 @@
-package com.khoubyari.example.api.rest.docs;
+package org.ncpsb.phoenixcluster.enhancer.webservice.api.rest.docs;
 
 import com.google.common.base.Predicates;
 

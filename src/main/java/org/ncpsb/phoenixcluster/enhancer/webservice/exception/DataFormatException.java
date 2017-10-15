@@ -1,4 +1,4 @@
-package com.khoubyari.example.exception;
+package org.ncpsb.phoenixcluster.enhancer.webservice.exception;
 
 /**
  * for HTTP 400 errors

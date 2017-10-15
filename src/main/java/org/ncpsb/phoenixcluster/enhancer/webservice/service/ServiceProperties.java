@@ -1,4 +1,4 @@
-package com.khoubyari.example.service;
+package org.ncpsb.phoenixcluster.enhancer.webservice.service;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
