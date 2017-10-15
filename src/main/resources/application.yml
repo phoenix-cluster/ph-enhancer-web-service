@@ -6,8 +6,11 @@ spring.jmx:
    enabled: false
 
 spring.datasource:
-    driverClassName: org.h2.Driver
-    url: jdbc:h2:mem:bootexample;MODE=MySQL
+#    driverClassName: org.h2.Driver
+#    url: jdbc:h2:mem:bootexample;MODE=MySQL
+    driver-class-name: org.apache.phoenix.jdbc.PhoenixDriver
+    url: jdbc:phoenix:192.168.6.20:2181:/hbase
+    type: com.alibaba.druid.pool.DruidDataSource
 
 server:
   port: 8090
@@ -37,21 +40,55 @@ info:
 
 hotel.service:
   name: 'default profile:'
+
+spring:
+  http:
+    multipart:
+      max-file-size: 1000MB
+      max-request-size: 10000MB
+
+#  jpa:
+#    hibernate.ddl-auto: create-drop
+#---
+#spring:
+#  profiles: test
+#  h2:
+#    console:
+#      enabled: true
+#  http:
+#    multipart:
+#      max-file-size: 100MB
+#      max-request-size: 1000MB
+#
+#spring.jpa:
+#    hibernate.ddl-auto: create-drop
+#
+#hotel.service:
+#  name: 'test profile:'
+
+
+
 ---
 spring:
   profiles: test
-  h2:
-    console:
-      enabled: true
 
-spring.jpa:
-    hibernate.ddl-auto: create-drop
+  datasource:
+    url: jdbc:phoenix:192.168.6.20:2181:/hbase
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: org.apache.phoenix.jdbc.PhoenixDriver
+    username: //phoenix的用户名默认为空
+    password: //phoenix的密码默认为空
+    default-auto-commit: true
+
+#  jpa:
+#    hibernate:
+#      dialect: org.hibernate.dialect.MySQLInnoDBDialect
+#      ddl-auto: update # todo: in non-dev environments, comment this out:
+
 
 hotel.service:
   name: 'test profile:'
-  
+
 logging:
   file: boot_example.log
-  org.hibernate: INFO
-
- 
+#  org.hibernate: INFO
