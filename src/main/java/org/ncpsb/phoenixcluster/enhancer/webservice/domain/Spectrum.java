@@ -4,10 +4,10 @@ package org.ncpsb.phoenixcluster.enhancer.webservice.domain;
 public class Spectrum {
 	private String title;
 	private String sequence;
-	private String charge;
-	private String precursorMz;
+	private Integer charge;
+	private Float precursorMz;
 	private String species;
-	private String similarysocre;
+	private Float similarysocre;
 	private String clusterId;
 	private String projectId;
 
@@ -27,19 +27,19 @@ public class Spectrum {
 		this.sequence = sequence;
 	}
 
-	public String getCharge() {
+	public Integer getCharge() {
 		return charge;
 	}
 
-	public void setCharge(String charge) {
+	public void setCharge(Integer charge) {
 		this.charge = charge;
 	}
 
-	public String getPrecursorMz() {
+	public Float getPrecursorMz() {
 		return precursorMz;
 	}
 
-	public void setPrecursorMz(String precursorMz) {
+	public void setPrecursorMz(Float precursorMz) {
 		this.precursorMz = precursorMz;
 	}
 
@@ -51,11 +51,11 @@ public class Spectrum {
 		this.species = species;
 	}
 
-	public String getSimilarysocre() {
+	public Float getSimilarysocre() {
 		return similarysocre;
 	}
 
-	public void setSimilarysocre(String ss) {
+	public void setSimilarysocre(Float ss) {
 		this.similarysocre = ss;
 	}
 
@@ -79,8 +79,8 @@ public class Spectrum {
 
 	}
 
-	public Spectrum(String id, String sequence, String charge, String precursorMz,
-					String species, String ss, String clusterId, String projectId) {
+	public Spectrum(String id, String sequence, Integer charge, Float precursorMz,
+					String species, Float ss, String clusterId, String projectId) {
 		super();
 		this.title = id;
 		this.sequence = sequence;
@@ -92,8 +92,8 @@ public class Spectrum {
 		this.projectId = projectId;
 	}
 
-	public Spectrum(String id, String sequence, String charge,
-					String precursorMz, String species, String ss) {
+	public Spectrum(String id, String sequence, Integer charge,
+					Float precursorMz, String species, Float ss) {
 
 		this.title = id;
 		this.sequence = sequence;

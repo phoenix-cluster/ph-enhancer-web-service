@@ -31,20 +31,21 @@ public class ClusterController extends AbstractRestHandler {
             ,produces = {"application/json"}
     )
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get a paginated list of all clusters.", notes = "The list is paginated. You can provide a page number (default 0) and a page size (default 100)")
+    @ApiOperation(value = "Get a paginated list of all clusters.", notes = "The list is paginated. You can provide a page number (default 1) and a page size (default 100)")
     public
     @ResponseBody
     //Page<Cluster> getAllCluster(@ApiParam(value = "The page number (zero-based)", required = true)
-    List<String> getAllCluster(@ApiParam(value = "The page number (zero-based)", required = true)
+    List<String> getClusters(@ApiParam(value = "The page number ", required = true)
                                       @RequestParam(value = "page", required = true, defaultValue = DEFAULT_PAGE_NUM) Integer page,
                                @ApiParam(value = "Tha page size", required = true)
                                       @RequestParam(value = "size", required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size,
                                HttpServletRequest request, HttpServletResponse response) {
 //        return this.clusterService.getAllClusterIDs(page, size,null, null);
-        List<String> allClusterIDs = this.clusterService.getAllClusterIDs(page, size,null, null);
+        assert (page>0 && size>0);
+        List<String> allClusterIDs = this.clusterService.getClusterIDs(page, size,null, null);
 
         for (String clusterID : allClusterIDs) {
-            System.out.println("::" + clusterID);
+            System.out.println("::::" + clusterID);
         }
         return allClusterIDs;
     }

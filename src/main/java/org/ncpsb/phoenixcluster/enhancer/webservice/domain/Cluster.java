@@ -1,105 +1,103 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.domain;
 
 import java.util.ArrayList;
+import java.util.List;
 
 //public class Cluster implements Cloneable {
 public class Cluster {
 	/*private String id;
-	private float avPrecursorMz;
-	private float avPrecursorIntens;
 	private int specCount;
 	private float ratio;
 	private List<Spectrum> spectra;
-	private List<Float> mzValues;
-	private List<Float> intensValues;*/
+	*/
 
 	private String id;
-	private String avPrecursorMz;
-	private String avPrecursorIntens;
-	private String specCount;
-	private String ratio;
-	private String CMz;
-	private String CIntens;
+	private Float avPrecursorMz;
+	private Float avPrecursorIntens;
+	private Integer specCount;
+	private Float ratio;
+	private List<Float> mzValues;
+	private List<Float> intensValues;
 	private ArrayList<Spectrum> spectra;
 
-	public Cluster(String id, String avPrecursorMz, String avPrecursorIntens,
-				   String specCount, String ratio, String CMz, String CIntens, ArrayList<Spectrum> spectra) {
+	public Cluster(String id, Float avPrecursorMz, Float avPrecursorIntens,
+				   Integer specCount, Float ratio, ArrayList<Spectrum> spectra) {
 		this.id = id;
 		this.avPrecursorMz = avPrecursorMz;
 		this.avPrecursorIntens = avPrecursorIntens;
 		this.specCount = specCount;
 		this.ratio = ratio;
-		this.CMz = CMz;
-		this.CIntens = CIntens;
 		this.spectra = spectra;
 	}
-	public Cluster() {}
+
+	public Cluster() {
+	}
 
 	public String getId() {
-		return this.id;
+		return id;
 	}
 
 	public void setId(String id) {
 		this.id = id;
 	}
 
-	public String getAvPrecursorMz() {
+	public Float getAvPrecursorMz() {
 		return avPrecursorMz;
 	}
 
-	public void setAvPrecursorMz(String avPrecursorMz) {
+	public void setAvPrecursorMz(Float avPrecursorMz) {
 		this.avPrecursorMz = avPrecursorMz;
 	}
 
-	public String getAvPrecursorIntens() {
+	public Float getAvPrecursorIntens() {
 		return avPrecursorIntens;
 	}
 
-	public void setAvPrecursorIntens(String avPrecursorIntens) {
+	public void setAvPrecursorIntens(Float avPrecursorIntens) {
 		this.avPrecursorIntens = avPrecursorIntens;
 	}
 
-	public String getSpecCount() {
+	public Integer getSpecCount() {
 		return specCount;
 	}
 
-	public void setSpecCount(String specCount) {
+	public void setSpecCount(Integer specCount) {
 		this.specCount = specCount;
+	}
+
+	public Float getRatio() {
+		return ratio;
+	}
+
+	public void setRatio(Float ratio) {
+		this.ratio = ratio;
+	}
+
+	public List<Float> getMzValues() {
+		return mzValues;
+	}
+
+	public void setMzValues(List<Float> mzValues) {
+		this.mzValues = mzValues;
+	}
+
+	public List<Float> getIntensValues() {
+		return intensValues;
+	}
+
+	public void setIntensValues(List<Float> intensValues) {
+		this.intensValues = intensValues;
 	}
 
 	public ArrayList<Spectrum> getSpectra() {
 		return spectra;
 	}
 
-	public void setSpectrums(ArrayList<Spectrum> spectra) {
+	public void setSpectra(ArrayList<Spectrum> spectra) {
 		this.spectra = spectra;
 	}
 
-	public String getRatio() {
-		return ratio;
-	}
-
-	public void setRatio(String ratio) {
-		this.ratio = ratio;
-	}
-
-	public String getMzValues() {
-		return CMz;
-	}
-
-	public void setMzValues(String mzValues) {
-		this.CMz = mzValues;
-	}
-
-	public String getIntensValues() {
-		return CIntens;
-	}
-
-	public void setIntensValues(String CIntens) {
-		this.CIntens = CIntens;
-	}
-
-	/*@Override
+/*@Override
 	public Cluster clone() throws CloneNotSupportedException {
 		Cluster result = (Cluster) super.clone();
 		ArrayList<Spectrum> tmpSpectra = new ArrayList<>(spectra.size());

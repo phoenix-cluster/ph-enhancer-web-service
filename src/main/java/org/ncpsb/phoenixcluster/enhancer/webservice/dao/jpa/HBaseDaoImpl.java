@@ -1,6 +1,7 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.dao.jpa;
 
 import org.ncpsb.phoenixcluster.enhancer.webservice.domain.Cluster;
+import org.ncpsb.phoenixcluster.enhancer.webservice.domain.ScoredPSM;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -26,11 +27,32 @@ public class HBaseDaoImpl implements HBaseDao {
     }
 
     @Override
-    public List query(String querySql, Object[] params, RowMapper<String> mapper) {
+    public Object query(String querySql, Object[] params, RowMapper<Object> mapper) {
         if (params != null && params.length > 0) {
             return jdbcTemplate.query(querySql, params, mapper);
         } else {
             return jdbcTemplate.query(querySql, mapper);
+        }
+    }
+
+    @Override
+    public int queryTotal(String querySql) {
+        return jdbcTemplate.queryForObject(querySql, null, Integer.class);
+    }
+    @Override
+    public List getScoredPSMs(String querySql, Object[] params, RowMapper<ScoredPSM> mapper) {
+        if (params != null && params.length > 0) {
+            return jdbcTemplate.query(querySql, params, mapper);
+        } else {
+            return jdbcTemplate.query(querySql, mapper);
+        }
+    }
+
+    public ScoredPSM getScoredPSM(String querySql, Object[] params, RowMapper<ScoredPSM> mapper) {
+        if (params != null && params.length > 0) {
+            return jdbcTemplate.queryForObject(querySql, params, mapper);
+        } else {
+            return jdbcTemplate.queryForObject(querySql, mapper);
         }
     }
 
