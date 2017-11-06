@@ -27,7 +27,7 @@ public abstract class AbstractRestHandler implements ApplicationEventPublisherAw
 
     protected static final String  DEFAULT_PAGE_SIZE = "50";
     protected static final String DEFAULT_PAGE_NUM = "1";
-    protected static final String DEFAULT_SORT_FIELD = "defaultSortField";
+    protected static final String DEFAULT_SORT_FIELD = "default";
     protected static final String DEFAULT_SORT_DIRECTION = "ASC";
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

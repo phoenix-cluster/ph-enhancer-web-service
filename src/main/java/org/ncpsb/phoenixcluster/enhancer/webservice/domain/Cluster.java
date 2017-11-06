@@ -13,22 +13,11 @@ public class Cluster {
 
 	private String id;
 	private Float avPrecursorMz;
-	private Float avPrecursorIntens;
 	private Integer specCount;
 	private Float ratio;
-	private List<Float> mzValues;
-	private List<Float> intensValues;
-	private ArrayList<Spectrum> spectra;
-
-	public Cluster(String id, Float avPrecursorMz, Float avPrecursorIntens,
-				   Integer specCount, Float ratio, ArrayList<Spectrum> spectra) {
-		this.id = id;
-		this.avPrecursorMz = avPrecursorMz;
-		this.avPrecursorIntens = avPrecursorIntens;
-		this.specCount = specCount;
-		this.ratio = ratio;
-		this.spectra = spectra;
-	}
+	private List<Float> consensusMz;
+	private List<Float> consensusIntens;
+	private List<String> spectraTitles;
 
 	public Cluster() {
 	}
@@ -49,14 +38,6 @@ public class Cluster {
 		this.avPrecursorMz = avPrecursorMz;
 	}
 
-	public Float getAvPrecursorIntens() {
-		return avPrecursorIntens;
-	}
-
-	public void setAvPrecursorIntens(Float avPrecursorIntens) {
-		this.avPrecursorIntens = avPrecursorIntens;
-	}
-
 	public Integer getSpecCount() {
 		return specCount;
 	}
@@ -73,31 +54,31 @@ public class Cluster {
 		this.ratio = ratio;
 	}
 
-	public List<Float> getMzValues() {
-		return mzValues;
+	public List<Float> getConsensusMz() {
+		return consensusMz;
 	}
 
-	public void setMzValues(List<Float> mzValues) {
-		this.mzValues = mzValues;
+	public void setConsensusMz(List<Float> consensusMz) {
+		this.consensusMz = consensusMz;
 	}
 
-	public List<Float> getIntensValues() {
-		return intensValues;
+	public List<Float> getConsensusIntens() {
+		return consensusIntens;
 	}
 
-	public void setIntensValues(List<Float> intensValues) {
-		this.intensValues = intensValues;
+	public void setConsensusIntens(List<Float> consensusIntens) {
+		this.consensusIntens = consensusIntens;
 	}
 
-	public ArrayList<Spectrum> getSpectra() {
-		return spectra;
+	public List<String> getSpectraTitles() {
+		return spectraTitles;
 	}
 
-	public void setSpectra(ArrayList<Spectrum> spectra) {
-		this.spectra = spectra;
+	public void setSpectraTitles(List<String> spectraTitles) {
+		this.spectraTitles = spectraTitles;
 	}
 
-/*@Override
+	/*@Override
 	public Cluster clone() throws CloneNotSupportedException {
 		Cluster result = (Cluster) super.clone();
 		ArrayList<Spectrum> tmpSpectra = new ArrayList<>(spectra.size());

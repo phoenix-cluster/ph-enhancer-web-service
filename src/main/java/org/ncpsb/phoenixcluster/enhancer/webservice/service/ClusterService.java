@@ -3,6 +3,7 @@ package org.ncpsb.phoenixcluster.enhancer.webservice.service;
 
 import org.ncpsb.phoenixcluster.enhancer.webservice.dao.jpa.HBaseDao;
 import org.ncpsb.phoenixcluster.enhancer.webservice.domain.Cluster;
+import org.ncpsb.phoenixcluster.enhancer.webservice.utils.ClusterUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
@@ -21,26 +22,25 @@ import java.util.Map;
 public class ClusterService {
     @Autowired
     private HBaseDao hBaseDao;
-    private String clusterTableName ="\"cluster_table_test_24102017\"";
+    private String clusterTableName ="\"cluster_table_test_02112017\"";
 
 
-    public Cluster getClusterByID(String clusterID, Map<String, String> map) {
+    public Cluster getClusterById(String clusterId) {
 //        StringBuffer clusterSql = new StringBuffer("SELECT * FROM compare_5_clusters");
-//        clusterSql.append("\"ROW\" = '" + clusterID + "'");
+//        clusterSql.append("\"ROW\" = '" + clusterId + "'");
         StringBuffer clusterSql = new StringBuffer("SELECT * FROM  " + clusterTableName + " tb WHERE ");
-        clusterSql.append("\"CLUSTER_ID\" = '" + clusterID + "'");
+        clusterSql.append("\"CLUSTER_ID\" = '" + clusterId + "'");
 
         Cluster cluster = (Cluster) hBaseDao.getCluster(clusterSql.toString(), null, new RowMapper<Cluster>() {
             @Override
             public Cluster mapRow(ResultSet rs, int rowNum) throws SQLException {
                 Cluster cluster = new Cluster();
-                cluster.setId(rs.getString("CLUSTER_ID"));
-//                cluster.setAvPrecursorMz(rs.getFloat("apm"));
-//                cluster.setAvPrecursorIntens(rs.getFloat("api"));
+                cluster.setId(rs.getString("CLUSTER_Id"));
                 cluster.setSpecCount(rs.getInt("N_SPEC"));
                 cluster.setRatio(rs.getFloat("CLUSTER_RATIO"));
-//                cluster.setMzValues(rs.get("conm"));
-//                cluster.setIntensValues(rs.getString("coni"));
+                cluster.setSpectraTitles(ClusterUtils.getStringListFromString(rs.getString("SPECTRA_TITLES"),"\\|\\|"));
+                cluster.setConsensusMz(ClusterUtils.getFloatListFromString(rs.getString("CONSENSUS_MZ"), ","));
+                cluster.setConsensusIntens(ClusterUtils.getFloatListFromString(rs.getString("CONSENSUS_INTENS"), ","));
                 return cluster;
             }
         });
@@ -48,7 +48,7 @@ public class ClusterService {
 //        return (clusters != null && clusters.size() > 0) ? clusters : null;
     }
 
-    public List<String> getClusterIDs(Integer page, Integer size, String sortField, String sortDirection) {
+    public List<String> getClusterIds(Integer page, Integer size, String sortField, String sortDirection) {
         if (sortField != null) {
             sortField = sortField.toUpperCase();
         }
@@ -62,17 +62,17 @@ public class ClusterService {
         clusterSql.append(" LIMIT " + size);
         clusterSql.append(" OFFSET " + (page - 1) * size);
 
-        List<String> clusterIDs = (List<String>) hBaseDao.query(clusterSql.toString(), null, new RowMapper<Object>() {
+        List<String> clusterIds = (List<String>) hBaseDao.query(clusterSql.toString(), null, new RowMapper<Object>() {
             @Override
             public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-                String clusterId = rs.getString("CLUSTER_ID");
+                String clusterId = rs.getString("CLUSTER_Id");
                 return clusterId;
             }
         });
-        for (String clusterID : clusterIDs) {
-            System.out.println(":" + clusterID);
+        for (String clusterId : clusterIds) {
+            System.out.println(":" + clusterId);
         }
-        return (clusterIDs != null && clusterIDs.size() > 0) ? (List) clusterIDs : null;
+        return (clusterIds != null && clusterIds.size() > 0) ? (List) clusterIds : null;
     }
 }
 

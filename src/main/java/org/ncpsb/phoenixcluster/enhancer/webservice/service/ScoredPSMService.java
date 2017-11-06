@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by baimi on 2017/10/11.
@@ -22,25 +24,32 @@ public class ScoredPSMService {
     private String clusterTableName = "cluster_table_test_24102017";
     private String spectrumTableName = "cluster_table_test_24102017_spec";
 
+    HashMap<String, String> columnMap = new HashMap<String, String>() {{
+        put("confidentScore","CONF_SC");
+        put("clusterRatio","CLUSTER_RATIO");
+        put("cluster_size","CLUSTER_SIZE");
+    }};
+
     @Autowired
     private HBaseDao hBaseDao;
 
 
     public List<ScoredPSM> getScoredPSMs(Integer page, Integer size, String sortField, String sortDirection) {
-        if (sortField != null && sortField != "") {
-            sortField = sortField.toUpperCase();
-        }
         if (sortDirection == null) {
             sortDirection = "ASC";
         }
 
         StringBuffer querySql = new StringBuffer("SELECT * FROM " + scoredPSMTableName);
-        if (sortField == "CONF_SC" || sortField == "CLUSTER_RATIO" || sortField == "CLUSTER_SIZE") {
-            querySql.append(" ORDER BY " + sortField + " " + sortDirection + " ");
+        if (sortField.equals("confidentScore") ||
+                sortField.equals("clusterRatio") ||
+                sortField.equals("clusterSize")
+                ) {
+            querySql.append(" ORDER BY " + columnMap.get(sortField) + " " + sortDirection + " ");
         }
         querySql.append(" LIMIT " + size);
         querySql.append(" OFFSET " + (page - 1) * size);
 
+        System.out.println("Going to execute: " + querySql);
         List<ScoredPSM> scoredPSMs = (List<ScoredPSM>) hBaseDao.getScoredPSMs(querySql.toString(), null, new RowMapper<ScoredPSM>() {
             @Override
             public ScoredPSM mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -52,7 +61,7 @@ public class ScoredPSMService {
                 scoredPSM.setClusterRatio(rs.getFloat("CLUSTER_RATIO"));
                 scoredPSM.setClusterSize(rs.getInt("CLUSTER_SIZE"));
 
-                scoredPSM.setConfidentiScore(rs.getFloat("CONF_SC"));
+                scoredPSM.setConfidentScore(rs.getFloat("CONF_SC"));
                 scoredPSM.setRecommendIdentification(rs.getString("RECOMMEND_PEP"));
 
                 return scoredPSM;

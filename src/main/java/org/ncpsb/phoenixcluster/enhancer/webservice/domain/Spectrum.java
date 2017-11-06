@@ -11,12 +11,12 @@ public class Spectrum {
 	private String clusterId;
 	private String projectId;
 
-	public String getId() {
+	public String getTitle() {
 		return title;
 	}
 
-	public void setId(String id) {
-		this.title = id;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	public String getSequence() {

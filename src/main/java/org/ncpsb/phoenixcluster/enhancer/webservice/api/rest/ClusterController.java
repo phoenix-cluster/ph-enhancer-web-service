@@ -19,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/example/v1/clusters")
+@CrossOrigin(origins = "*")
 @Api(tags = {"clusters"})
 public class ClusterController extends AbstractRestHandler {
 
@@ -40,27 +41,27 @@ public class ClusterController extends AbstractRestHandler {
                                @ApiParam(value = "Tha page size", required = true)
                                       @RequestParam(value = "size", required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size,
                                HttpServletRequest request, HttpServletResponse response) {
-//        return this.clusterService.getAllClusterIDs(page, size,null, null);
+//        return this.clusterService.getAllClusterIds(page, size,null, null);
         assert (page>0 && size>0);
-        List<String> allClusterIDs = this.clusterService.getClusterIDs(page, size,null, null);
+        List<String> allClusterIds = this.clusterService.getClusterIds(page, size,null, null);
 
-        for (String clusterID : allClusterIDs) {
-            System.out.println("::::" + clusterID);
+        for (String clusterId : allClusterIds) {
+            System.out.println("::::" + clusterId);
         }
-        return allClusterIDs;
+        return allClusterIds;
     }
 
     @RequestMapping(value = "/{id}",
             method = RequestMethod.GET,
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get a single cluster.", notes = "You have to provide a valid cluster ID.")
+    @ApiOperation(value = "Get a single cluster.", notes = "You have to provide a valid cluster Id.")
     public
     @ResponseBody
-    Cluster getCluster(@ApiParam(value = "The ID of the cluster.", required = true)
+    Cluster getCluster(@ApiParam(value = "The Id of the cluster.", required = true)
                              @PathVariable("id") String id,
                              HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Cluster cluster = this.clusterService.getClusterByID(id, null);
+        Cluster cluster = this.clusterService.getClusterById(id);
         checkResourceFound(cluster);
         //todo: http://goo.gl/6iNAkz
         return cluster;

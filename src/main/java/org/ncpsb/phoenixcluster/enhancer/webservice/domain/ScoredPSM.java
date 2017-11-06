@@ -13,7 +13,7 @@ public class ScoredPSM {
     private Float clusterRatio;
     private Integer clusterSize;
 
-    private Float confidentiScore;
+    private Float confidentScore;
     private String recommendIdentification;
 
     private String acceptence;
@@ -61,12 +61,12 @@ public class ScoredPSM {
         this.clusterSize = clusterSize;
     }
 
-    public Float getConfidentiScore() {
-        return confidentiScore;
+    public Float getConfidentScore() {
+        return confidentScore;
     }
 
-    public void setConfidentiScore(Float confidentiScore) {
-        this.confidentiScore = confidentiScore;
+    public void setConfidentScore(Float confidentScore) {
+        this.confidentScore = confidentScore;
     }
 
     public String getRecommendIdentification() {

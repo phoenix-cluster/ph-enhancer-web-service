@@ -20,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/example/v1/scoredpsms")
+@CrossOrigin(origins = "*")
 @Api(tags = {"scoredPSMs"})
 public class ScoredPSMController extends AbstractRestHandler {
 
@@ -40,15 +41,13 @@ public class ScoredPSMController extends AbstractRestHandler {
                                @ApiParam(value = "Tha page size", required = true)
                                       @RequestParam(value = "size", required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size,
                                   @ApiParam(value = "The sortField", required = true)
-                                  @RequestParam(value = "sortFiled", required = true, defaultValue = DEFAULT_SORT_FIELD) String sortField,
+                                  @RequestParam(value = "sortField", required = true, defaultValue = DEFAULT_SORT_FIELD) String sortField,
                                   @ApiParam(value = "The sort direction", required = true)
                                   @RequestParam(value = "sortDirection", required = true, defaultValue = DEFAULT_SORT_DIRECTION) String sortDirection,
                                HttpServletRequest request, HttpServletResponse response) {
 //        return this.clusterService.getAllClusterIDs(page, size,null, null);
 //        List<ScoredPSM> scoredPSMs = this.scoredPSMService.getScoredPSMs(page, size,null, null);
-        assert(page > 0);
-        assert(size > 0);
-        List<ScoredPSM> scoredPSMs = this.scoredPSMService.getScoredPSMs(page, size,sortField, sortDirection);
+        List<ScoredPSM> scoredPSMs = this.scoredPSMService.getScoredPSMs(page, size, sortField, sortDirection);
         Integer totalElements = this.scoredPSMService.totalScoredPSM();
         Integer totalPages = (int) Math.ceil((totalElements + 0.0)/size);
         PageOfScoredPSM pageOfScoredPSM = new PageOfScoredPSM(size, page, totalElements, totalPages, sortField, sortDirection,scoredPSMs);
