@@ -3,6 +3,7 @@ package org.ncpsb.phoenixcluster.enhancer.webservice.dao.jpa;
 import org.ncpsb.phoenixcluster.enhancer.webservice.domain.Cluster;
 import org.ncpsb.phoenixcluster.enhancer.webservice.domain.ScoredPSM;
 import org.ncpsb.phoenixcluster.enhancer.webservice.domain.Spectrum;
+import org.ncpsb.phoenixcluster.enhancer.webservice.domain.SpectrumInCluster;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.util.List;
@@ -26,6 +27,8 @@ public interface HBaseDao {
     public List getScoredPSMs(String querySql, Object[] params, RowMapper<ScoredPSM> mapper);
     public ScoredPSM getScoredPSM(String querySql, Object[] params, RowMapper<ScoredPSM> mapper);
 
+    public List getSpectraInCluster(String querySql, Object[] params, RowMapper<SpectrumInCluster> mapper);
     public List getSpectra(String querySql, Object[] params, RowMapper<Spectrum> mapper);
+    public SpectrumInCluster getSpectrumInCluster(String querySql, Object[] params, RowMapper<SpectrumInCluster> mapper);
     public Spectrum getSpectrum(String querySql, Object[] params, RowMapper<Spectrum> mapper);
 }

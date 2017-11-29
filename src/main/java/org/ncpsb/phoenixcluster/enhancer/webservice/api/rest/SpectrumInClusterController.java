@@ -3,8 +3,8 @@ package org.ncpsb.phoenixcluster.enhancer.webservice.api.rest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.ncpsb.phoenixcluster.enhancer.webservice.domain.Spectrum;
-import org.ncpsb.phoenixcluster.enhancer.webservice.service.SpectrumService;
+import org.ncpsb.phoenixcluster.enhancer.webservice.domain.SpectrumInCluster;
+import org.ncpsb.phoenixcluster.enhancer.webservice.service.SpectrumInClusterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,13 +18,13 @@ import java.util.List;
  */
 
 @RestController
-@RequestMapping(value = "/example/v1/spectrum")
+@RequestMapping(value = "/example/v1/spectrumInCluster")
 @CrossOrigin(origins = "*")
-@Api(tags = {"spectrum"})
-public class SpectrumController extends AbstractRestHandler {
+@Api(tags = {"spectrumInCluster"})
+public class SpectrumInClusterController extends AbstractRestHandler {
 
     @Autowired
-    private SpectrumService spectrumService;
+    private SpectrumInClusterService spectrumInClusterService;
 
 //    @RequestMapping(value = "",
 //            method = RequestMethod.GET
@@ -58,17 +58,17 @@ public class SpectrumController extends AbstractRestHandler {
             method = RequestMethod.GET,
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get a single spectrum.", notes = "You have to provide a valid spectrum title.")
+    @ApiOperation(value = "Get a single spectrumInCluster.", notes = "You have to provide a valid spectrum title.")
     public
     @ResponseBody
-    Spectrum getSpectrum(@ApiParam(value = "The title of the spectrum.", required = true)
+    SpectrumInCluster getSpectrumInCluster(@ApiParam(value = "The title of the spectrumInCluster.", required = true)
                              @PathVariable("title") String title,
                                   HttpServletRequest request, HttpServletResponse response) throws Exception {
         System.out.println(title);
-        Spectrum spectrum= this.spectrumService.getSpectrumByTitle(title);
+        SpectrumInCluster spectrumInCluster= this.spectrumInClusterService.getSpectrumInClusterByTitle(title);
 //        checkResourceFound(cluster);
         //todo: http://goo.gl/6iNAkz
-        return spectrum;
+        return spectrumInCluster;
     }
 
 
@@ -76,17 +76,17 @@ public class SpectrumController extends AbstractRestHandler {
             method = RequestMethod.GET,
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get a collection of spectrum.", notes = "You have to provide valid spectrum titles.")
+    @ApiOperation(value = "Get a collection of spectrumInCluster.", notes = "You have to provide valid spectrum titles.")
     public
     @ResponseBody
-    List<Spectrum> getSpectraByTitles(@ApiParam(value = "The titles of the spectra.", required = true)
+    List<SpectrumInCluster> getSpectraByTitles(@ApiParam(value = "The titles of the spectra.", required = true)
                              @PathVariable("titles") String titles,
                                                HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        List<Spectrum> spectra = this.spectrumService.getSpectraByTitles(titles);
+        List<SpectrumInCluster> spectraInCluster = this.spectrumInClusterService.getSpectraInClusterByTitles(titles);
 //        checkResourceFound(cluster);
         //todo: http://goo.gl/6iNAkz
-        return spectra;
+        return spectraInCluster;
     }
 
 

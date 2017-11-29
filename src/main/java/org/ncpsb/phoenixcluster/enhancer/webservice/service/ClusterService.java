@@ -22,7 +22,7 @@ import java.util.Map;
 public class ClusterService {
     @Autowired
     private HBaseDao hBaseDao;
-    private String clusterTableName ="\"cluster_table_test_02112017\"";
+    private String clusterTableName ="V_CLUSTER";
 
 
     public Cluster getClusterById(String clusterId) {

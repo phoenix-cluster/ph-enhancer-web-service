@@ -6,43 +6,32 @@ package org.ncpsb.phoenixcluster.enhancer.webservice.domain;
 
 
 public class ScoredPSM {
-    private String querySpectrumTitle;
-    private String previousIdentification;
+    private Integer Id;
 
-    private String clusterID;
+    private String peptideSequence;
+
+    private String clusterId;
     private Float clusterRatio;
     private Integer clusterSize;
 
     private Float confidentScore;
-    private String recommendIdentification;
+    private String recommendPeptide;
+
+    private Integer spectraNum;
+    private String spectraTitles;
 
     private String acceptence;
 
     public ScoredPSM() {
     }
 
-    public String getQuerySpectrumTitle() {
-        return querySpectrumTitle;
+
+    public String getClusterId() {
+        return clusterId;
     }
 
-    public void setQuerySpectrumTitle(String querySpectrumTitle) {
-        this.querySpectrumTitle = querySpectrumTitle;
-    }
-
-    public String getPreviousIdentification() {
-        return previousIdentification;
-    }
-
-    public void setPreviousIdentification(String previousIdentification) {
-        this.previousIdentification = previousIdentification;
-    }
-
-    public String getClusterID() {
-        return clusterID;
-    }
-
-    public void setClusterID(String clusterID) {
-        this.clusterID = clusterID;
+    public void setClusterId(String clusterId){
+        this.clusterId = clusterId;
     }
 
     public Float getClusterRatio() {
@@ -69,12 +58,44 @@ public class ScoredPSM {
         this.confidentScore = confidentScore;
     }
 
-    public String getRecommendIdentification() {
-        return recommendIdentification;
+    public Integer getId() {
+        return Id;
     }
 
-    public void setRecommendIdentification(String recommendIdentification) {
-        this.recommendIdentification = recommendIdentification;
+    public void setId(Integer id) {
+        Id = id;
+    }
+
+    public String getPeptideSequence() {
+        return peptideSequence;
+    }
+
+    public void setPeptideSequence(String peptideSequence) {
+        this.peptideSequence = peptideSequence;
+    }
+
+    public String getRecommendPeptide() {
+        return recommendPeptide;
+    }
+
+    public void setRecommendPeptide(String recommendPeptide) {
+        this.recommendPeptide = recommendPeptide;
+    }
+
+    public Integer getSpectraNum() {
+        return spectraNum;
+    }
+
+    public void setSpectraNum(Integer spectraNum) {
+        this.spectraNum = spectraNum;
+    }
+
+    public String getSpectraTitles() {
+        return spectraTitles;
+    }
+
+    public void setSpectraTitles(String spectraTitles) {
+        this.spectraTitles = spectraTitles;
     }
 
     public String getAcceptence() {

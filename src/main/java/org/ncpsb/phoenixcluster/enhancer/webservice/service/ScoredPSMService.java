@@ -20,9 +20,9 @@ import java.util.Map;
 
 @Service
 public class ScoredPSMService {
-    private String scoredPSMTableName = "LIB_SEARCH_SR_PXD000021TEST_27102017";
-    private String clusterTableName = "cluster_table_test_24102017";
-    private String spectrumTableName = "cluster_table_test_24102017_spec";
+    private String scoredPSMTableName = "V_PXD000021_SCORED_PSM";
+    private String clusterTableName = "V_CLUSTER";
+    private String spectrumTableName = "V_CLUSTER_SPEC";
 
     HashMap<String, String> columnMap = new HashMap<String, String>() {{
         put("confidentScore","CONF_SC");
@@ -54,15 +54,18 @@ public class ScoredPSMService {
             @Override
             public ScoredPSM mapRow(ResultSet rs, int rowNum) throws SQLException {
                 ScoredPSM scoredPSM = new ScoredPSM();
-                scoredPSM.setQuerySpectrumTitle(rs.getString("SPEC_TITLE"));
-                scoredPSM.setPreviousIdentification(rs.getString("PREV_ID_PEP"));
+                scoredPSM.setId(rs.getInt("ID"));
+                scoredPSM.setPeptideSequence(rs.getString("PEP_SEQ"));
 
-                scoredPSM.setClusterID(rs.getString("CLUSTER_ID"));
+                scoredPSM.setClusterId(rs.getString("CLUSTER_ID"));
                 scoredPSM.setClusterRatio(rs.getFloat("CLUSTER_RATIO"));
                 scoredPSM.setClusterSize(rs.getInt("CLUSTER_SIZE"));
 
                 scoredPSM.setConfidentScore(rs.getFloat("CONF_SC"));
-                scoredPSM.setRecommendIdentification(rs.getString("RECOMMEND_PEP"));
+                scoredPSM.setRecommendPeptide(rs.getString("RECOMMEND_PEP"));
+
+                scoredPSM.setSpectraNum(rs.getInt("NUM_SPEC"));
+                scoredPSM.setSpectraTitles(rs.getString("SPECTRA"));
 
                 return scoredPSM;
             }
