@@ -58,7 +58,7 @@ public class SpectrumService{
             @Override
             public Spectrum mapRow(ResultSet rs, int rowNum) throws SQLException {
                 Spectrum spectrum = new Spectrum();
-                spectrum.setSpectrumTitle(rs.getString("SPECTRUM_TITLE"));
+                spectrum.setTitle(rs.getString("SPECTRUM_TITLE"));
                 spectrum.setCharge(rs.getInt("CHARGE"));
                 spectrum.setPrecursorMz(rs.getFloat("PRECURSOR_MZ"));
                 spectrum.setPrecursorIntens(rs.getFloat("PRECURSOR_INTENS"));
@@ -91,7 +91,7 @@ public class SpectrumService{
             @Override
             public Spectrum mapRow(ResultSet rs, int rowNum) throws SQLException {
                 Spectrum spectrum = new Spectrum();
-                spectrum.setSpectrumTitle(rs.getString("SPECTRUM_TITLE"));
+                spectrum.setTitle(rs.getString("SPECTRUM_TITLE"));
                 spectrum.setCharge(rs.getInt("CHARGE"));
                 spectrum.setPrecursorMz(rs.getFloat("PRECURSOR_MZ"));
                 spectrum.setPrecursorIntens(rs.getFloat("PRECURSOR_INTENS"));

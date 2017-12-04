@@ -20,7 +20,9 @@ import java.util.Map;
 
 @Service
 public class ScoredPSMService {
-    private String scoredPSMTableName = "V_PXD000021_SCORED_PSM";
+    private String posScoredPSMTableName = "V_PXD000021_P_SCORED_PSM";
+    private String negScoredPSMTableName = "V_PXD000021_N_SCORED_PSM";
+    private String recommIdPSMTableName = "V_PXD000021_RECOMM_ID";
     private String clusterTableName = "V_CLUSTER";
     private String spectrumTableName = "V_CLUSTER_SPEC";
 
@@ -34,12 +36,42 @@ public class ScoredPSMService {
     private HBaseDao hBaseDao;
 
 
-    public List<ScoredPSM> getScoredPSMs(Integer page, Integer size, String sortField, String sortDirection) {
+    public List<ScoredPSM> getScoredPSMs(Integer page, Integer size, String sortField, String sortDirection, String resultType) {
+        String psmTableName = "";
+        switch (resultType){
+            case("negscore"):{
+                psmTableName = negScoredPSMTableName;
+                if (sortField.equals("confidentScore") && sortDirection == null) {
+                    sortDirection = "ASC";
+                }
+                break;
+            }
+            case("posscore"):{
+                psmTableName = posScoredPSMTableName;
+                if (sortField.equals("confidentScore") && sortDirection == null) {
+                    sortDirection = "DESC";
+                }
+                break;
+            }
+            case("recomm"):{
+                psmTableName = recommIdPSMTableName;
+                if (sortField.equals("confidentScore") && sortDirection == null) {
+                    sortDirection = "DESC";
+                }
+                break;
+            }
+            default:{
+                psmTableName = negScoredPSMTableName;
+                if (sortField.equals("confidentScore") && sortDirection == null) {
+                    sortDirection = "ASC";
+                }
+            }
+        }
         if (sortDirection == null) {
-            sortDirection = "ASC";
+            sortDirection = "DESC";
         }
 
-        StringBuffer querySql = new StringBuffer("SELECT * FROM " + scoredPSMTableName);
+        StringBuffer querySql = new StringBuffer("SELECT * FROM " + psmTableName);
         if (sortField.equals("confidentScore") ||
                 sortField.equals("clusterRatio") ||
                 sortField.equals("clusterSize")
@@ -55,8 +87,9 @@ public class ScoredPSMService {
             public ScoredPSM mapRow(ResultSet rs, int rowNum) throws SQLException {
                 ScoredPSM scoredPSM = new ScoredPSM();
                 scoredPSM.setId(rs.getInt("ID"));
-                scoredPSM.setPeptideSequence(rs.getString("PEP_SEQ"));
-
+                if (resultType != "recomm") {
+                    scoredPSM.setPeptideSequence(rs.getString("PEP_SEQ"));
+                }
                 scoredPSM.setClusterId(rs.getString("CLUSTER_ID"));
                 scoredPSM.setClusterRatio(rs.getFloat("CLUSTER_RATIO"));
                 scoredPSM.setClusterSize(rs.getInt("CLUSTER_SIZE"));
@@ -88,8 +121,27 @@ public class ScoredPSMService {
 
     }
 
-    public Integer totalScoredPSM() {
-        StringBuffer querySql = new StringBuffer("SELECT COUNT(*) AS total FROM " + scoredPSMTableName);
+    public Integer totalScoredPSM(String type) {
+        String psmTableName = "";
+        switch (type){
+            case("negscore"):{
+                psmTableName = negScoredPSMTableName;
+                break;
+            }
+            case("posscore"):{
+                psmTableName = posScoredPSMTableName;
+                break;
+            }
+            case("recomm"):{
+                psmTableName = recommIdPSMTableName;
+                break;
+            }
+            default:{
+                psmTableName = negScoredPSMTableName;
+            }
+        }
+
+        StringBuffer querySql = new StringBuffer("SELECT COUNT(*) AS total FROM " + psmTableName);
         Integer totalElement = (Integer) hBaseDao.queryTotal(querySql.toString());
         return totalElement;
     }

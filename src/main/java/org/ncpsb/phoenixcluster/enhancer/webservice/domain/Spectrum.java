@@ -6,19 +6,19 @@ import java.util.List;
  * Created by baimi on 2017/11/26.
  */
 public class Spectrum {
-    private String spectrumTitle;
+    private String title;
     private Float precursorMz;
     private Float precursorIntens;
     private Integer charge;
     private List<Float> peaklistMz;
     private List<Float> peaklistIntens;
 
-    public String getSpectrumTitle() {
-        return spectrumTitle;
+    public String getTitle() {
+        return title;
     }
 
-    public void setSpectrumTitle(String spectrumTitle) {
-        this.spectrumTitle = spectrumTitle;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public Float getPrecursorMz() {
