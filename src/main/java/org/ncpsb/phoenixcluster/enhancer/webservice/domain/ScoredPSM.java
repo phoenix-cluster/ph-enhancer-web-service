@@ -9,6 +9,7 @@ public class ScoredPSM {
     private Integer Id;
 
     private String peptideSequence;
+    private String peptideModsStr;
 
     private String clusterId;
     private Float clusterRatio;
@@ -16,6 +17,7 @@ public class ScoredPSM {
 
     private Float confidentScore;
     private String recommendPeptide;
+    private String recommendPepModsStr;
 
     private Integer spectraNum;
     private String spectraTitles;
@@ -25,6 +27,21 @@ public class ScoredPSM {
     public ScoredPSM() {
     }
 
+    public String getPeptideModsStr() {
+        return peptideModsStr;
+    }
+
+    public void setPeptideModsStr(String peptideModsStr) {
+        this.peptideModsStr = peptideModsStr;
+    }
+
+    public String getRecommendPepModsStr() {
+        return recommendPepModsStr;
+    }
+
+    public void setRecommendPepModsStr(String recommendPepMods) {
+        this.recommendPepModsStr = recommendPepMods;
+    }
 
     public String getClusterId() {
         return clusterId;

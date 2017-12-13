@@ -12,6 +12,7 @@ public class PageOfScoredPSM {
     private Integer totalPages;
     private String sortField;
     private String sortDirection;
+    private List<ScoredPSMForWeb> scoredPSMs;
 
     public String getSortField() {
         return sortField;
@@ -29,24 +30,23 @@ public class PageOfScoredPSM {
         this.sortDirection = sortDirection;
     }
 
-    public PageOfScoredPSM(Integer pageSize, Integer page, Integer totalElements, Integer totalPages, String sortField, String sortDirection, List<ScoredPSM> scoredPSMs) {
+    public PageOfScoredPSM(Integer pageSize, Integer page, Integer totalElements, Integer totalPages, String sortField, String sortDirection, List<ScoredPSMForWeb> scoredPSMsForWeb) {
         this.pageSize = pageSize;
         this.page = page;
         this.totalElements = totalElements;
         this.totalPages = totalPages;
         this.sortField = sortField;
         this.sortDirection = sortDirection;
-        this.scoredPSMs = scoredPSMs;
+        this.scoredPSMs = scoredPSMsForWeb;
     }
 
-    private List<ScoredPSM> scoredPSMs;
 
-    public PageOfScoredPSM(Integer pageSize, Integer page, Integer totalElements, Integer totalPages, List<ScoredPSM> scoredPSMs) {
+    public PageOfScoredPSM(Integer pageSize, Integer page, Integer totalElements, Integer totalPages, List<ScoredPSMForWeb> scoredPSMsForWeb) {
         this.pageSize = pageSize;
         this.page = page;
         this.totalElements = totalElements;
         this.totalPages = totalPages;
-        this.scoredPSMs = scoredPSMs;
+        this.scoredPSMs = scoredPSMsForWeb;
     }
 
     public Integer getPageSize() {
@@ -81,11 +81,11 @@ public class PageOfScoredPSM {
         this.totalPages = totalPages;
     }
 
-    public List<ScoredPSM> getScoredPSMs() {
+    public List<ScoredPSMForWeb> getScoredPSMs() {
         return scoredPSMs;
     }
 
-    public void setScoredPSMs(List<ScoredPSM> scoredPSMs) {
+    public void setScoredPSMs(List<ScoredPSMForWeb> scoredPSMs) {
         this.scoredPSMs = scoredPSMs;
     }
 }

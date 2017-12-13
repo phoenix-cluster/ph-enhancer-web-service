@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.ncpsb.phoenixcluster.enhancer.webservice.domain.PageOfScoredPSM;
 import org.ncpsb.phoenixcluster.enhancer.webservice.domain.ScoredPSM;
+import org.ncpsb.phoenixcluster.enhancer.webservice.domain.ScoredPSMForWeb;
 import org.ncpsb.phoenixcluster.enhancer.webservice.service.ScoredPSMService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -47,10 +48,10 @@ public class ScoredPSMController extends AbstractRestHandler {
                                HttpServletRequest request, HttpServletResponse response) {
 //        return this.clusterService.getAllClusterIDs(page, size,null, null);
 //        List<ScoredPSM> scoredPSMs = this.scoredPSMService.getScoredPSMs(page, size,null, null);
-        List<ScoredPSM> scoredPSMs = this.scoredPSMService.getScoredPSMs(page, size, sortField, sortDirection,"negscore");
+        List<ScoredPSMForWeb> scoredPSMsForWeb = this.scoredPSMService.getScoredPSMsForWeb(page, size, sortField, sortDirection,"negscore");
         Integer totalElements = this.scoredPSMService.totalScoredPSM("negscore");
         Integer totalPages = (int) Math.ceil((totalElements + 0.0)/size);
-        PageOfScoredPSM pageOfScoredPSM = new PageOfScoredPSM(size, page, totalElements, totalPages, sortField, sortDirection,scoredPSMs);
+        PageOfScoredPSM pageOfScoredPSM = new PageOfScoredPSM(size, page, totalElements, totalPages, sortField, sortDirection,scoredPSMsForWeb);
 
         return pageOfScoredPSM;
     }
@@ -84,10 +85,10 @@ public class ScoredPSMController extends AbstractRestHandler {
                                HttpServletRequest request, HttpServletResponse response) {
 //        return this.clusterService.getAllClusterIDs(page, size,null, null);
 //        List<ScoredPSM> scoredPSMs = this.scoredPSMService.getScoredPSMs(page, size,null, null);
-        List<ScoredPSM> scoredPSMs = this.scoredPSMService.getScoredPSMs(page, size, sortField, sortDirection, "posscore");
+        List<ScoredPSMForWeb> scoredPSMsForWeb = this.scoredPSMService.getScoredPSMsForWeb(page, size, sortField, sortDirection, "posscore");
         Integer totalElements = this.scoredPSMService.totalScoredPSM("posscore");
         Integer totalPages = (int) Math.ceil((totalElements + 0.0)/size);
-        PageOfScoredPSM pageOfScoredPSM = new PageOfScoredPSM(size, page, totalElements, totalPages, sortField, sortDirection,scoredPSMs);
+        PageOfScoredPSM pageOfScoredPSM = new PageOfScoredPSM(size, page, totalElements, totalPages, sortField, sortDirection,scoredPSMsForWeb);
 
         return pageOfScoredPSM;
     }
@@ -123,10 +124,10 @@ public class ScoredPSMController extends AbstractRestHandler {
                                HttpServletRequest request, HttpServletResponse response) {
 //        return this.clusterService.getAllClusterIDs(page, size,null, null);
 //        List<ScoredPSM> scoredPSMs = this.scoredPSMService.getScoredPSMs(page, size,null, null);
-        List<ScoredPSM> scoredPSMs = this.scoredPSMService.getScoredPSMs(page, size, sortField, sortDirection, "recomm");
+        List<ScoredPSMForWeb> scoredPSMsForWeb = this.scoredPSMService.getScoredPSMsForWeb(page, size, sortField, sortDirection, "recomm");
         Integer totalElements = this.scoredPSMService.totalScoredPSM("recomm");
         Integer totalPages = (int) Math.ceil((totalElements + 0.0)/size);
-        PageOfScoredPSM pageOfScoredPSM = new PageOfScoredPSM(size, page, totalElements, totalPages, sortField, sortDirection,scoredPSMs);
+        PageOfScoredPSM pageOfScoredPSM = new PageOfScoredPSM(size, page, totalElements, totalPages, sortField, sortDirection,scoredPSMsForWeb);
 
         return pageOfScoredPSM;
     }
@@ -146,5 +147,19 @@ public class ScoredPSMController extends AbstractRestHandler {
         //todo: http://goo.gl/6iNAkz
         return scoredPSM;
     }
+
+    @RequestMapping(value = "/updateAcceptance",
+            method = RequestMethod.PUT,
+            produces = {"application/json"})
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Put the user's acceptance statuses into database.", notes = "id:statusnumber, -1 for reject, 1 for accpeta")
+    public
+    @ResponseBody
+    void putUserAccpetance(@ApiParam(value = "The map of acceptance.", required = true)
+                             @PathVariable("psmtype") String psmtype,
+                             HttpServletRequest request, HttpServletResponse response) throws Exception {
+        System.out.println("puting user acceptance into " + psmtype + " table");
+    }
+
 
 }

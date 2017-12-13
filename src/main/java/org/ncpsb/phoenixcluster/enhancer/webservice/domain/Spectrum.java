@@ -13,6 +13,9 @@ public class Spectrum {
     private List<Float> peaklistMz;
     private List<Float> peaklistIntens;
 
+    private String peptideModsStr;
+    private List <ModificationForWeb> peptideMods;
+
     public String getTitle() {
         return title;
     }

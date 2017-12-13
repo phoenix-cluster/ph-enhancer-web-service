@@ -19,6 +19,13 @@
 		<start-class>org.ncpsb.phoenixcluster.enhancer.webservice.Application</start-class>
 	</properties>
 
+	<repositories>
+			<repository>
+				<id>nexus-ebi-release-repo</id>
+				<url>http://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-repo/</url>
+			</repository>
+	</repositories>
+
 	<dependencies>
 
 		<dependency>
@@ -55,6 +62,13 @@
 			<!--<artifactId>h2</artifactId>-->
 			<!--<version>1.4.193</version>-->
 		<!--</dependency>-->
+
+		<!-- https://mvnrepository.com/artifact/uk.ac.ebi.pride.utilities/pride-mod -->
+		<dependency>
+			<groupId>uk.ac.ebi.pride.utilities</groupId>
+			<artifactId>pride-mod</artifactId>
+			<version>2.1.8</version>
+		</dependency>
 
 		<!-- spring-test, hamcrest, ... -->
 		<dependency>
