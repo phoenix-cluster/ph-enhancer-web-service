@@ -6,6 +6,7 @@ import java.util.List;
  * Created by baimi on 2017/10/29.
  */
 public class PageOfScoredPSM {
+    private String  projectId;
     private Integer pageSize;
     private Integer page;
     private Integer totalElements;
@@ -30,7 +31,7 @@ public class PageOfScoredPSM {
         this.sortDirection = sortDirection;
     }
 
-    public PageOfScoredPSM(Integer pageSize, Integer page, Integer totalElements, Integer totalPages, String sortField, String sortDirection, List<ScoredPSMForWeb> scoredPSMsForWeb) {
+    public PageOfScoredPSM(String projectId, Integer pageSize, Integer page, Integer totalElements, Integer totalPages, String sortField, String sortDirection, List<ScoredPSMForWeb> scoredPSMsForWeb) {
         this.pageSize = pageSize;
         this.page = page;
         this.totalElements = totalElements;
@@ -41,12 +42,20 @@ public class PageOfScoredPSM {
     }
 
 
-    public PageOfScoredPSM(Integer pageSize, Integer page, Integer totalElements, Integer totalPages, List<ScoredPSMForWeb> scoredPSMsForWeb) {
+    public PageOfScoredPSM(String projectId, Integer pageSize, Integer page, Integer totalElements, Integer totalPages, List<ScoredPSMForWeb> scoredPSMsForWeb) {
         this.pageSize = pageSize;
         this.page = page;
         this.totalElements = totalElements;
         this.totalPages = totalPages;
         this.scoredPSMs = scoredPSMsForWeb;
+    }
+
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
     }
 
     public Integer getPageSize() {

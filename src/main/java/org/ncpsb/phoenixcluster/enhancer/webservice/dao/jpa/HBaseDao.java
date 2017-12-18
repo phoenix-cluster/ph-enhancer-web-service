@@ -7,6 +7,7 @@ import org.ncpsb.phoenixcluster.enhancer.webservice.domain.SpectrumInCluster;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by baimi on 2017/10/11.
@@ -31,4 +32,6 @@ public interface HBaseDao {
     public List getSpectra(String querySql, Object[] params, RowMapper<Spectrum> mapper);
     public SpectrumInCluster getSpectrumInCluster(String querySql, Object[] params, RowMapper<SpectrumInCluster> mapper);
     public Spectrum getSpectrum(String querySql, Object[] params, RowMapper<Spectrum> mapper);
+
+    List<Map> queryList(String s, RowMapper<Map> rowMapper);
 }

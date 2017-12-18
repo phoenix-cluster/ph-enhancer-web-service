@@ -1,5 +1,7 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.domain;
 
+import io.swagger.models.auth.In;
+
 /**
  * Created by baimi on 2017/10/26.
  */
@@ -22,7 +24,7 @@ public class ScoredPSM {
     private Integer spectraNum;
     private String spectraTitles;
 
-    private String acceptence;
+    private Integer acceptance;
 
     public ScoredPSM() {
     }
@@ -115,11 +117,11 @@ public class ScoredPSM {
         this.spectraTitles = spectraTitles;
     }
 
-    public String getAcceptence() {
-        return acceptence;
+    public Integer getAcceptance() {
+        return acceptance;
     }
 
-    public void setAcceptence(String acceptence) {
-        this.acceptence = acceptence;
+    public void setAcceptance(Integer acceptance) {
+        this.acceptance = acceptance;
     }
 }

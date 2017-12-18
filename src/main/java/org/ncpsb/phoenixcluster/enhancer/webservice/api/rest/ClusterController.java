@@ -1,6 +1,7 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.api.rest;
 
 import org.ncpsb.phoenixcluster.enhancer.webservice.domain.Cluster;
+import org.ncpsb.phoenixcluster.enhancer.webservice.domain.Configure;
 import org.ncpsb.phoenixcluster.enhancer.webservice.service.ClusterService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+
+import org.ncpsb.phoenixcluster.enhancer.webservice.domain.Configure;
 
 /*
  * Demonstrates how to set up RESTful API endpoints using Spring MVC
@@ -37,9 +40,9 @@ public class ClusterController extends AbstractRestHandler {
     @ResponseBody
     //Page<Cluster> getAllCluster(@ApiParam(value = "The page number (zero-based)", required = true)
     List<String> getClusters(@ApiParam(value = "The page number ", required = true)
-                                      @RequestParam(value = "page", required = true, defaultValue = DEFAULT_PAGE_NUM) Integer page,
+                                      @RequestParam(value = "page", required = true, defaultValue = Configure.DEFAULT_PAGE_NUM) Integer page,
                                @ApiParam(value = "Tha page size", required = true)
-                                      @RequestParam(value = "size", required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size,
+                                      @RequestParam(value = "size", required = true, defaultValue = Configure.DEFAULT_PAGE_SIZE) Integer size,
                                HttpServletRequest request, HttpServletResponse response) {
 //        return this.clusterService.getAllClusterIds(page, size,null, null);
         assert (page>0 && size>0);

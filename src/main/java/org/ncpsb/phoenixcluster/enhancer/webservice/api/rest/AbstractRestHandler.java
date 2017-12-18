@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletResponse;
-
 /**
  * This class is meant to be extended by all REST resource "controllers".
  * It contains exception mapping and other common REST API functionality
@@ -25,10 +24,7 @@ public abstract class AbstractRestHandler implements ApplicationEventPublisherAw
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
     protected ApplicationEventPublisher eventPublisher;
 
-    protected static final String  DEFAULT_PAGE_SIZE = "50";
-    protected static final String DEFAULT_PAGE_NUM = "1";
-    protected static final String DEFAULT_SORT_FIELD = "confidentScore";
-    protected static final String DEFAULT_SORT_DIRECTION = "ASC";
+
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(DataFormatException.class)

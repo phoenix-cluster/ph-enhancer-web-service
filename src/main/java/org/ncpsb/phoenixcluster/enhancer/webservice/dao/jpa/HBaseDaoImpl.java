@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -92,6 +93,11 @@ public class HBaseDaoImpl implements HBaseDao {
         } else {
             return jdbcTemplate.queryForObject(querySql, mapper);
         }
+    }
+
+    @Override
+    public List<Map> queryMap(String querySql, RowMapper<Map> rowMapper) {
+            return jdbcTemplate.query(querySql, rowMapper);
     }
 
 

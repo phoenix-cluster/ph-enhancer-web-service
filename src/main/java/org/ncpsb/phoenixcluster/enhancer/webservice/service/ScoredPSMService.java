@@ -5,7 +5,10 @@ import org.apache.avro.generic.GenericData;
 import org.ncpsb.phoenixcluster.enhancer.webservice.dao.jpa.HBaseDao;
 import org.ncpsb.phoenixcluster.enhancer.webservice.domain.ScoredPSM;
 import org.ncpsb.phoenixcluster.enhancer.webservice.domain.ScoredPSMForWeb;
+import org.ncpsb.phoenixcluster.enhancer.webservice.domain.Configure;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
@@ -23,48 +26,38 @@ import java.util.Map;
 
 @Service
 public class ScoredPSMService {
-    private String posScoredPSMTableName = "V_PXD000021_P_SCORED_PSM";
-    private String negScoredPSMTableName = "V_PXD000021_N_SCORED_PSM";
-    private String recommIdPSMTableName = "V_PXD000021_RECOMM_ID";
-    private String clusterTableName = "V_CLUSTER";
-    private String spectrumTableName = "V_CLUSTER_SPEC";
 
-    HashMap<String, String> columnMap = new HashMap<String, String>() {{
-        put("confidentScore", "CONF_SC");
-        put("clusterRatio", "CLUSTER_RATIO");
-        put("clusterSize", "CLUSTER_SIZE");
-    }};
 
     @Autowired
     private HBaseDao hBaseDao;
 
 
-    public List<ScoredPSMForWeb> getScoredPSMsForWeb(Integer page, Integer size, String sortField, String sortDirection, String resultType) {
+    public List<ScoredPSMForWeb> getScoredPSMsForWeb(String projectId, Integer page, Integer size, String sortField, String sortDirection, String resultType) {
         String psmTableName = "";
         switch (resultType) {
             case ("negscore"): {
-                psmTableName = negScoredPSMTableName;
+                psmTableName = Configure.NEG_SCORED_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID,projectId);
                 if (sortField.equals("confidentScore") && sortDirection == null) {
                     sortDirection = "ASC";
                 }
                 break;
             }
             case ("posscore"): {
-                psmTableName = posScoredPSMTableName;
+                psmTableName = Configure.POS_SCORED_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID,projectId);
                 if (sortField.equals("confidentScore") && sortDirection == null) {
                     sortDirection = "DESC";
                 }
                 break;
             }
             case ("recomm"): {
-                psmTableName = recommIdPSMTableName;
+                psmTableName = Configure.RECOMM_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID,projectId);
                 if (sortField.equals("confidentScore") && sortDirection == null) {
                     sortDirection = "DESC";
                 }
                 break;
             }
             default: {
-                psmTableName = negScoredPSMTableName;
+                psmTableName = Configure.NEG_SCORED_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID,projectId);
                 if (sortField.equals("confidentScore") && sortDirection == null) {
                     sortDirection = "ASC";
                 }
@@ -77,9 +70,10 @@ public class ScoredPSMService {
         StringBuffer querySql = new StringBuffer("SELECT * FROM " + psmTableName);
         if (sortField.equals("confidentScore") ||
                 sortField.equals("clusterRatio") ||
-                sortField.equals("clusterSize")
+                sortField.equals("clusterSize") ||
+                sortField.equals("acceptance")
                 ) {
-            querySql.append(" ORDER BY " + columnMap.get(sortField) + " " + sortDirection + " ");
+            querySql.append(" ORDER BY " + Configure.COLUMN_MAP.get(sortField) + " " + sortDirection + " ");
         }
         querySql.append(" LIMIT " + size);
         querySql.append(" OFFSET " + (page - 1) * size);
@@ -117,6 +111,7 @@ public class ScoredPSMService {
 
                 scoredPSM.setSpectraNum(rs.getInt("NUM_SPEC"));
                 scoredPSM.setSpectraTitles(rs.getString("SPECTRA"));
+                scoredPSM.setAcceptance(rs.getInt("ACCEPTANCE"));
 
                 return scoredPSM;
             }
@@ -139,29 +134,49 @@ public class ScoredPSMService {
 
     }
 
-    public Integer totalScoredPSM(String type) {
+    public Integer totalScoredPSM(String projectId, String type) {
         String psmTableName = "";
         switch (type) {
             case ("negscore"): {
-                psmTableName = negScoredPSMTableName;
+                psmTableName = Configure.NEG_SCORED_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID, projectId);
                 break;
             }
             case ("posscore"): {
-                psmTableName = posScoredPSMTableName;
+                psmTableName = Configure.POS_SCORED_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID, projectId);
                 break;
             }
             case ("recomm"): {
-                psmTableName = recommIdPSMTableName;
+                psmTableName = Configure.RECOMM_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID, projectId);
                 break;
             }
             default: {
-                psmTableName = negScoredPSMTableName;
+                psmTableName = Configure.NEG_SCORED_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID, projectId);
             }
         }
 
         StringBuffer querySql = new StringBuffer("SELECT COUNT(*) AS total FROM " + psmTableName);
         Integer totalElement = (Integer) hBaseDao.queryTotal(querySql.toString());
         return totalElement;
+    }
+
+    public ResponseEntity<String> updateUserAcceptance(String projectId, String psmType, Map<Integer, Integer> acceptanceMap) {
+        String psmTableName = "";
+        if (psmType.equalsIgnoreCase("recomm")) {
+            psmTableName = Configure.RECOMMEND_PSM_TABLE.replace(Configure.DEFAULT_PROJECT_ID, projectId);
+        } else if (psmType.equalsIgnoreCase("negscore") || psmType.equalsIgnoreCase("posscore")) {
+            psmTableName = Configure.SCORED_PSM_TABLE.replace(Configure.DEFAULT_PROJECT_ID, projectId);
+        } else {
+            return new ResponseEntity<String>("Wrong psm type: " + psmType, HttpStatus.BAD_REQUEST);
+        }
+
+        List<String> updateSqls = new ArrayList<String>();
+        for (Integer id : acceptanceMap.keySet()) {
+            Integer acceptanceStatus = acceptanceMap.get(id);
+            StringBuffer updateSql = new StringBuffer("UPSERT INTO " + psmTableName + "(ID, ACCEPTANCE) VALUES (" + id + "," + acceptanceStatus + ")");
+            updateSqls.add(updateSql.toString());
+        }
+        hBaseDao.batchUpdate(updateSqls);
+        return new ResponseEntity(acceptanceMap, HttpStatus.OK);
     }
 }
 
