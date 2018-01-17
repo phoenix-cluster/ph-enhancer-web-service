@@ -1,6 +1,6 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.utils;
 
-import org.ncpsb.phoenixcluster.enhancer.webservice.domain.ModificationForWeb;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.ModificationForWeb;
 import uk.ac.ebi.pride.utilities.pridemod.ModReader;
 import uk.ac.ebi.pride.utilities.pridemod.model.PTM;
 
@@ -33,8 +33,16 @@ public class ModificationUtils {
             int location = Integer.parseInt(strings[0]);
             PTM ptm = modReader.getPTMbyAccession(strings[1]);
             Double deltaMass = ptm.getMonoDeltaMass();
-            String residue = String.valueOf(peptide.charAt(location - 1));
-
+            String residue = "";
+            if(location > 0 ){
+                try {
+                    residue = String.valueOf(peptide.charAt(location - 1));
+                }
+                catch (Exception exception){
+                    System.out.println("modStr: " + modStr);
+                    System.out.println("location " + location + " out of string 's index: " + peptide);
+                }
+            }
             ModificationForWeb mod = new ModificationForWeb(location, deltaMass, residue);
             mods.add(mod);
         }

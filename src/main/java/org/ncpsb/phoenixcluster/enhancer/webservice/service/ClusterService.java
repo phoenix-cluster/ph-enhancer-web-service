@@ -2,7 +2,7 @@ package org.ncpsb.phoenixcluster.enhancer.webservice.service;
 
 
 import org.ncpsb.phoenixcluster.enhancer.webservice.dao.jpa.HBaseDao;
-import org.ncpsb.phoenixcluster.enhancer.webservice.domain.Cluster;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.Cluster;
 import org.ncpsb.phoenixcluster.enhancer.webservice.utils.ClusterUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by baimi on 2017/10/11.

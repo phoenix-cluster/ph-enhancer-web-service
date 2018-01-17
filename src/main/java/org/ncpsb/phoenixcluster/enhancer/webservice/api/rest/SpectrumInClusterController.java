@@ -3,7 +3,7 @@ package org.ncpsb.phoenixcluster.enhancer.webservice.api.rest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.ncpsb.phoenixcluster.enhancer.webservice.domain.SpectrumInCluster;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.SpectrumInCluster;
 import org.ncpsb.phoenixcluster.enhancer.webservice.service.SpectrumInClusterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

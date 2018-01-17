@@ -1,6 +1,6 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.api.rest;
 
-import org.ncpsb.phoenixcluster.enhancer.webservice.domain.RestErrorInfo;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.RestErrorInfo;
 import org.ncpsb.phoenixcluster.enhancer.webservice.exception.DataFormatException;
 import org.ncpsb.phoenixcluster.enhancer.webservice.exception.ResourceNotFoundException;
 import org.slf4j.Logger;

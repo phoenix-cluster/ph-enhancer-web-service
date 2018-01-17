@@ -1,9 +1,9 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.dao.jpa;
 
-import org.ncpsb.phoenixcluster.enhancer.webservice.domain.Cluster;
-import org.ncpsb.phoenixcluster.enhancer.webservice.domain.ScoredPSM;
-import org.ncpsb.phoenixcluster.enhancer.webservice.domain.Spectrum;
-import org.ncpsb.phoenixcluster.enhancer.webservice.domain.SpectrumInCluster;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.Cluster;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.ScoredPSM;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.Spectrum;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.SpectrumInCluster;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -100,6 +100,10 @@ public class HBaseDaoImpl implements HBaseDao {
             return jdbcTemplate.query(querySql, rowMapper);
     }
 
+    @Override
+    public List<Object> queryList(String querySql, RowMapper rowMapper) {
+        return jdbcTemplate.query(querySql, rowMapper);
+    }
 
     @Override
     public void update(String updateSQL, Object[] params) {

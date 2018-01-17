@@ -1,6 +1,6 @@
-package org.ncpsb.phoenixcluster.enhancer.webservice.domain;
+package org.ncpsb.phoenixcluster.enhancer.webservice.model;
 
-import io.swagger.models.auth.In;
+import java.util.List;
 
 /**
  * Created by baimi on 2017/10/26.
@@ -18,11 +18,12 @@ public class ScoredPSM {
     private Integer clusterSize;
 
     private Float confidentScore;
+    private Float recommConfidentScore;
     private String recommendPeptide;
     private String recommendPepModsStr;
 
     private Integer spectraNum;
-    private String spectraTitles;
+    private List<String> spectraTitles;
 
     private Integer acceptance;
 
@@ -77,6 +78,14 @@ public class ScoredPSM {
         this.confidentScore = confidentScore;
     }
 
+    public Float getRecommConfidentScore() {
+        return recommConfidentScore;
+    }
+
+    public void setRecommConfidentScore(Float recommConfidentScore) {
+        this.recommConfidentScore = recommConfidentScore;
+    }
+
     public Integer getId() {
         return Id;
     }
@@ -109,11 +118,11 @@ public class ScoredPSM {
         this.spectraNum = spectraNum;
     }
 
-    public String getSpectraTitles() {
+    public List<String> getSpectraTitles() {
         return spectraTitles;
     }
 
-    public void setSpectraTitles(String spectraTitles) {
+    public void setSpectraTitles(List<String> spectraTitles) {
         this.spectraTitles = spectraTitles;
     }
 

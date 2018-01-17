@@ -1,6 +1,5 @@
-package org.ncpsb.phoenixcluster.enhancer.webservice.domain;
+package org.ncpsb.phoenixcluster.enhancer.webservice.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 //public class Cluster implements Cloneable {

@@ -1,11 +1,7 @@
-package org.ncpsb.phoenixcluster.enhancer.webservice.domain;
+package org.ncpsb.phoenixcluster.enhancer.webservice.model;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.ncpsb.phoenixcluster.enhancer.webservice.utils.ModificationUtils;
-import uk.ac.ebi.pride.utilities.pridemod.ModReader;
-import uk.ac.ebi.pride.utilities.pridemod.model.PTM;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

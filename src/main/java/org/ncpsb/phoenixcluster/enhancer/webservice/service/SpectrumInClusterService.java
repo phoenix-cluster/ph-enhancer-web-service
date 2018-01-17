@@ -2,7 +2,7 @@ package org.ncpsb.phoenixcluster.enhancer.webservice.service;
 
 
 import org.ncpsb.phoenixcluster.enhancer.webservice.dao.jpa.HBaseDao;
-import org.ncpsb.phoenixcluster.enhancer.webservice.domain.SpectrumInCluster;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.SpectrumInCluster;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;

@@ -3,11 +3,11 @@ package org.ncpsb.phoenixcluster.enhancer.webservice.api.rest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.ncpsb.phoenixcluster.enhancer.webservice.domain.PageOfScoredPSM;
-import org.ncpsb.phoenixcluster.enhancer.webservice.domain.ScoredPSM;
-import org.ncpsb.phoenixcluster.enhancer.webservice.domain.ScoredPSMForWeb;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.PageOfScoredPSM;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.ScoredPSM;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.ScoredPSMForWeb;
 import org.ncpsb.phoenixcluster.enhancer.webservice.service.ScoredPSMService;
-import org.ncpsb.phoenixcluster.enhancer.webservice.domain.Configure;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.Configure;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
-import static org.ncpsb.phoenixcluster.enhancer.webservice.domain.Configure.*;
+import static org.ncpsb.phoenixcluster.enhancer.webservice.model.Configure.*;
 
 /*
  * Demonstrates how to set up RESTful API endpoints using Spring MVC
@@ -119,7 +119,7 @@ public class ScoredPSMController extends AbstractRestHandler {
      * @param response
      * @return
      */
-    @RequestMapping(value = "/recomm",
+    @RequestMapping(value = "/newid",
             method = RequestMethod.GET
 //            ,produces = {"application/json", "application/xml"}
             , produces = {"application/json"}
@@ -142,8 +142,8 @@ public class ScoredPSMController extends AbstractRestHandler {
             HttpServletRequest request, HttpServletResponse response) {
 //        return this.clusterService.getAllClusterIDs(page, size,null, null);
 //        List<ScoredPSM> scoredPSMs = this.scoredPSMService.getScoredPSMs(page, size,null, null);
-        List<ScoredPSMForWeb> scoredPSMsForWeb = this.scoredPSMService.getScoredPSMsForWeb(projectId, page, size, sortField, sortDirection, "recomm");
-        Integer totalElements = this.scoredPSMService.totalScoredPSM(projectId, "recomm");
+        List<ScoredPSMForWeb> scoredPSMsForWeb = this.scoredPSMService.getScoredPSMsForWeb(projectId, page, size, sortField, sortDirection, "newid");
+        Integer totalElements = this.scoredPSMService.totalScoredPSM(projectId, "newid");
         Integer totalPages = (int) Math.ceil((totalElements + 0.0) / size);
         PageOfScoredPSM pageOfScoredPSM = new PageOfScoredPSM(projectId, size, page, totalElements, totalPages, sortField, sortDirection, scoredPSMsForWeb);
 
@@ -180,7 +180,7 @@ public class ScoredPSMController extends AbstractRestHandler {
             @ApiParam(value = "The Project ID, given by PX ID or Phoenix ID", required = true)
             @RequestParam(value = "projectId", required = true, defaultValue = DEFAULT_PROJECT_ID) String projectId,
             @ApiParam(value = "The psmtype of this psm table.", required = true)
-            @RequestParam(value = "psmtype", required = true, defaultValue = "recomm") String psmtype,
+            @RequestParam(value = "psmtype", required = true, defaultValue = "newid") String psmtype,
             @RequestBody(required = true) Map<Integer, Integer> acceptanceMap,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         if (acceptanceMap.size() < 1) {

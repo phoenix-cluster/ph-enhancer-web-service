@@ -1,9 +1,7 @@
-package org.ncpsb.phoenixcluster.enhancer.webservice.domain;
+package org.ncpsb.phoenixcluster.enhancer.webservice.model;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by baimi on 2017/12/8.

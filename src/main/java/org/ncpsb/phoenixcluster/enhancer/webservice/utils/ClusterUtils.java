@@ -11,8 +11,19 @@ public class ClusterUtils {
     static public List<Float> getFloatListFromString(String str, String splitSymbol) {
         ArrayList<Float> floats = new ArrayList<Float>();
         String[] parts = str.split(splitSymbol);
+        Float floatNo = null ;
         for (String part : parts){
-            floats.add(Float.parseFloat(part));
+            try{
+                if(part.equalsIgnoreCase("nan") )
+                    floatNo = Float.valueOf(0);
+                else
+                    floatNo =Float.parseFloat(part);
+            }catch (Exception ex){
+                System.out.println(ex.getMessage());
+            }
+
+            if(floatNo !=null)
+                floats.add(floatNo);
         }
         return floats;
     }

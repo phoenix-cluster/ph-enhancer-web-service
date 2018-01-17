@@ -1,4 +1,4 @@
-package org.ncpsb.phoenixcluster.enhancer.webservice.domain;
+package org.ncpsb.phoenixcluster.enhancer.webservice.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

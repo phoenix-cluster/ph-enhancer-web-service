@@ -1,4 +1,4 @@
-package org.ncpsb.phoenixcluster.enhancer.webservice.domain;
+package org.ncpsb.phoenixcluster.enhancer.webservice.model;
 
 //public class Spectrum implements Cloneable {
 public class SpectrumInCluster {

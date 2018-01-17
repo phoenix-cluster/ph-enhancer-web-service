@@ -1,4 +1,4 @@
-package org.ncpsb.phoenixcluster.enhancer.webservice.domain;
+package org.ncpsb.phoenixcluster.enhancer.webservice.model;
 
 /**
  * Created by baimi on 2017/12/8.

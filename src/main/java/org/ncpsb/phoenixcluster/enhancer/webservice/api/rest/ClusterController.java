@@ -1,7 +1,7 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.api.rest;
 
-import org.ncpsb.phoenixcluster.enhancer.webservice.domain.Cluster;
-import org.ncpsb.phoenixcluster.enhancer.webservice.domain.Configure;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.Cluster;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.Configure;
 import org.ncpsb.phoenixcluster.enhancer.webservice.service.ClusterService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-
-import org.ncpsb.phoenixcluster.enhancer.webservice.domain.Configure;
 
 /*
  * Demonstrates how to set up RESTful API endpoints using Spring MVC
