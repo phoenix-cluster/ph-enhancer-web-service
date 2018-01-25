@@ -1,9 +1,6 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.dao.jpa;
 
-import org.ncpsb.phoenixcluster.enhancer.webservice.model.Cluster;
-import org.ncpsb.phoenixcluster.enhancer.webservice.model.ScoredPSM;
-import org.ncpsb.phoenixcluster.enhancer.webservice.model.Spectrum;
-import org.ncpsb.phoenixcluster.enhancer.webservice.model.SpectrumInCluster;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.*;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.util.List;
@@ -21,6 +18,10 @@ public interface HBaseDao {
 
     public Object query(String querySql,  Object[] params, RowMapper<Object> mapper);
 
+    Object getVennData(String querySql, Object[] params, RowMapper<VennData> rowMapper);
+
+    Object getThresholds(String querySql, Object[] params, RowMapper<Thresholds> rowMapper);
+
     public void update(String updateSql, Object[] params);
     public void batchUpdate(List<String> updateSQLs);
 
@@ -30,6 +31,7 @@ public interface HBaseDao {
 
     public List getSpectraInCluster(String querySql, Object[] params, RowMapper<SpectrumInCluster> mapper);
     public List getSpectra(String querySql, Object[] params, RowMapper<Spectrum> mapper);
+    public List getVennDataList(String querySql, Object[] params, RowMapper<VennData> mapper);
     public SpectrumInCluster getSpectrumInCluster(String querySql, Object[] params, RowMapper<SpectrumInCluster> mapper);
     public Spectrum getSpectrum(String querySql, Object[] params, RowMapper<Spectrum> mapper);
 

@@ -1,9 +1,6 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.dao.jpa;
 
-import org.ncpsb.phoenixcluster.enhancer.webservice.model.Cluster;
-import org.ncpsb.phoenixcluster.enhancer.webservice.model.ScoredPSM;
-import org.ncpsb.phoenixcluster.enhancer.webservice.model.Spectrum;
-import org.ncpsb.phoenixcluster.enhancer.webservice.model.SpectrumInCluster;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -78,6 +75,15 @@ public class HBaseDaoImpl implements HBaseDao {
     }
 
     @Override
+    public List getVennDataList(String querySql, Object[] params, RowMapper<VennData> mapper) {
+        if (params != null && params.length > 0) {
+            return jdbcTemplate.query(querySql, params, mapper);
+        } else {
+            return jdbcTemplate.query(querySql, mapper);
+        }
+    }
+
+    @Override
     public SpectrumInCluster getSpectrumInCluster(String querySql, Object[] params, RowMapper<SpectrumInCluster> mapper) {
         if (params != null && params.length > 0) {
             return jdbcTemplate.queryForObject(querySql, params, mapper);
@@ -104,6 +110,26 @@ public class HBaseDaoImpl implements HBaseDao {
     public List<Object> queryList(String querySql, RowMapper rowMapper) {
         return jdbcTemplate.query(querySql, rowMapper);
     }
+
+    @Override
+    public Object getVennData(String querySql, Object[] params, RowMapper<VennData> rowMapper) {
+        if (params != null && params.length > 0) {
+            return (VennData) jdbcTemplate.queryForObject(querySql, params, rowMapper);
+        } else {
+            return (VennData) jdbcTemplate.queryForObject(querySql, rowMapper);
+        }
+    }
+
+    @Override
+    public Object getThresholds(String querySql, Object[] params, RowMapper<Thresholds> rowMapper) {
+        if (params != null && params.length > 0) {
+            return (Thresholds) jdbcTemplate.queryForObject(querySql, params, rowMapper);
+        } else {
+            return (Thresholds) jdbcTemplate.queryForObject(querySql, rowMapper);
+        }
+    }
+
+
 
     @Override
     public void update(String updateSQL, Object[] params) {

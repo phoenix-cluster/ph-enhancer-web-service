@@ -5,7 +5,10 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.Configure;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.HistogramBin;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.Thresholds;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.VennData;
 import org.ncpsb.phoenixcluster.enhancer.webservice.service.HistogramService;
+import org.ncpsb.phoenixcluster.enhancer.webservice.service.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +28,8 @@ import java.util.List;
 public class StatisticsController extends AbstractRestHandler {
 
     @Autowired
-//    private StatisticsService statisticsService;
+    private StatisticsService statisticsService;
+    @Autowired
     private HistogramService histogramService;
 
     @RequestMapping(value = "/histogram",
@@ -34,7 +38,7 @@ public class StatisticsController extends AbstractRestHandler {
             ,produces = {"application/json"}
     )
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get a paginated list of all clusters.", notes = "The list is paginated. You can provide a page number (default 1) and a page size (default 100)")
+    @ApiOperation(value = "Get histogram data of a chart.", notes = "")
     public
     @ResponseBody
     //Page<Cluster> getAllCluster(@ApiParam(value = "The page number (zero-based)", required = true)
@@ -52,4 +56,72 @@ public class StatisticsController extends AbstractRestHandler {
         List<HistogramBin> histogramBins = this.histogramService.getHistData(projectId, psmType, fieldType, numBins);
         return histogramBins;
     }
+
+    @RequestMapping(value = "/venndata",
+            method = RequestMethod.GET
+//            ,produces = {"application/json", "application/xml"}
+            ,produces = {"application/json"}
+    )
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get the numbers for venn diagram.", notes = "")
+    public
+    @ResponseBody
+        //Page<Cluster> getAllCluster(@ApiParam(value = "The page number (zero-based)", required = true)
+    VennData getVennData(
+            @ApiParam(value = "Project Id", required = true)
+            @RequestParam(value = "projectId", required = true, defaultValue = Configure.DEFAULT_PROJECT_ID) String projectId,
+            HttpServletRequest request, HttpServletResponse response) {
+        VennData vennData = this.statisticsService.getVennData(projectId);
+        return vennData;
+    }
+    @RequestMapping(value = "/venndatalist",
+            method = RequestMethod.GET
+//            ,produces = {"application/json", "application/xml"}
+            ,produces = {"application/json"}
+    )
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get the venn data for all projects", notes = "")
+    public
+    @ResponseBody
+        //Page<Cluster> getAllCluster(@ApiParam(value = "The page number (zero-based)", required = true)
+    List<VennData> getVennDataList(
+            HttpServletRequest request, HttpServletResponse response) {
+        List<VennData> vennDataList = this.statisticsService.getVennDataList();
+        return vennDataList;
+    }
+
+
+   @RequestMapping(value = "/thresholds",
+            method = RequestMethod.GET
+//            ,produces = {"application/json", "application/xml"}
+            ,produces = {"application/json"}
+    )
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get the threholds numbers of this project.", notes = "")
+    public
+    @ResponseBody
+        //Page<Cluster> getAllCluster(@ApiParam(value = "The page number (zero-based)", required = true)
+   Thresholds getThreholds(
+            @ApiParam(value = "Project Id", required = true)
+            @RequestParam(value = "projectId", required = true, defaultValue = Configure.DEFAULT_PROJECT_ID) String projectId,
+            HttpServletRequest request, HttpServletResponse response) {
+       Thresholds thresholds = this.statisticsService.getThresholds(projectId);
+       return thresholds;
+   }
+
+   @RequestMapping(value = "/projects",
+            method = RequestMethod.GET
+//            ,produces = {"application/json", "application/xml"}
+            ,produces = {"application/json"}
+    )
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get the the project list.", notes = "")
+    public
+    @ResponseBody
+        //Page<Cluster> getAllCluster(@ApiParam(value = "The page number (zero-based)", required = true)
+   List<String> getProjects(HttpServletRequest request, HttpServletResponse response) {
+       List<String> projects = this.statisticsService.getProjects();
+       return projects;
+   }
+
 }
