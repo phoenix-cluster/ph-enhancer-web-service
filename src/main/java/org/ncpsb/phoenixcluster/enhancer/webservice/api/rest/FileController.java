@@ -1,33 +1,35 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.api.rest;
 
+import io.swagger.annotations.ApiParam;
 import org.apache.catalina.servlet4preview.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by baimi on 2017/10/13.
  */
 @RestController
-@RequestMapping("/upload")
+@RequestMapping(value = "/example/v1/file")
 @CrossOrigin
-public class FileUploadController extends AbstractRestHandler{
-    @RequestMapping(value = "/files", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+public class FileController extends AbstractRestHandler{
+    @RequestMapping(value = "/upload", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void uploadFiles(HttpServletRequest request) {
 //        String uploadFilePath = fileUploadPath.getUploadFilePath();
         String baseFilePath = context.getRealPath("");
@@ -57,6 +59,37 @@ public class FileUploadController extends AbstractRestHandler{
             }
         }
     }
+
+
+    @RequestMapping(value = "/download", method = RequestMethod.GET)
+    public ResponseEntity<ByteArrayResource> download(
+            @ApiParam(value = "The file url path", required = true)
+                                      @RequestParam(value = "filepath", required = true) String filepath
+            ) throws IOException {
+
+//        String uploadFilePath = fileUploadPath.getUploadFilePath();
+        String baseFilePath = context.getRealPath("");
+
+        String pathname = baseFilePath + File.separator
+                + filepath;
+        File file = new File(pathname);
+
+        Path path = Paths.get(file.getAbsolutePath());
+        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
+        headers.add("content-disposition", "attachment; filename=\"" + filepath+"\"");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(file.length())
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
+                .body(resource);
+    }
+
 
     @Autowired
     ServletContext context;

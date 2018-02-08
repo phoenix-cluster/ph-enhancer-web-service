@@ -1,5 +1,5 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.api.rest;
-
+import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -12,9 +12,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /*
@@ -38,13 +45,13 @@ public class ExportController extends AbstractRestHandler {
     @ApiOperation(value = "Export the PSMs to an JSON object, based on the parameters.", notes = "")
     public
     @ResponseBody
-    List<ScoredPSM> exportImpl(
+    String exportImpl(
             @ApiParam(value = "Project Id", required = true)
             @RequestParam(value = "projectId", required = true, defaultValue = Configure.DEFAULT_PROJECT_ID) String projectId,
             @ApiParam(value = "recommed confident score Range, [0,0] means it is not included", required = true)
             @RequestParam(value = "recommendRange", required = true, defaultValue = "[0,1]") String recommendScRange,
-            @ApiParam(value = "newIdentScRange, [0,0] means it is not included", required = true)
-            @RequestParam(value = "new Identiying PSMs Score range", required = true, defaultValue = "[0,0]") String newIdentScRange,
+            @ApiParam(value = "new Identiying PSMs Score range, [0,0] means it is not included", required = true)
+            @RequestParam(value = "newIdentScRange", required = true, defaultValue = "[0,0]") String newIdentScRange,
             @ApiParam(value = "highConfScRange, [0,0] means it is not included", required = true)
             @RequestParam(value = "highConfScRange", required = true, defaultValue = "[0,0]") String highConfScRange,
             @ApiParam(value = "include the mannually checked PSMs or not", required = true)
@@ -66,6 +73,34 @@ public class ExportController extends AbstractRestHandler {
         if (exportedRecommBetterPsms != null ) exportedPsms.addAll(exportedRecommBetterPsms);
         if (exportedNewIdentPsms != null ) exportedPsms.addAll(exportedNewIdentPsms);
         if (exportedHighScPsms != null ) exportedPsms.addAll(exportedHighScPsms);
-        return exportedPsms;
+
+        System.out.println(exportedPsms.size() + " psm has been exported");
+
+        String baseFilePath = context.getRealPath("");
+        DateFormat df = new SimpleDateFormat("yyyyMMdd");
+        String dateString = df.format(new Date());
+
+        String relativePath = projectId  + File.separator + "export" + File.separator
+                + dateString + File.separator;
+        String pathname = baseFilePath + File.separator + relativePath;
+        File dir = new File(pathname);
+
+        dir.mkdirs();
+        String fileName = projectId + "_export_file.json";
+        File file = new File(pathname + fileName);
+
+        Gson gson = new Gson();
+        try {
+            gson.toJson(exportedPsms, new FileWriter(file));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "{\"error\":\"" + ex.getMessage() + "\"}";
+        }
+        System.out.println(file.toString());
+        return "{\"filePath\":\"" + relativePath.toString() + fileName + "\"}";
     }
+
+    @Autowired
+    ServletContext context;
+
 }

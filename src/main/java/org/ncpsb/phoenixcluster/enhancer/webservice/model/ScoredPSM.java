@@ -15,6 +15,7 @@ public class ScoredPSM {
 
     private String clusterId;
     private Float clusterRatio;
+    private String clusterRatioStr;
     private Integer clusterSize;
 
     private Float confidentScore;
@@ -132,5 +133,13 @@ public class ScoredPSM {
 
     public void setAcceptance(Integer acceptance) {
         this.acceptance = acceptance;
+    }
+
+    public String getClusterRatioStr() {
+        return clusterRatioStr;
+    }
+
+    public void setClusterRatioStr(String clusterRatioStr) {
+        this.clusterRatioStr = clusterRatioStr;
     }
 }

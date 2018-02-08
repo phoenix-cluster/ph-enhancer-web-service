@@ -91,21 +91,36 @@ public class ExportService {
             return null;
         }
         String psmTableName = "";
+        String confidenceScoreType = "CONF_SC";
+        String peptideSequenceType = "PRE_SEQ";
+        String modificationsType = "PRE_MODS";
         switch (psmType) {
             case ("negscore"): {
                 psmTableName = Configure.NEG_SCORE_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID, projectId);
+                confidenceScoreType = "RECOMM_SEQ_SC";
+                peptideSequenceType = "RECOMM_SEQ";
+                modificationsType = "RECOMM_MODS";
                 break;
             }
             case ("posscore"): {
                 psmTableName = Configure.POS_SCORE_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID, projectId);
+                confidenceScoreType = "CONF_SC";
+                peptideSequenceType = "PRE_SEQ";
+                modificationsType = "PRE_MODS";
                 break;
             }
             case ("newid"): {
                 psmTableName = Configure.NEW_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID, projectId);
+                confidenceScoreType = "RECOMM_SEQ_SC";
+                peptideSequenceType = "RECOMM_SEQ";
+                modificationsType = "RECOMM_MODS";
                 break;
             }
             default: {
                 psmTableName = Configure.NEG_SCORE_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID, projectId);
+                confidenceScoreType = "RECOMM_SEQ_SC";
+                peptideSequenceType = "RECOMM_SEQ";
+                modificationsType = "RECOMM_MODS";
             }
         }
 
@@ -115,7 +130,7 @@ public class ExportService {
             List<Integer> conditions = new ArrayList<>();
             if (hasAccept) conditions.add(1);
             if (hasRejected) conditions.add(-1);
-            if (defaultAcceptType.equals("Accept") || defaultAcceptType.equals("Reject")) conditions.add(0);
+            if (defaultAcceptType.equalsIgnoreCase("Accept") || defaultAcceptType.equalsIgnoreCase("Reject")) conditions.add(0);
 
             if (conditions.size() == 0) {
                 System.out.println("Errors in the accept conditions, please have a type at least.");
@@ -127,11 +142,11 @@ public class ExportService {
             } else if (conditions.size() == 3) {
                 conditionsStr.append("WHERE ");
             }
-            conditionsStr.append(" CONF_SC >= " + scRangeHash.get("start"));
-            conditionsStr.append(" AND CONF_SC <= " + scRangeHash.get("end"));
+            conditionsStr.append(confidenceScoreType + " >= " + scRangeHash.get("start"));
+            conditionsStr.append(" AND " + confidenceScoreType + " <= " + scRangeHash.get("end"));
 
             querySql.append(conditionsStr);
-
+            System.out.println("going to export psms by " + querySql.toString());
             List<ScoredPSM> scoredPSMs = scoredPSMService.getScoredPSMs(querySql.toString(), psmType);
 
             return scoredPSMs;
