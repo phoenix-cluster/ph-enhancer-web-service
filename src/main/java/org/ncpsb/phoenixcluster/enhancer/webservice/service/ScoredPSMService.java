@@ -166,9 +166,11 @@ public class ScoredPSMService {
     public ResponseEntity<String> updateUserAcceptance(String projectId, String psmType, Map<Integer, Integer> acceptanceMap) {
         String psmTableName = "";
         if (psmType.equalsIgnoreCase("newid")) {
-            psmTableName = Configure.NEW_PSM_TABLE.replace(Configure.DEFAULT_PROJECT_ID, projectId);
-        } else if (psmType.equalsIgnoreCase("negscore") || psmType.equalsIgnoreCase("posscore")) {
-            psmTableName = Configure.SCORE_PSM_TABLE.replace(Configure.DEFAULT_PROJECT_ID, projectId);
+            psmTableName = Configure.NEW_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID, projectId);
+        } else if (psmType.equalsIgnoreCase("negscore")){
+            psmTableName = Configure.NEG_SCORE_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID, projectId);
+        } else if (psmType.equalsIgnoreCase("posscore")) {
+            psmTableName = Configure.POS_SCORE_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID, projectId);
         } else {
             return new ResponseEntity<String>("Wrong psm type: " + psmType, HttpStatus.BAD_REQUEST);
         }
@@ -176,7 +178,8 @@ public class ScoredPSMService {
         List<String> updateSqls = new ArrayList<String>();
         for (Integer id : acceptanceMap.keySet()) {
             Integer acceptanceStatus = acceptanceMap.get(id);
-            StringBuffer updateSql = new StringBuffer("UPSERT INTO " + psmTableName + "(ID, ACCEPTANCE) VALUES (" + id + "," + acceptanceStatus + ")");
+            StringBuffer updateSql = new StringBuffer("UPSERT INTO " + psmTableName + "(ROW_ID, ACCEPTANCE) VALUES (" + id + "," + acceptanceStatus + ")");
+            System.out.println("goting to execute " + updateSql.toString() );
             updateSqls.add(updateSql.toString());
         }
         hBaseDao.batchUpdate(updateSqls);
