@@ -13,6 +13,8 @@ public class Spectrum {
     private List<Float> peaklistMz;
     private List<Float> peaklistIntens;
 
+    private String peptideSequence;
+
     private String peptideModsStr;
     private List <ModificationForWeb> peptideMods;
 
@@ -62,5 +64,12 @@ public class Spectrum {
 
     public void setPeaklistIntens(List<Float> peaklistIntens) {
         this.peaklistIntens = peaklistIntens;
+    }
+    public String getPeptideSequence() {
+        return peptideSequence;
+    }
+
+    public void setPeptideSequence(String peptideSequence) {
+        this.peptideSequence = peptideSequence;
     }
 }

@@ -23,7 +23,6 @@ public class ClusterService {
     private HBaseDao hBaseDao;
     private String clusterTableName ="V_CLUSTER";
 
-
     public Cluster getClusterById(String clusterId) {
 //        StringBuffer clusterSql = new StringBuffer("SELECT * FROM compare_5_clusters");
 //        clusterSql.append("\"ROW\" = '" + clusterId + "'");
@@ -40,6 +39,7 @@ public class ClusterService {
                 cluster.setSpectraTitles(ClusterUtils.getStringListFromString(rs.getString("SPECTRA_TITLES"),"\\|\\|"));
                 cluster.setConsensusMz(ClusterUtils.getFloatListFromString(rs.getString("CONSENSUS_MZ"), ","));
                 cluster.setConsensusIntens(ClusterUtils.getFloatListFromString(rs.getString("CONSENSUS_INTENS"), ","));
+                cluster.setSequencesRatios(rs.getString("SEQUENCES_RATIOS"));
                 return cluster;
             }
         });

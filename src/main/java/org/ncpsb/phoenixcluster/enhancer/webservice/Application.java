@@ -21,7 +21,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableAutoConfiguration  // Sprint Boot Auto Configuration
 @ComponentScan(basePackages = "org.ncpsb.phoenixcluster.enhancer.webservice")
-//@EnableJpaRepositories("com.khoubyari.example.dao.jpa") // To segregate MongoDB and JPA repositories. Otherwise not needed.
     public class Application extends SpringBootServletInitializer {
 
     private static final Class<Application> applicationClass = Application.class;

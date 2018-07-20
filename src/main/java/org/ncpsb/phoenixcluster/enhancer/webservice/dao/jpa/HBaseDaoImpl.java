@@ -163,6 +163,9 @@ public class HBaseDaoImpl implements HBaseDao {
         }
     }
 
+    public String getSpecPeptideSeq(String querysql){
+        return jdbcTemplate.queryForMap(querysql).get("PEPTIDE_SEQUENCE").toString();
+    }
 //    @Override
 //    public FlumeInfo getFlumeInfo(String querySql, Object[] params, RowMapper<FlumeInfo> mapper) {
 //        if (params != null && params.length > 0) {

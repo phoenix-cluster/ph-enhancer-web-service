@@ -34,7 +34,7 @@ public interface HBaseDao {
     public List getVennDataList(String querySql, Object[] params, RowMapper<VennData> mapper);
     public SpectrumInCluster getSpectrumInCluster(String querySql, Object[] params, RowMapper<SpectrumInCluster> mapper);
     public Spectrum getSpectrum(String querySql, Object[] params, RowMapper<Spectrum> mapper);
-
+    public String getSpecPeptideSeq(String querySql);
     List<Object> queryList(String s, RowMapper rowMapper);
 
 //    List<Map> queryList(String s, RowMapper<Map> rowMapper);
