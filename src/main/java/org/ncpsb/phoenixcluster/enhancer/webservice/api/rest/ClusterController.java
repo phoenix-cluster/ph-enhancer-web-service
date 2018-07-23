@@ -23,29 +23,19 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 @Api(tags = {"clusters"})
 public class ClusterController extends AbstractRestHandler {
-
     @Autowired
     private ClusterService clusterService;
-
-    @RequestMapping(value = "",
-            method = RequestMethod.GET
-//            ,produces = {"application/json", "application/xml"}
-            ,produces = {"application/json"}
-    )
+    @RequestMapping(value = "", method = RequestMethod.GET,produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get a paginated list of all clusters.", notes = "The list is paginated. You can provide a page number (default 1) and a page size (default 100)")
-    public
     @ResponseBody
-    //Page<Cluster> getAllCluster(@ApiParam(value = "The page number (zero-based)", required = true)
-    List<String> getClusters(@ApiParam(value = "The page number ", required = true)
-                                      @RequestParam(value = "page", required = true, defaultValue = Configure.DEFAULT_PAGE_NUM) Integer page,
+    public List<String> getClusters(@ApiParam(value = "The page number ", required = true)
+                                        @RequestParam(value = "page", required = true, defaultValue = Configure.DEFAULT_PAGE_NUM) Integer page,
                                @ApiParam(value = "Tha page size", required = true)
                                       @RequestParam(value = "size", required = true, defaultValue = Configure.DEFAULT_PAGE_SIZE) Integer size,
                                HttpServletRequest request, HttpServletResponse response) {
-//        return this.clusterService.getAllClusterIds(page, size,null, null);
         assert (page>0 && size>0);
         List<String> allClusterIds = this.clusterService.getClusterIds(page, size,null, null);
-
         for (String clusterId : allClusterIds) {
             System.out.println("::::" + clusterId);
         }

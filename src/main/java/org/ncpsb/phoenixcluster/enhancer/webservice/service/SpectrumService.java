@@ -1,6 +1,8 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.service;
 
 
+import org.apache.avro.data.Json;
+import org.mortbay.util.ajax.JSON;
 import org.ncpsb.phoenixcluster.enhancer.webservice.dao.jpa.HBaseDao;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.Spectrum;
 import org.ncpsb.phoenixcluster.enhancer.webservice.utils.ClusterUtils;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -86,7 +89,7 @@ public class SpectrumService{
         querySql.setLength(querySql.length() - 1);
         querySql.append(")");
 
-        System.out.println("Going to execute: " + querySql);
+//        System.out.println("Going to execute: " + querySql);
         List<Spectrum> spectra = (List<Spectrum>) hBaseDao.getSpectra(querySql.toString(), null, new RowMapper<Spectrum>() {
             @Override
             public Spectrum mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -101,6 +104,17 @@ public class SpectrumService{
             }
         });
         return (spectra != null && spectra.size() > 0) ? (List) spectra: null;
+    }
+    public String getSpecPeptideSeqByTitle(String title){
+        String projectId = title.substring(0,title.indexOf(";"));
+        String psmTableName = "T_"+projectId+"_PSM";
+        StringBuffer querySql = new StringBuffer("SELECT * FROM " + psmTableName + " WHERE ");
+        title = title.trim();
+        querySql.append("SPECTRUM_TITLE = '" + title + "'");
+        System.out.println(querySql);
+        String peptideSequence = hBaseDao.getSpecPeptideSeq(querySql.toString());
+        String rs = peptideSequence;
+        return rs;
     }
 }
 

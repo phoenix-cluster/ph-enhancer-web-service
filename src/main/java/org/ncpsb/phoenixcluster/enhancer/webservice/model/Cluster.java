@@ -4,11 +4,6 @@ import java.util.List;
 
 //public class Cluster implements Cloneable {
 public class Cluster {
-	/*private String id;
-	private int specCount;
-	private float ratio;
-	private List<Spectrum> spectra;
-	*/
 
 	private String id;
 	private Float avPrecursorMz;
@@ -17,6 +12,7 @@ public class Cluster {
 	private List<Float> consensusMz;
 	private List<Float> consensusIntens;
 	private List<String> spectraTitles;
+	private String sequencesRatios;
 
 	public Cluster() {
 	}
@@ -76,7 +72,13 @@ public class Cluster {
 	public void setSpectraTitles(List<String> spectraTitles) {
 		this.spectraTitles = spectraTitles;
 	}
+	public String getSequencesRatios() {
+		return sequencesRatios;
+	}
 
+	public void setSequencesRatios(String sequencesRatios) {
+		this.sequencesRatios = sequencesRatios;
+	}
 	/*@Override
 	public Cluster clone() throws CloneNotSupportedException {
 		Cluster result = (Cluster) super.clone();

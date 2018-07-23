@@ -2,12 +2,15 @@ package org.ncpsb.phoenixcluster.enhancer.webservice.model;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.ncpsb.phoenixcluster.enhancer.webservice.service.ClusterService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Created by baimi on 2017/12/8.
  */
 public class ScoredPSMForWebTest {
     ScoredPSMForWeb psmForWeb = new ScoredPSMForWeb();
+
     @Before
     public void setUp() throws Exception {
         psmForWeb.setPeptideSequence("LVDTFLEDTKK");

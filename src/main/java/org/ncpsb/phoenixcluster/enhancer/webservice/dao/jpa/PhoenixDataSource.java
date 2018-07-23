@@ -15,7 +15,6 @@ import javax.sql.DataSource;
 public class PhoenixDataSource {
     @Autowired
     private Environment env;
-
     @Bean(name = "phoenixJdbcDataSource")
     @Qualifier("phoenixJdbcDataSource")
     public DataSource dataSource() {
@@ -27,10 +26,8 @@ public class PhoenixDataSource {
         dataSource.setDefaultAutoCommit(Boolean.valueOf(env.getProperty("phoenix.default-auto-commit")));
         return dataSource;
     }
-
     @Bean(name = "phoenixJdbcTemplate")
     public JdbcTemplate phoenixJdbcTemplate(@Qualifier("phoenixJdbcDataSource") DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
-
 }
