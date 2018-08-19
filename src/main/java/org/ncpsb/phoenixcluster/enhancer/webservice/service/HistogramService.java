@@ -1,6 +1,7 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.service;
 
 
+import org.apache.avro.generic.GenericData;
 import org.ncpsb.phoenixcluster.enhancer.webservice.dao.jpa.HBaseDao;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.Configure;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.HistogramBin;
@@ -85,6 +86,7 @@ public class HistogramService {
                 return ((Object) rs.getDouble("CONF_SC"));
             }
         });
+
         return getFloatHistList(objectList, numBins);
     }
 
@@ -109,6 +111,12 @@ public class HistogramService {
                 return ((Object) rs.getInt("CLUSTER_SIZE"));
             }
         });
+
+        if (objectList.size() < 1) {
+            List<HistogramBin> binList = new ArrayList<HistogramBin>();
+            return binList;
+        }
+
         List<Integer> sizeScoreList = new ArrayList<>();
         for (Object o1 : objectList
                 ) {
@@ -147,6 +155,12 @@ public class HistogramService {
 
 
     private List<HistogramBin> getFloatHistList(List<Object> objectList, Integer numBins){
+
+        if (objectList.size() < 1) {
+            List<HistogramBin> binList = new ArrayList<HistogramBin>();
+            return binList;
+        }
+
         List<Double> floatScoreList = new ArrayList<>();
         for (Object o1 : objectList
                 ) {

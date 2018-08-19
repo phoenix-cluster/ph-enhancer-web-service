@@ -36,6 +36,7 @@ public interface HBaseDao {
     public Spectrum getSpectrum(String querySql, Object[] params, RowMapper<Spectrum> mapper);
     public String getSpecPeptideSeq(String querySql);
     List<Object> queryList(String s, RowMapper rowMapper);
-
+    public Integer getLastAnalysisRecordId(String querySql, Object[] params, RowMapper<Integer> mapper);
+    public AnalysisJob getAnalysisJob(String querySql, Object[] params, RowMapper<AnalysisJob> mapper);
 //    List<Map> queryList(String s, RowMapper<Map> rowMapper);
 }
