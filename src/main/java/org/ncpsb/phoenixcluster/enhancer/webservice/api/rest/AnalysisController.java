@@ -1,12 +1,9 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.api.rest;
 
 import io.swagger.annotations.ApiParam;
-import org.ncpsb.phoenixcluster.enhancer.webservice.domain.FileUploadResponse;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.AnalysisJob;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.PageOfFile;
-import org.ncpsb.phoenixcluster.enhancer.webservice.model.ResultFileList;
 import org.ncpsb.phoenixcluster.enhancer.webservice.service.DoAnalysisService;
-import org.ncpsb.phoenixcluster.enhancer.webservice.service.FileUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.apache.catalina.servlet4preview.ServletContext;
@@ -26,13 +23,15 @@ public class AnalysisController {
 
     public String doAnalysis(HttpServletRequest request,
     @RequestHeader("analysisId") Integer analysisId,
-    @RequestHeader("minClusterSize") Integer minClusterSize
-//    @RequestHeader("userEmail") String userEmail,
+    @RequestHeader("minClusterSize") Integer minClusterSize,
+    @RequestHeader("userEmailAdd") String userEmailAdd,
+    @RequestHeader("isPublic") Boolean isPublic
 //    @RequestBody String resultFileList
 //    @RequestBody ResultFileList resultFileList
     )
     {
-        String returnMessage = doAnalysisService.doAnalysis(analysisId, minClusterSize);
+        System.out.println(userEmailAdd);
+        String returnMessage = doAnalysisService.doAnalysis(analysisId, minClusterSize, userEmailAdd, isPublic);
         return returnMessage;
     }
 

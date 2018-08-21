@@ -10,6 +10,7 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 //import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 
@@ -20,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
 @SpringBootApplication
 @Configuration
 @EnableAutoConfiguration  // Sprint Boot Auto Configuration
+@EnableScheduling
 @ComponentScan(basePackages = "org.ncpsb.phoenixcluster.enhancer.webservice")
     public class Application extends SpringBootServletInitializer {
 

@@ -21,13 +21,17 @@ public class DoAnalysisService {
     @Autowired
     private HBaseDao hBaseDao;
 
+    @Autowired
+    MailService mailService;
+
     String analysisRecoredTableName = "T_ANALYSIS_RECORD";
     //todo: checkTheFiles
     @Autowired
     FileUploadService fileUploadService;
 
-    public String doAnalysis(Integer myAnalysisId, Integer minClusterSize){
+    public String doAnalysis(Integer myAnalysisId, Integer minClusterSize, String userEmailAdd, Boolean isPublic){
         AnalysisJob analysisJob = fileUploadService.getAnalysisJob(myAnalysisId);
+        fileUploadService.upsertAnalysisRecordMore(myAnalysisId, userEmailAdd, isPublic);
         Process proc = null;
         File analysisJobFilePath = new File(analysisJob.getFilePath());
         File workingDir = analysisJobFilePath.getParentFile();

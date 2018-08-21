@@ -8,6 +8,8 @@ public class AnalysisJob {
     String status;
     Boolean isPublic;
     String token;
+    String emailAdd;
+    Boolean isEmailSent;
 
     public AnalysisJob() {
     }
@@ -22,6 +24,22 @@ public class AnalysisJob {
         this.status = status;
         this.isPublic = isPublic;
         this.token = token;
+    }
+
+    public String getEmailAdd() {
+        return emailAdd;
+    }
+
+    public void setEmailAdd(String emailAdd) {
+        this.emailAdd = emailAdd;
+    }
+
+    public Boolean getEmailSent() {
+        return isEmailSent;
+    }
+
+    public void setEmailSent(Boolean emailSent) {
+        isEmailSent = emailSent;
     }
 
     public Integer getId() {

@@ -1,9 +1,8 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.api.rest;
 
-import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.catalina.servlet4preview.ServletContext;
-import org.ncpsb.phoenixcluster.enhancer.webservice.domain.FileUploadResponse;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.FileUploadResponse;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.AnalysisJob;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.Configure;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.ResultFileList;

@@ -186,10 +186,19 @@ public class HBaseDaoImpl implements HBaseDao {
 
     @Override
     public AnalysisJob getAnalysisJob(String querySql, Object[] params, RowMapper<AnalysisJob> mapper){
-                if (params != null && params.length > 0) {
+        if (params != null && params.length > 0) {
             return (AnalysisJob) jdbcTemplate.queryForObject(querySql, params, mapper);
         } else {
             return (AnalysisJob) jdbcTemplate.queryForObject(querySql, mapper);
+        }
+    }
+
+    @Override
+    public List getAnalysisJobs(String querySql, Object[] params, RowMapper<AnalysisJob> mapper) {
+        if (params != null && params.length > 0) {
+            return jdbcTemplate.query(querySql, params, mapper);
+        } else {
+            return jdbcTemplate.query(querySql, mapper);
         }
     }
 
@@ -201,5 +210,8 @@ public class HBaseDaoImpl implements HBaseDao {
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
+
+
+
 
 }

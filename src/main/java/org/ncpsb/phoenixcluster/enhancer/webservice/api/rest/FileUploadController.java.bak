@@ -1,7 +1,7 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.api.rest;
 
 import org.apache.catalina.servlet4preview.ServletContext;
-import org.ncpsb.phoenixcluster.enhancer.webservice.domain.FileUploadResponse;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.FileUploadResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;

@@ -3,7 +3,7 @@ package org.ncpsb.phoenixcluster.enhancer.webservice.service;
 
 import org.apache.commons.text.RandomStringGenerator;
 import org.ncpsb.phoenixcluster.enhancer.webservice.dao.jpa.HBaseDao;
-import org.ncpsb.phoenixcluster.enhancer.webservice.domain.FileUploadResponse;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.FileUploadResponse;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.AnalysisJob;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.ResultFileList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +16,11 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.apache.commons.text.CharacterPredicates.ASCII_LOWERCASE_LETTERS;
 import static org.apache.commons.text.CharacterPredicates.DIGITS;
-import static org.apache.commons.text.CharacterPredicates.LETTERS;
 
 /**
  * Created by baimi on 2017/10/11.
@@ -143,6 +144,28 @@ public class FileUploadService {
             return analysisJob;
     }
 
+    public List<AnalysisJob> getAnalysisJobsToSentEmail(){
+            StringBuffer clusterSql = new StringBuffer("SELECT * FROM  " + analysisRecoredTableName + " WHERE  STATUS LIKE 'finished%' AND IS_EMAIL_SENT=false " +
+            " AND EMAIL_ADD IS NOT NULL");
+            List<AnalysisJob> analysisJobs = (List<AnalysisJob>) hBaseDao.getAnalysisJobs(clusterSql.toString(), null, new RowMapper<AnalysisJob>() {
+            @Override
+            public AnalysisJob mapRow(ResultSet rs, int rowNum) throws SQLException {
+                AnalysisJob analysisJob1 = new AnalysisJob();
+                analysisJob1.setId(rs.getInt("ID"));
+                analysisJob1.setStatus(rs.getString("STATUS"));
+                analysisJob1.setUserId(rs.getInt("USER_ID"));
+                analysisJob1.setToken(rs.getString("TOKEN"));
+                analysisJob1.setEmailAdd(rs.getString("EMAIL_ADD"));
+                analysisJob1.setEmailSent(rs.getBoolean("IS_EMAIL_SENT"));
+                return analysisJob1;
+            }
+        });
+
+        return (analysisJobs != null && analysisJobs.size() > 0) ? (List) analysisJobs: null;
+    }
+
+
+
     public void upsertAnalysisRecordInfo(Integer myId, String filePath, String uploadDate, int userId, String status) {
         StringBuffer clusterSql = new StringBuffer("UPSERT INTO " + analysisRecoredTableName +
                 " (ID, FILE_PATH, UPLOAD_DATE, USER_ID, STATUS) VALUES(");
@@ -163,5 +186,22 @@ public class FileUploadService {
         hBaseDao.update(clusterSql.toString(), null);
     }
 
+    public void upsertAnalysisRecordMore(Integer myId, String emailAdd, Boolean isPublic) {
+        StringBuffer clusterSql = new StringBuffer("UPSERT INTO " + analysisRecoredTableName +
+                " (ID, EMAIL_ADD, ISPUBLIC) VALUES(");
+        clusterSql.append(myId + ",");
+        clusterSql.append("'" + emailAdd + "',");
+        clusterSql.append("" + isPublic + ")");
 
+        hBaseDao.update(clusterSql.toString(), null);
+    }
+
+
+    public void upsertAnalysisRecordEmailSentStatus(Integer myId, boolean emailSentStatus) {
+        StringBuffer clusterSql = new StringBuffer("UPSERT INTO " + analysisRecoredTableName +
+                " (ID, IS_EMAIL_SENT) VALUES(");
+        clusterSql.append(myId + ",");
+        clusterSql.append(" "+ emailSentStatus+ ")");
+        hBaseDao.update(clusterSql.toString(), null);
+    }
 }
