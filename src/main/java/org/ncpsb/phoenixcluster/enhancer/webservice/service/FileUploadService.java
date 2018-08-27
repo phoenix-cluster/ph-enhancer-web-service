@@ -34,9 +34,9 @@ public class FileUploadService {
     String analysisRecoredTableName = "T_ANALYSIS_RECORD";
 
     public AnalysisJob initAnalysisJob() {
-        StringBuffer clusterSql = new StringBuffer("SELECT * FROM  " + analysisRecoredTableName + " ORDER BY ID DESC LIMIT 1");
+        StringBuffer sqlString = new StringBuffer("SELECT * FROM  " + analysisRecoredTableName + " ORDER BY ID DESC LIMIT 1");
 
-        Integer analysisRecordId = (Integer) hBaseDao.getLastAnalysisRecordId(clusterSql.toString(), null, new RowMapper<Integer>() {
+        Integer analysisRecordId = (Integer) hBaseDao.getLastAnalysisRecordId(sqlString.toString(), null, new RowMapper<Integer>() {
             @Override
             public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return new Integer(rs.getInt("ID"));
@@ -55,16 +55,18 @@ public class FileUploadService {
     }
 
     public void upsertAnalysisRecord(AnalysisJob analysisJob) {
-        StringBuffer clusterSql = new StringBuffer("UPSERT INTO " + analysisRecoredTableName + " VALUES(");
-        clusterSql.append(analysisJob.getId()+ ",");
-        clusterSql.append("'" + analysisJob.getFilePath()+ "',");
-        clusterSql.append("'" + analysisJob.getUploadDate()+ "',");
-        clusterSql.append(analysisJob.getUserId()+ ",");
-        clusterSql.append("'" + analysisJob.getStatus()+ "',");
-        clusterSql.append("'" + analysisJob.getToken()+ "',");
-        clusterSql.append(analysisJob.getPublic()+ ")");
+        StringBuffer sqlString = new StringBuffer("UPSERT INTO " + analysisRecoredTableName +
+                "(ID, FILE_PATH, UPLOAD_DATE, USER_ID, STATUS, TOKEN, ISPUBLIC)" +
+                " VALUES(");
+        sqlString.append(analysisJob.getId()+ ",");
+        sqlString.append("'" + analysisJob.getFilePath()+ "',");
+        sqlString.append("'" + analysisJob.getUploadDate()+ "',");
+        sqlString.append(analysisJob.getUserId()+ ",");
+        sqlString.append("'" + analysisJob.getStatus()+ "',");
+        sqlString.append("'" + analysisJob.getToken()+ "',");
+        sqlString.append(analysisJob.getPublic()+ ")");
 
-        hBaseDao.update(clusterSql.toString(), null);
+        hBaseDao.update(sqlString.toString(), null);
     }
 
 
@@ -107,8 +109,8 @@ public class FileUploadService {
     }
 
     public AnalysisJob getAnalysisJob(Integer myAnalysisId){
-            StringBuffer clusterSql = new StringBuffer("SELECT * FROM  " + analysisRecoredTableName + " WHERE ID = " + myAnalysisId);
-            AnalysisJob analysisJob = (AnalysisJob) hBaseDao.getAnalysisJob(clusterSql.toString(), null, new RowMapper<AnalysisJob>() {
+            StringBuffer sqlString = new StringBuffer("SELECT * FROM  " + analysisRecoredTableName + " WHERE ID = " + myAnalysisId);
+            AnalysisJob analysisJob = (AnalysisJob) hBaseDao.getAnalysisJob(sqlString.toString(), null, new RowMapper<AnalysisJob>() {
             @Override
             public AnalysisJob mapRow(ResultSet rs, int rowNum) throws SQLException {
                 AnalysisJob analysisJob1 = new AnalysisJob();
@@ -126,18 +128,18 @@ public class FileUploadService {
     }
 
     public AnalysisJob getAnalysisJobByToken(String analysisJobToken){
-            StringBuffer clusterSql = new StringBuffer("SELECT * FROM  " + analysisRecoredTableName + " WHERE TOKEN = '" + analysisJobToken + "'");
-            AnalysisJob analysisJob = (AnalysisJob) hBaseDao.getAnalysisJob(clusterSql.toString(), null, new RowMapper<AnalysisJob>() {
+            StringBuffer sqlString = new StringBuffer("SELECT * FROM  " + analysisRecoredTableName + " WHERE TOKEN = '" + analysisJobToken + "'");
+            AnalysisJob analysisJob = (AnalysisJob) hBaseDao.getAnalysisJob(sqlString.toString(), null, new RowMapper<AnalysisJob>() {
             @Override
             public AnalysisJob mapRow(ResultSet rs, int rowNum) throws SQLException {
-                AnalysisJob analysisJob1 = new AnalysisJob();
-                analysisJob1.setId(rs.getInt("ID"));
-                analysisJob1.setFilePath(rs.getString("FILE_PATH"));
-                analysisJob1.setUploadDate(rs.getString("UPLOAD_DATE"));
-                analysisJob1.setStatus(rs.getString("STATUS"));
-                analysisJob1.setUserId(rs.getInt("USER_ID"));
-                analysisJob1.setPublic(rs.getBoolean("ISPUBLIC"));
-                analysisJob1.setToken(rs.getString("TOKEN"));
+                AnalysisJob analysisJob1 = new AnalysisJob(
+                rs.getInt("ID"),
+                rs.getString("FILE_PATH"),
+                rs.getString("UPLOAD_DATE"),
+                rs.getInt("USER_ID"),
+                rs.getString("STATUS"),
+                rs.getBoolean("ISPUBLIC"),
+                rs.getString("TOKEN"));
                 return analysisJob1;
             }
         });
@@ -145,9 +147,9 @@ public class FileUploadService {
     }
 
     public List<AnalysisJob> getAnalysisJobsToSentEmail(){
-            StringBuffer clusterSql = new StringBuffer("SELECT * FROM  " + analysisRecoredTableName + " WHERE  STATUS LIKE 'finished%' AND IS_EMAIL_SENT=false " +
+            StringBuffer sqlString = new StringBuffer("SELECT * FROM  " + analysisRecoredTableName + " WHERE  STATUS LIKE 'finished%' AND IS_EMAIL_SENT=false " +
             " AND EMAIL_ADD IS NOT NULL");
-            List<AnalysisJob> analysisJobs = (List<AnalysisJob>) hBaseDao.getAnalysisJobs(clusterSql.toString(), null, new RowMapper<AnalysisJob>() {
+            List<AnalysisJob> analysisJobs = (List<AnalysisJob>) hBaseDao.getAnalysisJobs(sqlString.toString(), null, new RowMapper<AnalysisJob>() {
             @Override
             public AnalysisJob mapRow(ResultSet rs, int rowNum) throws SQLException {
                 AnalysisJob analysisJob1 = new AnalysisJob();
@@ -166,42 +168,42 @@ public class FileUploadService {
 
 
 
-    public void upsertAnalysisRecordInfo(Integer myId, String filePath, String uploadDate, int userId, String status) {
-        StringBuffer clusterSql = new StringBuffer("UPSERT INTO " + analysisRecoredTableName +
-                " (ID, FILE_PATH, UPLOAD_DATE, USER_ID, STATUS) VALUES(");
-        clusterSql.append(myId + ",");
-        clusterSql.append("'" + filePath + "',");
-        clusterSql.append("'" + uploadDate + "',");
-        clusterSql.append(userId + ",");
-        clusterSql.append("'" + status + "')");
-
-        hBaseDao.update(clusterSql.toString(), null);
+    public void upsertAnalysisRecordInfo(Integer myId, String filePath, String uploadDate, int userId, String status, String accessionId) {
+        StringBuffer sqlString = new StringBuffer("UPSERT INTO " + analysisRecoredTableName +
+                " (ID, FILE_PATH, UPLOAD_DATE, USER_ID, STATUS, ACCESSION) VALUES(");
+        sqlString.append(myId + ",");
+        sqlString.append("'" + filePath + "',");
+        sqlString.append("'" + uploadDate + "',");
+        sqlString.append(userId + ",");
+        sqlString.append("'" + status + "',");
+        sqlString.append("'" + accessionId + "')");
+        hBaseDao.update(sqlString.toString(), null);
     }
     public void upsertAnalysisRecordStatus(Integer myId, String status) {
-        StringBuffer clusterSql = new StringBuffer("UPSERT INTO " + analysisRecoredTableName +
+        StringBuffer sqlString = new StringBuffer("UPSERT INTO " + analysisRecoredTableName +
                 " (ID, STATUS) VALUES(");
-        clusterSql.append(myId + ",");
-        clusterSql.append("'" + status + "')");
+        sqlString.append(myId + ",");
+        sqlString.append("'" + status + "')");
 
-        hBaseDao.update(clusterSql.toString(), null);
+        hBaseDao.update(sqlString.toString(), null);
     }
 
     public void upsertAnalysisRecordMore(Integer myId, String emailAdd, Boolean isPublic) {
-        StringBuffer clusterSql = new StringBuffer("UPSERT INTO " + analysisRecoredTableName +
+        StringBuffer sqlString = new StringBuffer("UPSERT INTO " + analysisRecoredTableName +
                 " (ID, EMAIL_ADD, ISPUBLIC) VALUES(");
-        clusterSql.append(myId + ",");
-        clusterSql.append("'" + emailAdd + "',");
-        clusterSql.append("" + isPublic + ")");
+        sqlString.append(myId + ",");
+        sqlString.append("'" + emailAdd + "',");
+        sqlString.append("" + isPublic + ")");
 
-        hBaseDao.update(clusterSql.toString(), null);
+        hBaseDao.update(sqlString.toString(), null);
     }
 
 
     public void upsertAnalysisRecordEmailSentStatus(Integer myId, boolean emailSentStatus) {
-        StringBuffer clusterSql = new StringBuffer("UPSERT INTO " + analysisRecoredTableName +
+        StringBuffer sqlString = new StringBuffer("UPSERT INTO " + analysisRecoredTableName +
                 " (ID, IS_EMAIL_SENT) VALUES(");
-        clusterSql.append(myId + ",");
-        clusterSql.append(" "+ emailSentStatus+ ")");
-        hBaseDao.update(clusterSql.toString(), null);
+        sqlString.append(myId + ",");
+        sqlString.append(" "+ emailSentStatus+ ")");
+        hBaseDao.update(sqlString.toString(), null);
     }
 }

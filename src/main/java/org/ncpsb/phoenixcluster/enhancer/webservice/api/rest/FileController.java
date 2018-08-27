@@ -40,23 +40,24 @@ public class FileController extends AbstractRestHandler{
     @RequestMapping(value = "/upload", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public FileUploadResponse uploadFiles(HttpServletRequest request,
 //    @ApiParam(value = "The analysis id", required = true)
-//    @RequestParam(value = "myid", required = true) Integer myId)
-    @RequestHeader("myId") Integer myId
+//    @RequestParam(value = "myid", required = true) Integer jobId)
+    @RequestHeader("jobId") Integer jobId,
+    @RequestHeader("accessionId") String accessionId
     )
     {
 //        String uploadFilePath = fileUploadPath.getUploadFilePath();
-//        Integer myId = 1;
+//        Integer jobId = 1;
         String baseFilePath = Configure.ANALYSIS_DATA_PATH;
         DateFormat df = new SimpleDateFormat("yyyyMMdd");
         String dateString = df.format(new Date());
         String pathname = baseFilePath + File.separator
-                + dateString + File.separator + myId + File.separator;
+                + dateString + File.separator + accessionId + File.separator;
         File file = new File(pathname);
         if (!file.exists()) {
             System.out.println("making dir: " + file);
             file.mkdirs();
         }
-        fileUploadService.upsertAnalysisRecordInfo(myId, pathname, dateString, 0, "initialed");
+        fileUploadService.upsertAnalysisRecordInfo(jobId, pathname, dateString, 0, "initialed", accessionId);
 
         MultipartHttpServletRequest muti = (MultipartHttpServletRequest) request;
         System.out.println(muti.getMultiFileMap().size());
@@ -76,9 +77,9 @@ public class FileController extends AbstractRestHandler{
             }
             System.out.println("File" + pathname + "  has benn uploaded");
         }
-        fileUploadService.upsertAnalysisRecordStatus(myId, "uploading");
+        fileUploadService.upsertAnalysisRecordStatus(jobId, "uploading");
 
-        FileUploadResponse fileUploadResponse = new FileUploadResponse("success", myId, "NULL");
+        FileUploadResponse fileUploadResponse = new FileUploadResponse("success", jobId, "NULL");
         return fileUploadResponse;
     }
 
@@ -124,19 +125,19 @@ public class FileController extends AbstractRestHandler{
 
     @RequestMapping(value = "/confirmFiles", method = RequestMethod.POST, produces = {"application/json"})
     public FileUploadResponse confirmFiles(HttpServletRequest request,
-    @RequestHeader("myId") Integer myId,
+    @RequestHeader("jobId") Integer jobId,
 //    @RequestBody String resultFileList
     @RequestBody ResultFileList resultFileList
     )
     {
-        FileUploadResponse fileUploadResponse = new FileUploadResponse("null", myId, "");
-        AnalysisJob analysisJob = fileUploadService.getAnalysisJob(myId);
-        boolean correctFlag = fileUploadService.isFileListCorrect(resultFileList, myId, fileUploadResponse, analysisJob);
+        FileUploadResponse fileUploadResponse = new FileUploadResponse("null", jobId, "");
+        AnalysisJob analysisJob = fileUploadService.getAnalysisJob(jobId);
+        boolean correctFlag = fileUploadService.isFileListCorrect(resultFileList, jobId, fileUploadResponse, analysisJob);
         if (correctFlag) {
-            System.out.println("you got " + resultFileList.getFileListLength() + ": " + resultFileList.getFileList() + " file in AnalysisJob " + myId);
+            System.out.println("you got " + resultFileList.getFileListLength() + ": " + resultFileList.getFileList() + " file in AnalysisJob " + jobId);
             fileUploadResponse.setStatus("success");
             fileUploadService.writeToResultFile(analysisJob.getFilePath(), resultFileList);
-            fileUploadService.upsertAnalysisRecordStatus(myId, "uploaded");
+            fileUploadService.upsertAnalysisRecordStatus(jobId, "uploaded");
         }else {
             fileUploadResponse.setStatus("error");
         }

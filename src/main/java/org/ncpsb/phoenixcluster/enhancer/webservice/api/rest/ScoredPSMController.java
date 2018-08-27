@@ -1,13 +1,12 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.api.rest;
 
+import com.sun.javafx.binding.StringFormatter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.ncpsb.phoenixcluster.enhancer.webservice.model.PageOfScoredPSM;
-import org.ncpsb.phoenixcluster.enhancer.webservice.model.ScoredPSM;
-import org.ncpsb.phoenixcluster.enhancer.webservice.model.ScoredPSMForWeb;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.*;
+import org.ncpsb.phoenixcluster.enhancer.webservice.service.FileUploadService;
 import org.ncpsb.phoenixcluster.enhancer.webservice.service.ScoredPSMService;
-import org.ncpsb.phoenixcluster.enhancer.webservice.model.Configure;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,6 +32,8 @@ public class ScoredPSMController extends AbstractRestHandler {
 
     @Autowired
     private ScoredPSMService scoredPSMService;
+    @Autowired
+    private FileUploadService fileUploadService;
 
     @RequestMapping(value = "/negscore",
             method = RequestMethod.GET
@@ -44,8 +45,8 @@ public class ScoredPSMController extends AbstractRestHandler {
     public
     @ResponseBody
     PageOfScoredPSM getNegScoredPSMs(
-            @ApiParam(value = "The Project ID, given by PX ID or Phoenix ID", required = true)
-            @RequestParam(value = "projectId", required = true, defaultValue = DEFAULT_PROJECT_ID) String projectId,
+            @ApiParam(value = "The Results Identifier, given by PX ID, Phoenix Enhancer ID or Token", required = true)
+            @RequestParam(value = "Identifier", required = true, defaultValue = DEFAULT_PROJECT_ID) String identifier,
             @ApiParam(value = "The page number, start at 1", required = true)
             @RequestParam(value = "page", required = true, defaultValue = DEFAULT_PAGE_NUM) Integer page,
             @ApiParam(value = "Tha page size", required = true)
@@ -57,10 +58,31 @@ public class ScoredPSMController extends AbstractRestHandler {
             HttpServletRequest request, HttpServletResponse response) {
 //        return this.clusterService.getAllClusterIDs(page, size,null, null);
 //        List<ScoredPSM> scoredPSMs = this.scoredPSMService.getScoredPSMs(page, size,null, null);
-        List<ScoredPSMForWeb> scoredPSMsForWeb = this.scoredPSMService.getScoredPSMsForWeb(projectId, page, size, sortField, sortDirection, "negscore");
-        Integer totalElements = this.scoredPSMService.totalScoredPSM(projectId, "negscore");
+        String idType = this.scoredPSMService.getIdType(identifier);
+        String accessionId = null;
+        Integer analysisJobId = 0;
+        if (idType.equalsIgnoreCase("ex")) {
+            analysisJobId = Integer.valueOf(identifier.substring(1,identifier.length()));
+            AnalysisJob analysisJob = this.fileUploadService.getAnalysisJob(analysisJobId);
+            if (!analysisJob.getPublic()){
+                return null;
+            }
+            accessionId = identifier;
+        }
+
+        if (idType.equalsIgnoreCase("token")) {
+            AnalysisJob analysisJob = this.fileUploadService.getAnalysisJobByToken(identifier);
+            analysisJobId = analysisJob.getId();
+            accessionId = String.format("E%06d", analysisJobId);
+        }
+        if (idType.equalsIgnoreCase("px")) {
+            accessionId = identifier;
+        }
+
+        List<ScoredPSMForWeb> scoredPSMsForWeb = this.scoredPSMService.getScoredPSMsForWeb(accessionId, page, size, sortField, sortDirection, "negscore");
+        Integer totalElements = this.scoredPSMService.totalScoredPSM(accessionId, "negscore");
         Integer totalPages = (int) Math.ceil((totalElements + 0.0) / size);
-        PageOfScoredPSM pageOfScoredPSM = new PageOfScoredPSM(projectId, size, page, totalElements, totalPages, sortField, sortDirection, scoredPSMsForWeb);
+        PageOfScoredPSM pageOfScoredPSM = new PageOfScoredPSM(accessionId, size, page, totalElements, totalPages, sortField, sortDirection, scoredPSMsForWeb);
 
         return pageOfScoredPSM;
     }

@@ -37,17 +37,18 @@ public class DoAnalysisService {
         File workingDir = analysisJobFilePath.getParentFile();
         try {
 
+            String accessionId = String.format("E%06d", myAnalysisId);
 
             if (isAnalysisStarted(myAnalysisId)) {
-                System.out.println("The analysis job"  + myAnalysisId + " has been started");
+                System.out.println("The analysis job"  + accessionId + " has been started");
                 return "The analysis job has been started";
             }
             String pythonPath = "/usr/bin/python3 ";
             String pipelinePath = "/home/ubuntu/mingze/tools/spectra-library-analysis/analysis_pipeline_new.py ";
-            String parameterAnalysisId = "-p " + myAnalysisId + " ";
+            String parameterAccessionId = "-p " + accessionId + " ";
             String parameterClusterSize = "-s " + minClusterSize + " ";
-            String parameterSilent = "-t y ";
-            String commandLine = pythonPath + pipelinePath + parameterAnalysisId + parameterClusterSize + parameterSilent;
+            String parameterQuiet= "-t y ";
+            String commandLine = pythonPath + pipelinePath + parameterAccessionId+ parameterClusterSize + parameterQuiet;
 
             //this part is used to test if the invoke are working fine or not
             commandLine = "/usr/bin/python3 /tmp/test.py";
@@ -60,8 +61,6 @@ public class DoAnalysisService {
                 System.out.println(line);
             }
             reader.close();
-
-
 
             //rename the resultFile.txt for running, avoid multiple jobs being invoked at the same time
             File resultFile = new File(analysisJob.getFilePath() + File.separator + "resultFiles.txt");
@@ -78,7 +77,7 @@ public class DoAnalysisService {
                     return "The analysis job " + myAnalysisId + " is going wrong";
                 }
             }
-            commandLine = pythonPath + pipelinePath + parameterAnalysisId + parameterClusterSize + parameterSilent;
+            commandLine = pythonPath + pipelinePath + parameterAccessionId + parameterClusterSize + parameterQuiet;
             System.out.println("start to execute " + commandLine);
             proc = Runtime.getRuntime().exec(commandLine, null, workingDir);
         } catch (IOException e) {
@@ -133,7 +132,7 @@ public class DoAnalysisService {
 
         String pathString = analysisJob.getFilePath();
         String parentDirString = new File(pathString).getParent();
-        String filePathName = parentDirString + File.separator + analysisJob.getId()+"_pipeline.log";
+        String filePathName = parentDirString + File.separator + analysisJob.getAccessionId()+"_pipeline.log";
         File logFile = new File(filePathName);
         if (logFile.isFile()) {
             try {

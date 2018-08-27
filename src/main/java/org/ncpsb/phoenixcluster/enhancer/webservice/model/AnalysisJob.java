@@ -10,13 +10,12 @@ public class AnalysisJob {
     String token;
     String emailAdd;
     Boolean isEmailSent;
+    String accessionId;
 
     public AnalysisJob() {
     }
 
     public AnalysisJob(Integer id, String filePath, String uploadDate, Integer userId, String status, Boolean isPublic, String token) {
-
-
         this.id = id;
         this.filePath = filePath;
         this.uploadDate = uploadDate;
@@ -24,6 +23,7 @@ public class AnalysisJob {
         this.status = status;
         this.isPublic = isPublic;
         this.token = token;
+        this.accessionId = String.format("E%06d", id);
     }
 
     public String getEmailAdd() {
@@ -96,5 +96,13 @@ public class AnalysisJob {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getAccessionId() {
+        return accessionId;
+    }
+
+    public void setAccessionId(String accessionId) {
+        this.accessionId = accessionId;
     }
 }

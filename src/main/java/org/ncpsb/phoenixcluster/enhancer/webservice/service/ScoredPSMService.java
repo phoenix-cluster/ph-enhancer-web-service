@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Created by baimi on 2017/10/11.
@@ -184,6 +185,19 @@ public class ScoredPSMService {
         }
         hBaseDao.batchUpdate(updateSqls);
         return new ResponseEntity(acceptanceMap, HttpStatus.OK);
+    }
+
+    static public String getIdType(String resultId) {
+        if (Pattern.matches("[\\w,\\d]{10}", resultId)) {
+            return "token";
+        }
+        if (Pattern.matches("P[X,R]D\\d{6}", resultId)) {
+            return "px";
+        }
+        if (Pattern.matches("E\\d{6}", resultId)) {
+            return "ex";
+        }
+        return "error";
     }
 }
 
