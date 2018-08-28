@@ -1,6 +1,5 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.api.rest;
 
-import com.sun.javafx.binding.StringFormatter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -8,6 +7,7 @@ import org.ncpsb.phoenixcluster.enhancer.webservice.model.*;
 import org.ncpsb.phoenixcluster.enhancer.webservice.service.FileUploadService;
 import org.ncpsb.phoenixcluster.enhancer.webservice.service.ScoredPSMService;
 
+import org.ncpsb.phoenixcluster.enhancer.webservice.service.IdentifierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +33,7 @@ public class ScoredPSMController extends AbstractRestHandler {
     @Autowired
     private ScoredPSMService scoredPSMService;
     @Autowired
-    private FileUploadService fileUploadService;
+    private IdentifierService identifierService;
 
     @RequestMapping(value = "/negscore",
             method = RequestMethod.GET
@@ -46,7 +46,7 @@ public class ScoredPSMController extends AbstractRestHandler {
     @ResponseBody
     PageOfScoredPSM getNegScoredPSMs(
             @ApiParam(value = "The Results Identifier, given by PX ID, Phoenix Enhancer ID or Token", required = true)
-            @RequestParam(value = "Identifier", required = true, defaultValue = DEFAULT_PROJECT_ID) String identifier,
+            @RequestParam(value = "identifier", required = true, defaultValue = DEFAULT_PROJECT_ID) String identifier,
             @ApiParam(value = "The page number, start at 1", required = true)
             @RequestParam(value = "page", required = true, defaultValue = DEFAULT_PAGE_NUM) Integer page,
             @ApiParam(value = "Tha page size", required = true)
@@ -58,27 +58,7 @@ public class ScoredPSMController extends AbstractRestHandler {
             HttpServletRequest request, HttpServletResponse response) {
 //        return this.clusterService.getAllClusterIDs(page, size,null, null);
 //        List<ScoredPSM> scoredPSMs = this.scoredPSMService.getScoredPSMs(page, size,null, null);
-        String idType = this.scoredPSMService.getIdType(identifier);
-        String accessionId = null;
-        Integer analysisJobId = 0;
-        if (idType.equalsIgnoreCase("ex")) {
-            analysisJobId = Integer.valueOf(identifier.substring(1,identifier.length()));
-            AnalysisJob analysisJob = this.fileUploadService.getAnalysisJob(analysisJobId);
-            if (!analysisJob.getPublic()){
-                return null;
-            }
-            accessionId = identifier;
-        }
-
-        if (idType.equalsIgnoreCase("token")) {
-            AnalysisJob analysisJob = this.fileUploadService.getAnalysisJobByToken(identifier);
-            analysisJobId = analysisJob.getId();
-            accessionId = String.format("E%06d", analysisJobId);
-        }
-        if (idType.equalsIgnoreCase("px")) {
-            accessionId = identifier;
-        }
-
+        String accessionId = this.identifierService.getJobAccession(identifier);
         List<ScoredPSMForWeb> scoredPSMsForWeb = this.scoredPSMService.getScoredPSMsForWeb(accessionId, page, size, sortField, sortDirection, "negscore");
         Integer totalElements = this.scoredPSMService.totalScoredPSM(accessionId, "negscore");
         Integer totalPages = (int) Math.ceil((totalElements + 0.0) / size);
@@ -109,7 +89,7 @@ public class ScoredPSMController extends AbstractRestHandler {
     @ResponseBody
     PageOfScoredPSM getPosScoredPSMs(
             @ApiParam(value = "The Project ID, given by PX ID or Phoenix ID", required = true)
-            @RequestParam(value = "projectId", required = true, defaultValue = DEFAULT_PROJECT_ID) String projectId,
+            @RequestParam(value = "identifier", required = true, defaultValue = DEFAULT_PROJECT_ID) String identifier,
             @ApiParam(value = "The page number, start at 1", required = true)
             @RequestParam(value = "page", required = true, defaultValue = DEFAULT_PAGE_NUM) Integer page,
             @ApiParam(value = "Tha page size", required = true)
@@ -121,10 +101,12 @@ public class ScoredPSMController extends AbstractRestHandler {
             HttpServletRequest request, HttpServletResponse response) {
 //        return this.clusterService.getAllClusterIDs(page, size,null, null);
 //        List<ScoredPSM> scoredPSMs = this.scoredPSMService.getScoredPSMs(page, size,null, null);
-        List<ScoredPSMForWeb> scoredPSMsForWeb = this.scoredPSMService.getScoredPSMsForWeb(projectId, page, size, sortField, sortDirection, "posscore");
-        Integer totalElements = this.scoredPSMService.totalScoredPSM(projectId, "posscore");
+        String accessionId = this.identifierService.getJobAccession(identifier);
+        System.out.println("identifier " + identifier  + " ---> " + accessionId + "(accessionId)");
+        List<ScoredPSMForWeb> scoredPSMsForWeb = this.scoredPSMService.getScoredPSMsForWeb(accessionId, page, size, sortField, sortDirection, "posscore");
+        Integer totalElements = this.scoredPSMService.totalScoredPSM(accessionId, "posscore");
         Integer totalPages = (int) Math.ceil((totalElements + 0.0) / size);
-        PageOfScoredPSM pageOfScoredPSM = new PageOfScoredPSM(projectId, size, page, totalElements, totalPages, sortField, sortDirection, scoredPSMsForWeb);
+        PageOfScoredPSM pageOfScoredPSM = new PageOfScoredPSM(accessionId, size, page, totalElements, totalPages, sortField, sortDirection, scoredPSMsForWeb);
 
         return pageOfScoredPSM;
     }
@@ -152,7 +134,7 @@ public class ScoredPSMController extends AbstractRestHandler {
     @ResponseBody
     PageOfScoredPSM getNewIdScoredPSMs(
             @ApiParam(value = "The Project ID, given by PX ID or Phoenix ID", required = true)
-            @RequestParam(value = "projectId", required = true, defaultValue = DEFAULT_PROJECT_ID) String projectId,
+            @RequestParam(value = "identifier", required = true, defaultValue = DEFAULT_PROJECT_ID) String identifier,
             @ApiParam(value = "The page number, start at 1", required = true)
             @RequestParam(value = "page", required = true, defaultValue = DEFAULT_PAGE_NUM) Integer page,
             @ApiParam(value = "Tha page size", required = true)
@@ -164,10 +146,11 @@ public class ScoredPSMController extends AbstractRestHandler {
             HttpServletRequest request, HttpServletResponse response) {
 //        return this.clusterService.getAllClusterIDs(page, size,null, null);
 //        List<ScoredPSM> scoredPSMs = this.scoredPSMService.getScoredPSMs(page, size,null, null);
-        List<ScoredPSMForWeb> scoredPSMsForWeb = this.scoredPSMService.getScoredPSMsForWeb(projectId, page, size, sortField, sortDirection, "newid");
-        Integer totalElements = this.scoredPSMService.totalScoredPSM(projectId, "newid");
+        String accessionId = this.identifierService.getJobAccession(identifier);
+        List<ScoredPSMForWeb> scoredPSMsForWeb = this.scoredPSMService.getScoredPSMsForWeb(accessionId, page, size, sortField, sortDirection, "newid");
+        Integer totalElements = this.scoredPSMService.totalScoredPSM(accessionId, "newid");
         Integer totalPages = (int) Math.ceil((totalElements + 0.0) / size);
-        PageOfScoredPSM pageOfScoredPSM = new PageOfScoredPSM(projectId, size, page, totalElements, totalPages, sortField, sortDirection, scoredPSMsForWeb);
+        PageOfScoredPSM pageOfScoredPSM = new PageOfScoredPSM(accessionId, size, page, totalElements, totalPages, sortField, sortDirection, scoredPSMsForWeb);
 
         return pageOfScoredPSM;
     }
@@ -200,7 +183,7 @@ public class ScoredPSMController extends AbstractRestHandler {
     @ResponseBody
     ResponseEntity<?> putUserAcceptance(
             @ApiParam(value = "The Project ID, given by PX ID or Phoenix ID", required = true)
-            @RequestParam(value = "projectId", required = true, defaultValue = DEFAULT_PROJECT_ID) String projectId,
+            @RequestParam(value = "identifier", required = true, defaultValue = DEFAULT_PROJECT_ID) String identifier,
             @ApiParam(value = "The psmtype of this psm table.", required = true)
             @RequestParam(value = "psmtype", required = true, defaultValue = "newid") String psmtype,
             @RequestBody(required = true) Map<Integer, Integer> acceptanceMap,
@@ -208,7 +191,8 @@ public class ScoredPSMController extends AbstractRestHandler {
         if (acceptanceMap.size() < 1) {
             return new ResponseEntity<String>("Empty acceptance map.", HttpStatus.BAD_REQUEST);
         }
-        return (this.scoredPSMService.updateUserAcceptance(projectId, psmtype, acceptanceMap));
+        String accessionId = this.identifierService.getJobAccession(identifier);
+        return (this.scoredPSMService.updateUserAcceptance(accessionId, psmtype, acceptanceMap));
     }
 
 

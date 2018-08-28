@@ -43,8 +43,8 @@ public class StatisticsController extends AbstractRestHandler {
     @ResponseBody
     //Page<Cluster> getAllCluster(@ApiParam(value = "The page number (zero-based)", required = true)
     List<HistogramBin> getHistData(
-            @ApiParam(value = "Project Id", required = true)
-            @RequestParam(value = "projectId", required = true, defaultValue = Configure.DEFAULT_PROJECT_ID) String projectId,
+            @ApiParam(value = "Identifier", required = true)
+            @RequestParam(value = "identifier", required = true, defaultValue = Configure.DEFAULT_PROJECT_ID) String identifier,
             @ApiParam(value = "The bin number for histogram", required = true)
             @RequestParam(value = "numBins", required = true, defaultValue = "20") Integer numBins,
             @ApiParam(value = "psmType", required = true)
@@ -53,7 +53,7 @@ public class StatisticsController extends AbstractRestHandler {
             @RequestParam(value = "fieldType", required = true, defaultValue = "confScore")  String fieldType,
             HttpServletRequest request, HttpServletResponse response) {
         assert (numBins>0);
-        List<HistogramBin> histogramBins = this.histogramService.getHistData(projectId, psmType, fieldType, numBins);
+        List<HistogramBin> histogramBins = this.histogramService.getHistData(identifier, psmType, fieldType, numBins);
         return histogramBins;
     }
 
@@ -68,10 +68,10 @@ public class StatisticsController extends AbstractRestHandler {
     @ResponseBody
         //Page<Cluster> getAllCluster(@ApiParam(value = "The page number (zero-based)", required = true)
     VennData getVennData(
-            @ApiParam(value = "Project Id", required = true)
-            @RequestParam(value = "projectId", required = true, defaultValue = Configure.DEFAULT_PROJECT_ID) String projectId,
+            @ApiParam(value = "Identifier", required = true)
+            @RequestParam(value = "identifier", required = true, defaultValue = Configure.DEFAULT_PROJECT_ID) String identifier,
             HttpServletRequest request, HttpServletResponse response) {
-        VennData vennData = this.statisticsService.getVennData(projectId);
+        VennData vennData = this.statisticsService.getVennData(identifier);
         return vennData;
     }
     @RequestMapping(value = "/venndatalist",
@@ -102,10 +102,10 @@ public class StatisticsController extends AbstractRestHandler {
     @ResponseBody
         //Page<Cluster> getAllCluster(@ApiParam(value = "The page number (zero-based)", required = true)
    Thresholds getThreholds(
-            @ApiParam(value = "Project Id", required = true)
-            @RequestParam(value = "projectId", required = true, defaultValue = Configure.DEFAULT_PROJECT_ID) String projectId,
+            @ApiParam(value = "Identifier", required = true)
+            @RequestParam(value = "identifier", required = true, defaultValue = Configure.DEFAULT_PROJECT_ID) String identifier,
             HttpServletRequest request, HttpServletResponse response) {
-       Thresholds thresholds = this.statisticsService.getThresholds(projectId);
+       Thresholds thresholds = this.statisticsService.getThresholds(identifier);
        return thresholds;
    }
 

@@ -142,4 +142,24 @@ public class ScoredPSM {
     public void setClusterRatioStr(String clusterRatioStr) {
         this.clusterRatioStr = clusterRatioStr;
     }
+
+    @Override
+    public String toString() {
+        return "ScoredPSM{" +
+                "Id=" + Id +
+                ", peptideSequence='" + peptideSequence + '\'' +
+                ", peptideModsStr='" + peptideModsStr + '\'' +
+                ", clusterId='" + clusterId + '\'' +
+                ", clusterRatio=" + clusterRatio +
+                ", clusterRatioStr='" + clusterRatioStr + '\'' +
+                ", clusterSize=" + clusterSize +
+                ", confidentScore=" + confidentScore +
+                ", recommConfidentScore=" + recommConfidentScore +
+                ", recommendPeptide='" + recommendPeptide + '\'' +
+                ", recommendPepModsStr='" + recommendPepModsStr + '\'' +
+                ", spectraNum=" + spectraNum +
+                ", spectraTitles=" + spectraTitles +
+                ", acceptance=" + acceptance +
+                '}';
+    }
 }

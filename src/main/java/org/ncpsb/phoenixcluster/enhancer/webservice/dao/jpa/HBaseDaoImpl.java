@@ -28,6 +28,7 @@ public class HBaseDaoImpl implements HBaseDao {
 
     @Override
     public Object query(String querySql, Object[] params, RowMapper<Object> mapper) {
+        System.out.println(querySql);
         if (params != null && params.length > 0) {
             return jdbcTemplate.query(querySql, params, mapper);
         } else {
@@ -37,10 +38,12 @@ public class HBaseDaoImpl implements HBaseDao {
 
     @Override
     public int queryTotal(String querySql) {
+        System.out.println(querySql);
         return jdbcTemplate.queryForObject(querySql, null, Integer.class);
     }
     @Override
     public List getScoredPSMs(String querySql, Object[] params, RowMapper<ScoredPSM> mapper) {
+        System.out.println(querySql);
         if (params != null && params.length > 0) {
             return jdbcTemplate.query(querySql, params, mapper);
         } else {
@@ -49,6 +52,7 @@ public class HBaseDaoImpl implements HBaseDao {
     }
 
     public ScoredPSM getScoredPSM(String querySql, Object[] params, RowMapper<ScoredPSM> mapper) {
+        System.out.println(querySql);
         if (params != null && params.length > 0) {
             return jdbcTemplate.queryForObject(querySql, params, mapper);
         } else {
@@ -58,6 +62,7 @@ public class HBaseDaoImpl implements HBaseDao {
 
     @Override
     public List getSpectraInCluster(String querySql, Object[] params, RowMapper<SpectrumInCluster> mapper) {
+        System.out.println(querySql);
         if (params != null && params.length > 0) {
             return jdbcTemplate.query(querySql, params, mapper);
         } else {
@@ -67,6 +72,7 @@ public class HBaseDaoImpl implements HBaseDao {
 
     @Override
     public List getSpectra(String querySql, Object[] params, RowMapper<Spectrum> mapper) {
+        System.out.println(querySql);
         if (params != null && params.length > 0) {
             return jdbcTemplate.query(querySql, params, mapper);
         } else {
@@ -76,6 +82,7 @@ public class HBaseDaoImpl implements HBaseDao {
 
     @Override
     public List getVennDataList(String querySql, Object[] params, RowMapper<VennData> mapper) {
+        System.out.println(querySql);
         if (params != null && params.length > 0) {
             return jdbcTemplate.query(querySql, params, mapper);
         } else {
@@ -85,6 +92,7 @@ public class HBaseDaoImpl implements HBaseDao {
 
     @Override
     public SpectrumInCluster getSpectrumInCluster(String querySql, Object[] params, RowMapper<SpectrumInCluster> mapper) {
+        System.out.println(querySql);
         if (params != null && params.length > 0) {
             return jdbcTemplate.queryForObject(querySql, params, mapper);
         } else {
@@ -94,6 +102,7 @@ public class HBaseDaoImpl implements HBaseDao {
 
     @Override
     public Spectrum getSpectrum(String querySql, Object[] params, RowMapper<Spectrum> mapper) {
+        System.out.println(querySql);
         if (params != null && params.length > 0) {
             return jdbcTemplate.queryForObject(querySql, params, mapper);
         } else {
@@ -103,16 +112,19 @@ public class HBaseDaoImpl implements HBaseDao {
 
     @Override
     public List<Map> queryMap(String querySql, RowMapper<Map> rowMapper) {
-            return jdbcTemplate.query(querySql, rowMapper);
+        System.out.println(querySql);
+        return jdbcTemplate.query(querySql, rowMapper);
     }
 
     @Override
     public List<Object> queryList(String querySql, RowMapper rowMapper) {
+        System.out.println(querySql);
         return jdbcTemplate.query(querySql, rowMapper);
     }
 
     @Override
     public Object getVennData(String querySql, Object[] params, RowMapper<VennData> rowMapper) {
+        System.out.println(querySql);
         if (params != null && params.length > 0) {
             return (VennData) jdbcTemplate.queryForObject(querySql, params, rowMapper);
         } else {
@@ -122,6 +134,7 @@ public class HBaseDaoImpl implements HBaseDao {
 
     @Override
     public Object getThresholds(String querySql, Object[] params, RowMapper<Thresholds> rowMapper) {
+        System.out.println(querySql);
         if (params != null && params.length > 0) {
             return (Thresholds) jdbcTemplate.queryForObject(querySql, params, rowMapper);
         } else {
@@ -134,11 +147,14 @@ public class HBaseDaoImpl implements HBaseDao {
     @Override
     public void update(String updateSQL, Object[] params) {
         // System.out.println("##########UPDATE SQL:" + updateSQL);
+        System.out.println(updateSQL);
+
         jdbcTemplate.update(updateSQL, params);
     }
 
     @Override
     public void batchUpdate(List<String> updateSQL) {
+        System.out.println(updateSQL);
         for (String sql : updateSQL) {
             // System.out.println("##########UPDATE SQL:" + sql);
             jdbcTemplate.update(sql);
@@ -156,6 +172,7 @@ public class HBaseDaoImpl implements HBaseDao {
 
     @Override
     public Cluster getCluster(String querySql, Object[] params, RowMapper<Cluster> mapper) {
+        System.out.println(querySql);
        if (params != null && params.length > 0) {
             return (Cluster) jdbcTemplate.queryForObject(querySql, params, mapper);
         } else {
@@ -164,6 +181,7 @@ public class HBaseDaoImpl implements HBaseDao {
     }
 
     public String getSpecPeptideSeq(String querysql){
+        System.out.println(querysql);
         return jdbcTemplate.queryForMap(querysql).get("PEPTIDE_SEQUENCE").toString();
     }
 //    @Override
@@ -177,6 +195,7 @@ public class HBaseDaoImpl implements HBaseDao {
 
     @Override
     public Integer getLastAnalysisRecordId(String querySql, Object[] params, RowMapper<Integer> mapper) {
+        System.out.println(querySql);
         if (params != null && params.length > 0) {
             return (Integer) jdbcTemplate.queryForObject(querySql, params, mapper);
         } else {
@@ -186,6 +205,7 @@ public class HBaseDaoImpl implements HBaseDao {
 
     @Override
     public AnalysisJob getAnalysisJob(String querySql, Object[] params, RowMapper<AnalysisJob> mapper){
+        System.out.println(querySql);
         if (params != null && params.length > 0) {
             return (AnalysisJob) jdbcTemplate.queryForObject(querySql, params, mapper);
         } else {
@@ -195,6 +215,7 @@ public class HBaseDaoImpl implements HBaseDao {
 
     @Override
     public List getAnalysisJobs(String querySql, Object[] params, RowMapper<AnalysisJob> mapper) {
+        System.out.println(querySql);
         if (params != null && params.length > 0) {
             return jdbcTemplate.query(querySql, params, mapper);
         } else {

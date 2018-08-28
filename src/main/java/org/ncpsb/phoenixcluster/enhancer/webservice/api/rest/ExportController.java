@@ -1,5 +1,6 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.api.rest;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -89,13 +91,15 @@ public class ExportController extends AbstractRestHandler {
         String fileName = projectId + "_export_file.json";
         File file = new File(pathname + fileName);
 
-        Gson gson = new Gson();
-        try {
-            gson.toJson(exportedPsms, new FileWriter(file));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return "{\"error\":\"" + ex.getMessage() + "\"}";
+        try (Writer writer = new FileWriter(file)) {
+            Gson gson = new GsonBuilder().create();
+            String jsonString = gson.toJson(exportedPsms);
+            writer.write(jsonString);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "{\"error\":\"" + e.getMessage() + "\"}";
         }
+
         System.out.println(file.toString());
         return "{\"filePath\":\"" + relativePath.toString() + fileName + "\"}";
     }

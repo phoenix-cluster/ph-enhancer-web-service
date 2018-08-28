@@ -110,6 +110,7 @@ public class FileUploadService {
 
     public AnalysisJob getAnalysisJob(Integer myAnalysisId){
             StringBuffer sqlString = new StringBuffer("SELECT * FROM  " + analysisRecoredTableName + " WHERE ID = " + myAnalysisId);
+            System.out.println(sqlString.toString());
             AnalysisJob analysisJob = (AnalysisJob) hBaseDao.getAnalysisJob(sqlString.toString(), null, new RowMapper<AnalysisJob>() {
             @Override
             public AnalysisJob mapRow(ResultSet rs, int rowNum) throws SQLException {

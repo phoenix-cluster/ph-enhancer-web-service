@@ -187,18 +187,7 @@ public class ScoredPSMService {
         return new ResponseEntity(acceptanceMap, HttpStatus.OK);
     }
 
-    static public String getIdType(String resultId) {
-        if (Pattern.matches("[\\w,\\d]{10}", resultId)) {
-            return "token";
-        }
-        if (Pattern.matches("P[X,R]D\\d{6}", resultId)) {
-            return "px";
-        }
-        if (Pattern.matches("E\\d{6}", resultId)) {
-            return "ex";
-        }
-        return "error";
-    }
+
 }
 
 

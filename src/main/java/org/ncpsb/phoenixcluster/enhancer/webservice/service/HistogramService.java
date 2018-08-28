@@ -23,25 +23,27 @@ import java.util.*;
 public class HistogramService {
     @Autowired
     private HBaseDao hBaseDao;
+    @Autowired
+    private IdentifierService identifierService;
 
-
-    public List<HistogramBin> getHistData(String projectId, String type, String fieldType, Integer numBins) {
+    public List<HistogramBin> getHistData(String identifier, String type, String fieldType, Integer numBins) {
         String psmTableName = "";
+        String accessionId = this.identifierService.getJobAccession(identifier);
         switch (type) {
             case ("negscore"): {
-                psmTableName = Configure.NEG_SCORE_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID, projectId);
+                psmTableName = Configure.NEG_SCORE_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID, accessionId);
                 break;
             }
             case ("posscore"): {
-                psmTableName = Configure.POS_SCORE_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID, projectId);
+                psmTableName = Configure.POS_SCORE_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID, accessionId);
                 break;
             }
             case ("newid"): {
-                psmTableName = Configure.NEW_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID, projectId);
+                psmTableName = Configure.NEW_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID, accessionId);
                 break;
             }
             default: {
-                psmTableName = Configure.NEG_SCORE_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID, projectId);
+                psmTableName = Configure.NEG_SCORE_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID, accessionId);
             }
         }
 
@@ -143,14 +145,19 @@ public class HistogramService {
                 sizeScoreList.remove(itemI);
             }
         }
-
-        Integer min = sizeScoreList.get(0);
-        Integer max = sizeScoreList.get(sizeScoreList.size() - 1);
-        List<HistogramBin> binList = StatisticsUtils.calcIntHistogram(sizeScoreList, min, max, numBins-2);
-        binList.add(0, firstBin);
-        binList.add(binList.size(), lastBin);
-
-        return binList;
+        if (sizeScoreList.size() <= 0) {
+            List<HistogramBin> binList = new ArrayList<HistogramBin>();
+            binList.add(0, firstBin);
+            binList.add(binList.size(), lastBin);
+            return binList;
+        }else {
+            Integer min = sizeScoreList.get(0);
+            Integer max = sizeScoreList.get(sizeScoreList.size() - 1);
+            List<HistogramBin> binList = StatisticsUtils.calcIntHistogram(sizeScoreList, min, max, numBins - 2);
+            binList.add(0, firstBin);
+            binList.add(binList.size(), lastBin);
+            return binList;
+        }
     }
 
 
@@ -189,12 +196,19 @@ public class HistogramService {
                 floatScoreList.remove(itemF);
             }
         }
-        Double min = floatScoreList.get(0);
-        Double max = floatScoreList.get(floatScoreList.size() - 1);
-        List<HistogramBin> binList = StatisticsUtils.calcHistogram(floatScoreList, min, max, numBins-2);
-        binList.add(0, firstBin);
-        binList.add(binList.size(), lastBin);
-        return binList;
+        if (floatScoreList.size() <= 0) {
+            List<HistogramBin> binList = new ArrayList<HistogramBin>();
+            binList.add(0, firstBin);
+            binList.add(binList.size(), lastBin);
+            return binList;
+        }else {
+            Double min = floatScoreList.get(0);
+            Double max = floatScoreList.get(floatScoreList.size() - 1);
+            List<HistogramBin> binList = StatisticsUtils.calcHistogram(floatScoreList, min, max, numBins - 2);
+            binList.add(0, firstBin);
+            binList.add(binList.size(), lastBin);
+            return binList;
+        }
     }
 
 }
