@@ -52,6 +52,7 @@ public class SpectrumService{
 //    }
 
     public Spectrum getSpectrumByTitle(String title) {
+        String spectrumTableName = getSpectrumTableName(title);
         StringBuffer querySql = new StringBuffer("SELECT * FROM \"" + spectrumTableName + "\" WHERE ");
         title = title.trim();
         querySql.append("SPECTRUM_TITLE = '" + title + "'");
@@ -80,8 +81,9 @@ public class SpectrumService{
 //    }
 
     public List<Spectrum> getSpectraByTitles(String titlesStr) {
-        StringBuffer querySql = new StringBuffer("SELECT * FROM \"" + spectrumTableName + "\" WHERE SPECTRUM_TITLE in (");
         String[] titles = titlesStr.split("\\|\\|");
+        String spectrumTableName = getSpectrumTableName(titles[0]);
+        StringBuffer querySql = new StringBuffer("SELECT * FROM \"" + spectrumTableName + "\" WHERE SPECTRUM_TITLE in (");
         for (String title : titles){
             title = title.trim();
             querySql.append("'" + title + "',");
@@ -115,6 +117,21 @@ public class SpectrumService{
         String peptideSequence = hBaseDao.getSpecPeptideSeq(querySql.toString());
         String rs = peptideSequence;
         return rs;
+    }
+
+    private String getSpectrumTableName(String title){
+        String spectrumTableName = "";
+        if(title.startsWith("PXD") || title.startsWith("PRD")) {
+            spectrumTableName = this.spectrumTableName;
+        }else {
+            if (title.startsWith("E")){
+                spectrumTableName = this.spectrumTableName + "_TEST";
+            }else{
+                System.out.println("ERROR, the spectrum title neither starts with P?D nor E");
+                return null;
+            }
+        }
+        return spectrumTableName;
     }
 }
 

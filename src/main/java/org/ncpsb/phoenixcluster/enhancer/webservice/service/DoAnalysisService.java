@@ -74,6 +74,7 @@ public class DoAnalysisService {
                 }
                 else {
                     System.out.println("This job " + myAnalysisId + " resultFile.txt is going wrong, please contact the administrator to have a check.");
+                    System.out.println("file:" + resultFile.getAbsolutePath());
                     return "The analysis job " + myAnalysisId + " is going wrong";
                 }
             }

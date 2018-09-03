@@ -1,6 +1,7 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.api.rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.sun.tools.internal.ws.wsdl.framework.Identifiable;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -9,6 +10,7 @@ import org.ncpsb.phoenixcluster.enhancer.webservice.model.HistogramBin;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.ScoredPSM;
 import org.ncpsb.phoenixcluster.enhancer.webservice.service.ExportService;
 import org.ncpsb.phoenixcluster.enhancer.webservice.service.HistogramService;
+import org.ncpsb.phoenixcluster.enhancer.webservice.service.IdentifierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +40,8 @@ public class ExportController extends AbstractRestHandler {
 
     @Autowired
     private ExportService exportService;
+    @Autowired
+    private IdentifierService identifierService;
 
     @RequestMapping(value = "",
             method = RequestMethod.GET
@@ -48,8 +52,8 @@ public class ExportController extends AbstractRestHandler {
     public
     @ResponseBody
     String exportImpl(
-            @ApiParam(value = "Project Id", required = true)
-            @RequestParam(value = "projectId", required = true, defaultValue = Configure.DEFAULT_PROJECT_ID) String projectId,
+            @ApiParam(value = "Identifier", required = true)
+            @RequestParam(value = "identifier", required = true, defaultValue = Configure.DEFAULT_PROJECT_ID) String identifier,
             @ApiParam(value = "recommed confident score Range, [0,0] means it is not included", required = true)
             @RequestParam(value = "recommendRange", required = true, defaultValue = "[0,1]") String recommendScRange,
             @ApiParam(value = "new Identiying PSMs Score range, [0,0] means it is not included", required = true)
@@ -64,11 +68,13 @@ public class ExportController extends AbstractRestHandler {
             @RequestParam(value = "hasRejected", required = true, defaultValue = "false") Boolean hasRejected,
             HttpServletRequest request, HttpServletResponse response) {
 
-        List<ScoredPSM> exportedRecommBetterPsms = this.exportService.getExportedPsmSingleType(projectId, "negscore", recommendScRange,
+        String accessionId = this.identifierService.getJobAccession(identifier);
+        System.out.println("identifier " + identifier  + " ---> " + accessionId + "(accessionId)");
+        List<ScoredPSM> exportedRecommBetterPsms = this.exportService.getExportedPsmSingleType(accessionId, "negscore", recommendScRange,
                 hasAccept, defaultAcceptType, hasRejected);
-        List<ScoredPSM> exportedNewIdentPsms= this.exportService.getExportedPsmSingleType(projectId, "newid", recommendScRange,
+        List<ScoredPSM> exportedNewIdentPsms= this.exportService.getExportedPsmSingleType(accessionId, "newid", recommendScRange,
                 hasAccept, defaultAcceptType, hasRejected);
-        List<ScoredPSM> exportedHighScPsms = this.exportService.getExportedPsmSingleType(projectId, "posscore", recommendScRange,
+        List<ScoredPSM> exportedHighScPsms = this.exportService.getExportedPsmSingleType(accessionId, "posscore", recommendScRange,
                 hasAccept, defaultAcceptType, hasRejected);
 
         List<ScoredPSM> exportedPsms = new ArrayList<>();
@@ -82,13 +88,13 @@ public class ExportController extends AbstractRestHandler {
         DateFormat df = new SimpleDateFormat("yyyyMMdd");
         String dateString = df.format(new Date());
 
-        String relativePath = projectId  + File.separator + "export" + File.separator
+        String relativePath = accessionId + File.separator + "export" + File.separator
                 + dateString + File.separator;
         String pathname = baseFilePath + File.separator + relativePath;
         File dir = new File(pathname);
 
         dir.mkdirs();
-        String fileName = projectId + "_export_file.json";
+        String fileName = accessionId + "_export_file.json";
         File file = new File(pathname + fileName);
 
         try (Writer writer = new FileWriter(file)) {
