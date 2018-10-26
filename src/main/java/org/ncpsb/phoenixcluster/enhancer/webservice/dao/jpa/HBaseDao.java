@@ -1,6 +1,7 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.dao.jpa;
 
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.*;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.util.List;
@@ -39,5 +40,8 @@ public interface HBaseDao {
     public Integer getLastAnalysisRecordId(String querySql, Object[] params, RowMapper<Integer> mapper);
     public AnalysisJob getAnalysisJob(String querySql, Object[] params, RowMapper<AnalysisJob> mapper);
     public List getAnalysisJobs(String querySql, Object[] params, RowMapper<AnalysisJob> mapper);
+
+    JdbcTemplate getJdbcTemplate();
+
 //    List<Map> queryList(String s, RowMapper<Map> rowMapper);
 }

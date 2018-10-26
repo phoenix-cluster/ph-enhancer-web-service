@@ -4,7 +4,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.*;
-import org.ncpsb.phoenixcluster.enhancer.webservice.service.FileUploadService;
 import org.ncpsb.phoenixcluster.enhancer.webservice.service.ScoredPSMService;
 
 import org.ncpsb.phoenixcluster.enhancer.webservice.service.IdentifierService;
@@ -60,7 +59,7 @@ public class ScoredPSMController extends AbstractRestHandler {
 //        List<ScoredPSM> scoredPSMs = this.scoredPSMService.getScoredPSMs(page, size,null, null);
         String accessionId = this.identifierService.getJobAccession(identifier);
         List<ScoredPSMForWeb> scoredPSMsForWeb = this.scoredPSMService.getScoredPSMsForWeb(accessionId, page, size, sortField, sortDirection, "negscore");
-        Integer totalElements = this.scoredPSMService.totalScoredPSM(accessionId, "negscore");
+        Integer totalElements = this.scoredPSMService.findTotalScoredPSM(accessionId, "negscore");
         Integer totalPages = (int) Math.ceil((totalElements + 0.0) / size);
         PageOfScoredPSM pageOfScoredPSM = new PageOfScoredPSM(accessionId, size, page, totalElements, totalPages, sortField, sortDirection, scoredPSMsForWeb);
 
@@ -104,7 +103,7 @@ public class ScoredPSMController extends AbstractRestHandler {
         String accessionId = this.identifierService.getJobAccession(identifier);
         System.out.println("identifier " + identifier  + " ---> " + accessionId + "(accessionId)");
         List<ScoredPSMForWeb> scoredPSMsForWeb = this.scoredPSMService.getScoredPSMsForWeb(accessionId, page, size, sortField, sortDirection, "posscore");
-        Integer totalElements = this.scoredPSMService.totalScoredPSM(accessionId, "posscore");
+        Integer totalElements = this.scoredPSMService.findTotalScoredPSM(accessionId, "posscore");
         Integer totalPages = (int) Math.ceil((totalElements + 0.0) / size);
         PageOfScoredPSM pageOfScoredPSM = new PageOfScoredPSM(accessionId, size, page, totalElements, totalPages, sortField, sortDirection, scoredPSMsForWeb);
 
@@ -140,7 +139,7 @@ public class ScoredPSMController extends AbstractRestHandler {
             @ApiParam(value = "Tha page size", required = true)
             @RequestParam(value = "size", required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size,
             @ApiParam(value = "The sortField", required = true)
-            @RequestParam(value = "sortField", required = true, defaultValue = DEFAULT_SORT_FIELD) String sortField,
+            @RequestParam(value = "sortField", required = true, defaultValue = "RECOMM_SEQ_SC") String sortField,
             @ApiParam(value = "The sort direction", required = true)
             @RequestParam(value = "sortDirection", required = true, defaultValue = DEFAULT_SORT_DIRECTION) String sortDirection,
             HttpServletRequest request, HttpServletResponse response) {
@@ -148,13 +147,15 @@ public class ScoredPSMController extends AbstractRestHandler {
 //        List<ScoredPSM> scoredPSMs = this.scoredPSMService.getScoredPSMs(page, size,null, null);
         String accessionId = this.identifierService.getJobAccession(identifier);
         List<ScoredPSMForWeb> scoredPSMsForWeb = this.scoredPSMService.getScoredPSMsForWeb(accessionId, page, size, sortField, sortDirection, "newid");
-        Integer totalElements = this.scoredPSMService.totalScoredPSM(accessionId, "newid");
+        Integer totalElements = this.scoredPSMService.findTotalScoredPSM(accessionId, "newid");
         Integer totalPages = (int) Math.ceil((totalElements + 0.0) / size);
         PageOfScoredPSM pageOfScoredPSM = new PageOfScoredPSM(accessionId, size, page, totalElements, totalPages, sortField, sortDirection, scoredPSMsForWeb);
 
         return pageOfScoredPSM;
     }
 
+
+/*
     @RequestMapping(value = "/{projectId}/{id}",
             method = RequestMethod.GET,
             produces = {"application/json"})
@@ -168,11 +169,13 @@ public class ScoredPSMController extends AbstractRestHandler {
             @ApiParam(value = "The ID of the scoredPsm.", required = true)
             @PathVariable("id") String id,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ScoredPSM scoredPSM = this.scoredPSMService.getPSMByTitle(id, null);
+        ScoredPSM scoredPSM = this.scoredPSMService.findPSMByTitle(projectId, id);
 //        checkResourceFound(cluster);
         //todo: http://goo.gl/6iNAkz
         return scoredPSM;
     }
+*/
+
 
     @RequestMapping(value = "/updateAcceptance",
             method = RequestMethod.PUT,

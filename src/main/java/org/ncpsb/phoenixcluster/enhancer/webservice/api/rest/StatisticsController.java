@@ -53,7 +53,7 @@ public class StatisticsController extends AbstractRestHandler {
             @RequestParam(value = "fieldType", required = true, defaultValue = "confScore")  String fieldType,
             HttpServletRequest request, HttpServletResponse response) {
         assert (numBins>0);
-        List<HistogramBin> histogramBins = this.histogramService.getHistData(identifier, psmType, fieldType, numBins);
+        List<HistogramBin> histogramBins = this.histogramService.getHistDataForDifferenetScAndFiled(identifier, psmType, fieldType, numBins);
         return histogramBins;
     }
 
@@ -71,7 +71,7 @@ public class StatisticsController extends AbstractRestHandler {
             @ApiParam(value = "Identifier", required = true)
             @RequestParam(value = "identifier", required = true, defaultValue = Configure.DEFAULT_PROJECT_ID) String identifier,
             HttpServletRequest request, HttpServletResponse response) {
-        VennData vennData = this.statisticsService.getVennData(identifier);
+        VennData vennData = this.statisticsService.findVennData(identifier);
         return vennData;
     }
     @RequestMapping(value = "/venndatalist",
@@ -105,7 +105,7 @@ public class StatisticsController extends AbstractRestHandler {
             @ApiParam(value = "Identifier", required = true)
             @RequestParam(value = "identifier", required = true, defaultValue = Configure.DEFAULT_PROJECT_ID) String identifier,
             HttpServletRequest request, HttpServletResponse response) {
-       Thresholds thresholds = this.statisticsService.getThresholds(identifier);
+       Thresholds thresholds = this.statisticsService.findThresholdsByProjectId(identifier);
        return thresholds;
    }
 
@@ -120,7 +120,7 @@ public class StatisticsController extends AbstractRestHandler {
     @ResponseBody
         //Page<Cluster> getAllCluster(@ApiParam(value = "The page number (zero-based)", required = true)
    List<String> getProjects(HttpServletRequest request, HttpServletResponse response) {
-       List<String> projects = this.statisticsService.getProjects();
+       List<String> projects = this.statisticsService.findProjects();
        return projects;
    }
 

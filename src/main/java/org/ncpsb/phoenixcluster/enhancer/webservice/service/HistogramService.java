@@ -1,7 +1,6 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.service;
 
 
-import org.apache.avro.generic.GenericData;
 import org.ncpsb.phoenixcluster.enhancer.webservice.dao.jpa.HBaseDao;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.Configure;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.HistogramBin;
@@ -26,7 +25,15 @@ public class HistogramService {
     @Autowired
     private IdentifierService identifierService;
 
-    public List<HistogramBin> getHistData(String identifier, String type, String fieldType, Integer numBins) {
+    /***
+     * get Histogram Data For Differenet Scores(PSM) And Fileds
+     * @param identifier
+     * @param type
+     * @param fieldType
+     * @param numBins
+     * @return
+     */
+    public List<HistogramBin> getHistDataForDifferenetScAndFiled(String identifier, String type, String fieldType, Integer numBins) {
         String psmTableName = "";
         String accessionId = this.identifierService.getJobAccession(identifier);
         switch (type) {
@@ -67,93 +74,86 @@ public class HistogramService {
 //        return (clusters != null && clusters.size() > 0) ? clusters : null;
     }
 
-    private List<HistogramBin>getRecommConfidentScoreHistData(String psmTableName, Integer numBins) {
+    public List<Double> findRecommConfidentScore(String psmTableName){
         StringBuffer querySql = new StringBuffer("SELECT RECOMM_SEQ_SC FROM " + psmTableName);
+        List<Double> scoreList = (List<Double>) hBaseDao.getJdbcTemplate().query(querySql.toString(), (rs, rowNum) -> rs.getDouble("RECOMM_SEQ_SC"));
+        return scoreList;
+    }
 
-        List<Object> objectList = (List<Object>) hBaseDao.queryList(querySql.toString(), new RowMapper() {
-            @Override
-            public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return ((Object) rs.getDouble("RECOMM_SEQ_SC"));
-            }
-        });
-        return getFloatHistList(objectList, numBins);
+    public List<Double> findConfidentScore(String psmTableName) {
+        StringBuffer querySql = new StringBuffer("SELECT CONF_SC FROM " + psmTableName);
+        List<Double> scoreList = (List<Double>) hBaseDao.getJdbcTemplate().query(querySql.toString(), (rs, rowNum) -> rs.getDouble("CONF_SC"));
+        return scoreList;
+    }
+
+    public List<Double> findClusterRatio(String psmTableName) {
+        StringBuffer querySql = new StringBuffer("SELECT CLUSTER_RATIO FROM " + psmTableName);
+        List<Double> scoreList = (List<Double>) hBaseDao.getJdbcTemplate().query(querySql.toString(), (rs, rowNum) -> rs.getDouble("CLUSTER_RATIO"));
+        return scoreList;
+    }
+
+    public List<Integer> findClusterSize(String psmTableName) {
+        StringBuffer querySql = new StringBuffer("SELECT CLUSTER_SIZE FROM " + psmTableName);
+        List<Integer> scoreList = (List<Integer>) hBaseDao.getJdbcTemplate().query(querySql.toString(), (rs, rowNum) -> rs.getInt("CLUSTER_SIZE"));
+        return scoreList;
+    }
+
+    private List<HistogramBin>getRecommConfidentScoreHistData(String psmTableName, Integer numBins) {
+        List<Double> scoreList = findRecommConfidentScore(psmTableName);
+        return getDoubleHistList(scoreList, numBins);
     }
 
     private List<HistogramBin>getConfidentScoreHistData(String psmTableName, Integer numBins) {
-        StringBuffer querySql = new StringBuffer("SELECT CONF_SC FROM " + psmTableName);
-
-        List<Object> objectList = (List<Object>) hBaseDao.queryList(querySql.toString(), new RowMapper() {
-            @Override
-            public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return ((Object) rs.getDouble("CONF_SC"));
-            }
-        });
-
-        return getFloatHistList(objectList, numBins);
+        List<Double> scoreList = findConfidentScore(psmTableName);
+        return getDoubleHistList(scoreList, numBins);
     }
 
     private List<HistogramBin>getClusterRatioHistData(String psmTableName, Integer numBins) {
-        StringBuffer querySql = new StringBuffer("SELECT CLUSTER_RATIO FROM " + psmTableName);
-
-        List<Object> objectList = (List<Object>) hBaseDao.queryList(querySql.toString(), new RowMapper() {
-            @Override
-            public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return ((Object) rs.getDouble("CLUSTER_RATIO"));
-            }
-        });
-        return getFloatHistList(objectList, numBins);
+        List<Double> sizeList = findClusterRatio(psmTableName);
+        return getDoubleHistList(sizeList, numBins);
     }
 
     private List<HistogramBin>getClusterSizeHistData(String psmTableName, Integer numBins) {
-        StringBuffer querySql = new StringBuffer("SELECT CLUSTER_SIZE FROM " + psmTableName);
+        List<Integer> sizeList = findClusterSize(psmTableName);
+        return getIntHistList(sizeList, numBins);
+    }
 
-        List<Object> objectList = (List<Object>) hBaseDao.queryList(querySql.toString(), new RowMapper() {
-            @Override
-            public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return ((Object) rs.getInt("CLUSTER_SIZE"));
-            }
-        });
 
-        if (objectList.size() < 1) {
+
+    private List<HistogramBin> getIntHistList(List<Integer> integerList, Integer numBins) {
+        if (integerList.size() < 1) {
             List<HistogramBin> binList = new ArrayList<HistogramBin>();
             return binList;
         }
 
-        List<Integer> sizeScoreList = new ArrayList<>();
-        for (Object o1 : objectList
-                ) {
-            Integer i1 = (Integer) o1;
-            sizeScoreList.add(i1);
-        }
+        integerList.sort((a, b) -> Integer.compare(a, b));
 
-        sizeScoreList.sort((a, b) -> Integer.compare(a, b));
-
-        Integer onePercentile = StatisticsUtils.getIntPercentileFromSorted(1, sizeScoreList);
-        Integer lastOnePercentile = StatisticsUtils.getIntPercentileFromSorted(99, sizeScoreList);
+        Integer onePercentile = StatisticsUtils.getIntPercentileFromSorted(1, integerList);
+        Integer lastOnePercentile = StatisticsUtils.getIntPercentileFromSorted(99, integerList);
 
         HistogramBin firstBin = new HistogramBin(1, (double) 0, (double)onePercentile,  0);
         HistogramBin lastBin =  new HistogramBin(numBins, (double) lastOnePercentile, (double) Integer.MAX_VALUE, 0);
 
-        for (int i=sizeScoreList.size()-1; i>=0; i--) {
-            Integer itemI = sizeScoreList.get(i);
+        for (int i=integerList.size()-1; i>=0; i--) {
+            Integer itemI = integerList.get(i);
             if (itemI > lastBin.getLowerBound() && itemI <= lastBin.getUpperBound()) {
                 lastBin.addOne();
-                sizeScoreList.remove(itemI);
+                integerList.remove(itemI);
             }
             if (itemI >= firstBin.getLowerBound() && itemI <= firstBin.getUpperBound()) {
                 firstBin.addOne();
-                sizeScoreList.remove(itemI);
+                integerList.remove(itemI);
             }
         }
-        if (sizeScoreList.size() <= 0) {
+        if (integerList.size() <= 0) {
             List<HistogramBin> binList = new ArrayList<HistogramBin>();
             binList.add(0, firstBin);
             binList.add(binList.size(), lastBin);
             return binList;
         }else {
-            Integer min = sizeScoreList.get(0);
-            Integer max = sizeScoreList.get(sizeScoreList.size() - 1);
-            List<HistogramBin> binList = StatisticsUtils.calcIntHistogram(sizeScoreList, min, max, numBins - 2);
+            Integer min = integerList.get(0);
+            Integer max = integerList.get(integerList.size() - 1);
+            List<HistogramBin> binList = StatisticsUtils.calcIntHistogram(integerList, min, max, numBins - 2);
             binList.add(0, firstBin);
             binList.add(binList.size(), lastBin);
             return binList;
@@ -161,50 +161,49 @@ public class HistogramService {
     }
 
 
-    private List<HistogramBin> getFloatHistList(List<Object> objectList, Integer numBins){
+    /***
+     * calculate the histogram bins based on the double list
+     * @param doubleList
+     * @param numBins
+     * @return
+     */
+    private List<HistogramBin> getDoubleHistList(List<Double> doubleList, Integer numBins){
 
-        if (objectList.size() < 1) {
+        if (doubleList.size() < 1) {
             List<HistogramBin> binList = new ArrayList<HistogramBin>();
             return binList;
         }
 
-        List<Double> floatScoreList = new ArrayList<>();
-        for (Object o1 : objectList
-                ) {
-            Double f1 = (Double) o1;
-            floatScoreList.add(f1);
-        }
+        doubleList.sort((a, b) -> Double.compare(a, b));
 
-        floatScoreList.sort((a, b) -> Double.compare(a, b));
+        Double onePercentile = StatisticsUtils.getPercentileFromSorted(1, doubleList);
+        Double lastOnePercentile = StatisticsUtils.getPercentileFromSorted(99, doubleList);
 
-        Double onePercentile = StatisticsUtils.getPercentileFromSorted(1, floatScoreList);
-        Double lastOnePercentile = StatisticsUtils.getPercentileFromSorted(99, floatScoreList);
-
-        Double lowerBoud = floatScoreList.get(0) <0.0 ? -1.0 : 0.0 ;
-        Double upperBoud = floatScoreList.get(floatScoreList.size() - 1) > 0.0 ? 1.0 : 0.0 ;
+        Double lowerBoud = doubleList.get(0) <0.0 ? -1.0 : 0.0 ;
+        Double upperBoud = doubleList.get(doubleList.size() - 1) > 0.0 ? 1.0 : 0.0 ;
         HistogramBin firstBin = new HistogramBin(1, lowerBoud, onePercentile,  0);
         HistogramBin lastBin =  new HistogramBin(numBins, lastOnePercentile, upperBoud, 0);
 
-        for (int i=floatScoreList.size()-1; i>=0; i--) {
-            Double itemF = floatScoreList.get(i);
+        for (int i=doubleList.size()-1; i>=0; i--) {
+            Double itemF = doubleList.get(i);
             if (itemF > lastBin.getLowerBound() && itemF <= lastBin.getUpperBound()) {
                 lastBin.addOne();
-                floatScoreList.remove(itemF);
+                doubleList.remove(itemF);
             }
             if (itemF >= firstBin.getLowerBound() && itemF <= firstBin.getUpperBound()) {
                 firstBin.addOne();
-                floatScoreList.remove(itemF);
+                doubleList.remove(itemF);
             }
         }
-        if (floatScoreList.size() <= 0) {
+        if (doubleList.size() <= 0) {
             List<HistogramBin> binList = new ArrayList<HistogramBin>();
             binList.add(0, firstBin);
             binList.add(binList.size(), lastBin);
             return binList;
         }else {
-            Double min = floatScoreList.get(0);
-            Double max = floatScoreList.get(floatScoreList.size() - 1);
-            List<HistogramBin> binList = StatisticsUtils.calcHistogram(floatScoreList, min, max, numBins - 2);
+            Double min = doubleList.get(0);
+            Double max = doubleList.get(doubleList.size() - 1);
+            List<HistogramBin> binList = StatisticsUtils.calcHistogram(doubleList, min, max, numBins - 2);
             binList.add(0, firstBin);
             binList.add(binList.size(), lastBin);
             return binList;

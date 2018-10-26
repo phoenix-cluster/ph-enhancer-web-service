@@ -1,7 +1,6 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.service;
 
 import org.apache.commons.io.input.ReversedLinesFileReader;
-import org.apache.hadoop.yarn.webapp.hamlet.Hamlet;
 import org.ncpsb.phoenixcluster.enhancer.webservice.dao.jpa.HBaseDao;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.AnalysisJob;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.PageOfFile;
@@ -9,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.lang.reflect.Array;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 
 @Service
@@ -29,9 +25,17 @@ public class DoAnalysisService {
     @Autowired
     FileUploadService fileUploadService;
 
+    /***
+     * start to do the analysis job, with these parameters
+     * @param myAnalysisId
+     * @param minClusterSize
+     * @param userEmailAdd
+     * @param isPublic
+     * @return
+     */
     public String doAnalysis(Integer myAnalysisId, Integer minClusterSize, String userEmailAdd, Boolean isPublic){
         AnalysisJob analysisJob = fileUploadService.getAnalysisJob(myAnalysisId);
-        fileUploadService.upsertAnalysisRecordMore(myAnalysisId, userEmailAdd, isPublic);
+        fileUploadService.updateAnalysisJobMore(myAnalysisId, userEmailAdd, isPublic);
         Process proc = null;
         File analysisJobFilePath = new File(analysisJob.getFilePath());
         File workingDir = analysisJobFilePath.getParentFile();
@@ -106,6 +110,11 @@ public class DoAnalysisService {
 //        return null;
     }
 
+    /***
+     * check if this analysis job aleady started, by checking the status of the analysis job
+     * @param analysisJobId
+     * @return
+     */
     private boolean isAnalysisStarted(Integer analysisJobId) {
         AnalysisJob analysisJob = fileUploadService.getAnalysisJob(analysisJobId);
         String status = analysisJob.getStatus();
@@ -118,21 +127,39 @@ public class DoAnalysisService {
     }
 
 
+    /***
+     * get analysis job by invock the method in service
+     * @param analysisId
+     * @return
+     */
     public AnalysisJob getAnalysisJob(Integer analysisId) {
         return this.fileUploadService.getAnalysisJob(analysisId);
     }
 
+    /***
+     * find  an analysis job by token (random 20 chars)
+     * @param token
+     * @return
+     */
     public AnalysisJob getAnalysisJobByToken(String token) {
-        return this.fileUploadService.getAnalysisJobByToken(token);
+        return this.fileUploadService.findAnalysisJobByToken(token);
     }
 
-    //Read latest lines from the log file
+
+    /***
+     * Read latest lines from the log file
+     * @param analysisJob
+     * @param startLineNo
+     * @return
+     * @throws FileNotFoundException
+     */
     public PageOfFile getPageFromLog(AnalysisJob analysisJob, Integer startLineNo) throws FileNotFoundException {
         Integer logFileLength = 0, fileLength_toRead = 0;
         PageOfFile pageOfFile  = new PageOfFile(null, 0, 0, 0);
 
         String pathString = analysisJob.getFilePath();
-        String parentDirString = new File(pathString).getParent();
+        File file = new File(pathString);
+        String parentDirString = file.getParent();
         String filePathName = parentDirString + File.separator + analysisJob.getAccessionId()+"_pipeline.log";
         File logFile = new File(filePathName);
         if (logFile.isFile()) {
@@ -177,6 +204,12 @@ public class DoAnalysisService {
         return pageOfFile;
     }
 
+    /***
+     * get the No. of lines of a file
+     * @param input
+     * @return
+     * @throws IOException
+     */
     private static int countLines(File input) throws IOException {
         try (InputStream is = new FileInputStream(input)) {
             int count = 1;

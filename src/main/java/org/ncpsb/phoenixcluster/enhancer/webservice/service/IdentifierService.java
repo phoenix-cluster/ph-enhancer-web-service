@@ -1,7 +1,6 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.service;
 
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.AnalysisJob;
-import org.ncpsb.phoenixcluster.enhancer.webservice.service.FileUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +24,7 @@ public class IdentifierService {
         }
 
         if (idType.equalsIgnoreCase("token")) {
-            AnalysisJob analysisJob = this.fileUploadService.getAnalysisJobByToken(identifier);
+            AnalysisJob analysisJob = this.fileUploadService.findAnalysisJobByToken(identifier);
             analysisJobId = analysisJob.getId();
             accessionId = String.format("E%06d", analysisJobId);
         }

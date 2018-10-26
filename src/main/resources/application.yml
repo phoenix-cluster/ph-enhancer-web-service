@@ -10,10 +10,17 @@ spring.datasource:
 #    url: jdbc:h2:mem:bootexample;MODE=MySQL
     driver-class-name: org.apache.phoenix.jdbc.PhoenixDriver
     url: jdbc:phoenix:192.168.6.20:2181:/hbase
-    type: com.alibaba.druid.pool.DruidDataSource
+#    type: com.alibaba.druid.pool.DruidDataSource
+    type: org.ncpsb.phoenixcluster.enhancer.webservice.model.PhoenixNoPoolingDatasource
+
+#    driver-class-name: com.mysql.jdbc.Driver
+#    url: jdbc:mysql:192.168.6.20:3309/phoenix_enhancer
+#    username: phoenix_enhancer
+#    password: enhancer123
+#    type: com.alibaba.druid.pool.DruidDataSource
 
 server:
-  port: 8090
+  port: 8099
 
 #todo: make sure to always enable security in production
 security:
@@ -22,7 +29,8 @@ security:
 
 #management endpoints on a separate port
 management:
-  port: 8091
+#  port: 8091
+  port: 8098
   security:
     enabled: false # management port is internal only. no need to secure it.
 

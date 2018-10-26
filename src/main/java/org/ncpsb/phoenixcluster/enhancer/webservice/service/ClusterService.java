@@ -3,10 +3,13 @@ package org.ncpsb.phoenixcluster.enhancer.webservice.service;
 
 import org.ncpsb.phoenixcluster.enhancer.webservice.dao.jpa.HBaseDao;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.Cluster;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.ClusterRowMapper;
 import org.ncpsb.phoenixcluster.enhancer.webservice.utils.ClusterUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.jdbc.core.support.JdbcDaoSupport;
+
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,31 +26,31 @@ public class ClusterService {
     private HBaseDao hBaseDao;
     private String clusterTableName ="V_CLUSTER";
 
-    public Cluster getClusterById(String clusterId) {
+    /***
+     * find a cluster by clusterId
+     * @param clusterId
+     * @return
+     */
+    public Cluster findByClusterId(String clusterId) {
 //        StringBuffer clusterSql = new StringBuffer("SELECT * FROM compare_5_clusters");
 //        clusterSql.append("\"ROW\" = '" + clusterId + "'");
-        StringBuffer clusterSql = new StringBuffer("SELECT * FROM  " + clusterTableName + " tb WHERE ");
-        clusterSql.append("\"CLUSTER_ID\" = '" + clusterId + "'");
+        StringBuffer clusterSql = new StringBuffer("SELECT * FROM  " + clusterTableName + " WHERE ");
+        clusterSql.append("\"CLUSTER_ID\" = ? ");
 
-        Cluster cluster = (Cluster) hBaseDao.getCluster(clusterSql.toString(), null, new RowMapper<Cluster>() {
-            @Override
-            public Cluster mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Cluster cluster = new Cluster();
-                cluster.setId(rs.getString("CLUSTER_Id"));
-                cluster.setSpecCount(rs.getInt("N_SPEC"));
-                cluster.setRatio(rs.getFloat("CLUSTER_RATIO"));
-                cluster.setSpectraTitles(ClusterUtils.getStringListFromString(rs.getString("SPECTRA_TITLES"),"\\|\\|"));
-                cluster.setConsensusMz(ClusterUtils.getFloatListFromString(rs.getString("CONSENSUS_MZ"), ","));
-                cluster.setConsensusIntens(ClusterUtils.getFloatListFromString(rs.getString("CONSENSUS_INTENS"), ","));
-                cluster.setSequencesRatios(rs.getString("SEQUENCES_RATIOS"));
-                return cluster;
-            }
-        });
+        Cluster cluster = (Cluster) hBaseDao.getJdbcTemplate().queryForObject(clusterSql.toString(), new Object[] {clusterId},new ClusterRowMapper());
         return cluster;
 //        return (clusters != null && clusters.size() > 0) ? clusters : null;
     }
 
-    public List<String> getClusterIds(Integer page, Integer size, String sortField, String sortDirection) {
+    /***
+     * find All clusterIds, with sorting and pagination
+     * @param page
+     * @param size
+     * @param sortField
+     * @param sortDirection
+     * @return
+     */
+    public List<String> findClusterIds(Integer page, Integer size, String sortField, String sortDirection) {
         if (sortField != null) {
             sortField = sortField.toUpperCase();
         }
@@ -61,16 +64,9 @@ public class ClusterService {
         clusterSql.append(" LIMIT " + size);
         clusterSql.append(" OFFSET " + (page - 1) * size);
 
-        List<String> clusterIds = (List<String>) hBaseDao.query(clusterSql.toString(), null, new RowMapper<Object>() {
-            @Override
-            public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-                String clusterId = rs.getString("CLUSTER_Id");
-                return clusterId;
-            }
-        });
-        for (String clusterId : clusterIds) {
-            System.out.println(":" + clusterId);
-        }
+        List<String> clusterIds = (List<String>) hBaseDao.getJdbcTemplate().query(clusterSql.toString(), (rs, rowNum) ->
+            new String(rs.getString("CLUSTER_Id")));
+
         return (clusterIds != null && clusterIds.size() > 0) ? (List) clusterIds : null;
     }
 }

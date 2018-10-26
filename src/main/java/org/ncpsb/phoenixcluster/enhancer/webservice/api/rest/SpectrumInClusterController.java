@@ -65,7 +65,7 @@ public class SpectrumInClusterController extends AbstractRestHandler {
                              @PathVariable("title") String title,
                                   HttpServletRequest request, HttpServletResponse response) throws Exception {
         System.out.println(title);
-        SpectrumInCluster spectrumInCluster= this.spectrumInClusterService.getSpectrumInClusterByTitle(title);
+        SpectrumInCluster spectrumInCluster= this.spectrumInClusterService.findSpectrumInClusterByTitle(title);
 //        checkResourceFound(cluster);
         //todo: http://goo.gl/6iNAkz
         return spectrumInCluster;
@@ -83,7 +83,7 @@ public class SpectrumInClusterController extends AbstractRestHandler {
                              @PathVariable("titles") String titles,
                                                HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        List<SpectrumInCluster> spectraInCluster = this.spectrumInClusterService.getSpectraInClusterByTitles(titles);
+        List<SpectrumInCluster> spectraInCluster = this.spectrumInClusterService.findSpectraInClusterByTitles(titles);
 //        checkResourceFound(cluster);
         //todo: http://goo.gl/6iNAkz
         return spectraInCluster;

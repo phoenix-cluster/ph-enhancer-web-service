@@ -35,7 +35,7 @@ public class ClusterController extends AbstractRestHandler {
                                       @RequestParam(value = "size", required = true, defaultValue = Configure.DEFAULT_PAGE_SIZE) Integer size,
                                HttpServletRequest request, HttpServletResponse response) {
         assert (page>0 && size>0);
-        List<String> allClusterIds = this.clusterService.getClusterIds(page, size,null, null);
+        List<String> allClusterIds = this.clusterService.findClusterIds(page, size,null, null);
         for (String clusterId : allClusterIds) {
             System.out.println("::::" + clusterId);
         }
@@ -52,7 +52,7 @@ public class ClusterController extends AbstractRestHandler {
     Cluster getCluster(@ApiParam(value = "The Id of the cluster.", required = true)
                              @PathVariable("id") String id,
                              HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Cluster cluster = this.clusterService.getClusterById(id);
+        Cluster cluster = this.clusterService.findByClusterId(id);
         checkResourceFound(cluster);
         //todo: http://goo.gl/6iNAkz
         return cluster;

@@ -223,6 +223,7 @@ public class HBaseDaoImpl implements HBaseDao {
         }
     }
 
+    @Override
     public JdbcTemplate getJdbcTemplate() {
         return jdbcTemplate;
     }

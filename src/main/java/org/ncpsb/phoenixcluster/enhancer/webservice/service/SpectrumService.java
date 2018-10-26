@@ -5,6 +5,7 @@ import org.apache.avro.data.Json;
 import org.mortbay.util.ajax.JSON;
 import org.ncpsb.phoenixcluster.enhancer.webservice.dao.jpa.HBaseDao;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.Spectrum;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.SpectrumRowMapper;
 import org.ncpsb.phoenixcluster.enhancer.webservice.utils.ClusterUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
@@ -22,7 +23,7 @@ import java.util.List;
 
 @Service
 public class SpectrumService{
-    private String spectrumTableName = "T_SPECTRUM";
+    private String spectrumTableNamePrefix = "T_SPECTRUM";
 
     @Autowired
     private HBaseDao hBaseDao;
@@ -80,7 +81,12 @@ public class SpectrumService{
 //        return totalElement;
 //    }
 
-    public List<Spectrum> getSpectraByTitles(String titlesStr) {
+    /***
+     * Dao
+     * @param titlesStr
+     * @return
+     */
+    public List<Spectrum> findSpectraByTitles(String titlesStr) {
         String[] titles = titlesStr.split("\\|\\|");
         String spectrumTableName = getSpectrumTableName(titles[0]);
         StringBuffer querySql = new StringBuffer("SELECT * FROM \"" + spectrumTableName + "\" WHERE SPECTRUM_TITLE in (");
@@ -91,41 +97,40 @@ public class SpectrumService{
         querySql.setLength(querySql.length() - 1);
         querySql.append(")");
 
-//        System.out.println("Going to execute: " + querySql);
-        List<Spectrum> spectra = (List<Spectrum>) hBaseDao.getSpectra(querySql.toString(), null, new RowMapper<Spectrum>() {
-            @Override
-            public Spectrum mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Spectrum spectrum = new Spectrum();
-                spectrum.setTitle(rs.getString("SPECTRUM_TITLE"));
-                spectrum.setCharge(rs.getInt("CHARGE"));
-                spectrum.setPrecursorMz(rs.getFloat("PRECURSOR_MZ"));
-                spectrum.setPrecursorIntens(rs.getFloat("PRECURSOR_INTENS"));
-                spectrum.setPeaklistMz(ClusterUtils.getFloatListFromString(rs.getString("PEAKLIST_MZ"), ","));
-                spectrum.setPeaklistIntens(ClusterUtils.getFloatListFromString(rs.getString("PEAKLIST_INTENS"), ","));
-                return spectrum;
-            }
-        });
+        System.out.println("Going to execute: " + querySql);
+        List<Spectrum> spectra = (List<Spectrum>) hBaseDao.getJdbcTemplate().query(querySql.toString(), new SpectrumRowMapper());
         return (spectra != null && spectra.size() > 0) ? (List) spectra: null;
     }
-    public String getSpecPeptideSeqByTitle(String title){
+
+    /***
+     * Dao
+     * @param title
+     * @return
+     */
+    public String findSpecPeptideSeqByTitle(String title){
         String projectId = title.substring(0,title.indexOf(";"));
         String psmTableName = "T_"+projectId+"_PSM";
         StringBuffer querySql = new StringBuffer("SELECT * FROM " + psmTableName + " WHERE ");
         title = title.trim();
-        querySql.append("SPECTRUM_TITLE = '" + title + "'");
+        querySql.append("SPECTRUM_TITLE = ? ");
         System.out.println(querySql);
-        String peptideSequence = hBaseDao.getSpecPeptideSeq(querySql.toString());
-        String rs = peptideSequence;
-        return rs;
+        String peptideSequence = hBaseDao.getJdbcTemplate().queryForObject(querySql.toString(), new Object[]{title}, (rs, rowNum)->rs.getString("PEPTIDE_SEQUENCE"));
+        return peptideSequence;
     }
 
+    /***
+     *
+     * @param title
+     * @return
+     */
     private String getSpectrumTableName(String title){
+        //todo to modify this for Mysql Dao
         String spectrumTableName = "";
         if(title.startsWith("PXD") || title.startsWith("PRD")) {
-            spectrumTableName = this.spectrumTableName;
+            spectrumTableName = this.spectrumTableNamePrefix;
         }else {
             if (title.startsWith("E")){
-                spectrumTableName = this.spectrumTableName + "_TEST";
+                spectrumTableName = this.spectrumTableNamePrefix + "_TEST";
             }else{
                 System.out.println("ERROR, the spectrum title neither starts with P?D nor E");
                 return null;

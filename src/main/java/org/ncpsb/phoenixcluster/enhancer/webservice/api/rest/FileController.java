@@ -57,7 +57,7 @@ public class FileController extends AbstractRestHandler{
             System.out.println("making dir: " + file);
             file.mkdirs();
         }
-        fileUploadService.upsertAnalysisRecordInfo(jobId, pathname, dateString, 0, "initialed", accessionId);
+        fileUploadService.insertAnalysisJob(jobId, pathname, dateString, 0, "initialed", accessionId);
 
         MultipartHttpServletRequest muti = (MultipartHttpServletRequest) request;
         System.out.println(muti.getMultiFileMap().size());
@@ -77,7 +77,7 @@ public class FileController extends AbstractRestHandler{
             }
             System.out.println("File" + pathname + "  has benn uploaded");
         }
-        fileUploadService.upsertAnalysisRecordStatus(jobId, "uploading");
+        fileUploadService.updateAnalysisJobStatus(jobId, "uploading");
 
         FileUploadResponse fileUploadResponse = new FileUploadResponse("success", jobId, "NULL");
         return fileUploadResponse;
@@ -137,7 +137,7 @@ public class FileController extends AbstractRestHandler{
             System.out.println("you got " + resultFileList.getFileListLength() + ": " + resultFileList.getFileList() + " file in AnalysisJob " + jobId);
             fileUploadResponse.setStatus("success");
             fileUploadService.writeToResultFile(analysisJob.getFilePath(), resultFileList);
-            fileUploadService.upsertAnalysisRecordStatus(jobId, "uploaded");
+            fileUploadService.updateAnalysisJobStatus(jobId, "uploaded");
         }else {
             fileUploadResponse.setStatus("error");
         }

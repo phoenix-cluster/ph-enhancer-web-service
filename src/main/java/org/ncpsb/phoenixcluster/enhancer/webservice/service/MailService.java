@@ -42,7 +42,7 @@ public class MailService {
             System.out.println(analysisJob.getId());
             String sentFlag = prepareAndSendEmail(analysisJob.getEmailAdd(), analysisJob.getStatus(), analysisJob.getId(), analysisJob.getToken());
             if (sentFlag.equalsIgnoreCase("done")) {
-                fileUploadService.upsertAnalysisRecordEmailSentStatus(analysisJob.getId(), true);
+                fileUploadService.updateAnalysisRecordEmailSentStatus(analysisJob.getId(), true);
             }
         }
 //        while (analysisJob.getStatus()!="finished" && analysisJob.getStatus() !="finished_with_error") {
