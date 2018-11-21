@@ -1,16 +1,13 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.service;
 
 
-import org.ncpsb.phoenixcluster.enhancer.webservice.dao.jpa.HBaseDao;
+import org.ncpsb.phoenixcluster.enhancer.webservice.dao.mysql.ScoredPSMDaoMysqlImpl;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.Configure;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.HistogramBin;
 import org.ncpsb.phoenixcluster.enhancer.webservice.utils.StatisticsUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -21,7 +18,7 @@ import java.util.*;
 @Service
 public class HistogramService {
     @Autowired
-    private HBaseDao hBaseDao;
+    private ScoredPSMDaoMysqlImpl scoredPSMDao;
     @Autowired
     private IdentifierService identifierService;
 
@@ -74,47 +71,25 @@ public class HistogramService {
 //        return (clusters != null && clusters.size() > 0) ? clusters : null;
     }
 
-    public List<Double> findRecommConfidentScore(String psmTableName){
-        StringBuffer querySql = new StringBuffer("SELECT RECOMM_SEQ_SC FROM " + psmTableName);
-        List<Double> scoreList = (List<Double>) hBaseDao.getJdbcTemplate().query(querySql.toString(), (rs, rowNum) -> rs.getDouble("RECOMM_SEQ_SC"));
-        return scoreList;
-    }
 
-    public List<Double> findConfidentScore(String psmTableName) {
-        StringBuffer querySql = new StringBuffer("SELECT CONF_SC FROM " + psmTableName);
-        List<Double> scoreList = (List<Double>) hBaseDao.getJdbcTemplate().query(querySql.toString(), (rs, rowNum) -> rs.getDouble("CONF_SC"));
-        return scoreList;
-    }
-
-    public List<Double> findClusterRatio(String psmTableName) {
-        StringBuffer querySql = new StringBuffer("SELECT CLUSTER_RATIO FROM " + psmTableName);
-        List<Double> scoreList = (List<Double>) hBaseDao.getJdbcTemplate().query(querySql.toString(), (rs, rowNum) -> rs.getDouble("CLUSTER_RATIO"));
-        return scoreList;
-    }
-
-    public List<Integer> findClusterSize(String psmTableName) {
-        StringBuffer querySql = new StringBuffer("SELECT CLUSTER_SIZE FROM " + psmTableName);
-        List<Integer> scoreList = (List<Integer>) hBaseDao.getJdbcTemplate().query(querySql.toString(), (rs, rowNum) -> rs.getInt("CLUSTER_SIZE"));
-        return scoreList;
-    }
 
     private List<HistogramBin>getRecommConfidentScoreHistData(String psmTableName, Integer numBins) {
-        List<Double> scoreList = findRecommConfidentScore(psmTableName);
+        List<Double> scoreList = scoredPSMDao.findRecommConfidentScore(psmTableName);
         return getDoubleHistList(scoreList, numBins);
     }
 
     private List<HistogramBin>getConfidentScoreHistData(String psmTableName, Integer numBins) {
-        List<Double> scoreList = findConfidentScore(psmTableName);
+        List<Double> scoreList = scoredPSMDao.findConfidentScore(psmTableName);
         return getDoubleHistList(scoreList, numBins);
     }
 
     private List<HistogramBin>getClusterRatioHistData(String psmTableName, Integer numBins) {
-        List<Double> sizeList = findClusterRatio(psmTableName);
+        List<Double> sizeList = scoredPSMDao.findClusterRatio(psmTableName);
         return getDoubleHistList(sizeList, numBins);
     }
 
     private List<HistogramBin>getClusterSizeHistData(String psmTableName, Integer numBins) {
-        List<Integer> sizeList = findClusterSize(psmTableName);
+        List<Integer> sizeList = scoredPSMDao.findClusterSize(psmTableName);
         return getIntHistList(sizeList, numBins);
     }
 

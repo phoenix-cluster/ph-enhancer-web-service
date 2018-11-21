@@ -12,22 +12,22 @@ import javax.sql.DataSource;
 /**
  * Created by baimi on 2017/10/11.
  */
-public class PhoenixDataSource {
-    @Autowired
-    private Environment env;
-    @Bean(name = "phoenixJdbcDataSource")
-    @Qualifier("phoenixJdbcDataSource")
-    public DataSource dataSource() {
-        DruidDataSource dataSource = new DruidDataSource();
-        dataSource.setUrl(env.getProperty("phoenix.url"));
-        dataSource.setDriverClassName(env.getProperty("phoenix.driver-class-name"));
-        dataSource.setUsername(env.getProperty("phoenix.username"));
-        dataSource.setPassword(env.getProperty("phoenix.password"));
-        dataSource.setDefaultAutoCommit(Boolean.valueOf(env.getProperty("phoenix.default-auto-commit")));
-        return dataSource;
-    }
-    @Bean(name = "phoenixJdbcTemplate")
-    public JdbcTemplate phoenixJdbcTemplate(@Qualifier("phoenixJdbcDataSource") DataSource dataSource) {
-        return new JdbcTemplate(dataSource);
-    }
-}
+//public class PhoenixDataSource {
+//    @Autowired
+//    private Environment env;
+//    @Bean(name = "phoenixJdbcDataSource")
+//    @Qualifier("phoenixJdbcDataSource")
+//    public DataSource dataSource() {
+//        DruidDataSource dataSource = new DruidDataSource();
+//        dataSource.setUrl(env.getProperty("phoenix.url"));
+//        dataSource.setDriverClassName(env.getProperty("phoenix.driver-class-name"));
+//        dataSource.setUsername(env.getProperty("phoenix.username"));
+//        dataSource.setPassword(env.getProperty("phoenix.password"));
+//        dataSource.setDefaultAutoCommit(Boolean.valueOf(env.getProperty("phoenix.default-auto-commit")));
+//        return dataSource;
+//    }
+//    @Bean(name = "phoenixJdbcTemplate")
+//    public JdbcTemplate phoenixJdbcTemplate(@Qualifier("phoenixJdbcDataSource") DataSource dataSource) {
+//        return new JdbcTemplate(dataSource);
+//    }
+//}

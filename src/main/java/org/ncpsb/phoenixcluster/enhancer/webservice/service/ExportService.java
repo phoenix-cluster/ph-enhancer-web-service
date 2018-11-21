@@ -1,19 +1,12 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.service;
 
 
-import org.apache.avro.generic.GenericData;
-import org.ncpsb.phoenixcluster.enhancer.webservice.dao.jpa.HBaseDao;
+import org.ncpsb.phoenixcluster.enhancer.webservice.dao.mysql.ScoredPSMDaoMysqlImpl;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.Configure;
-import org.ncpsb.phoenixcluster.enhancer.webservice.model.HistogramBin;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.ScoredPSM;
-import org.ncpsb.phoenixcluster.enhancer.webservice.utils.StatisticsUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -25,9 +18,7 @@ import java.util.List;
 @Service
 public class ExportService {
     @Autowired
-    private HBaseDao hBaseDao;
-    @Autowired
-    private ScoredPSMService scoredPSMService;
+    private ScoredPSMDaoMysqlImpl scoredPSMDao;
 
 
     /***
@@ -146,7 +137,7 @@ public class ExportService {
         }
 
         if (scRangeHash.get("start") < scRangeHash.get("end")) {
-            List<ScoredPSM> scoredPSMs = scoredPSMService.findScoredPSMsByAcceptance(psmTableName,
+            List<ScoredPSM> scoredPSMs = scoredPSMDao.findScoredPSMsByAcceptance(psmTableName,
                                                          resultType,
                                                          scRangeHash, confidenceScoreType,
                                                          hasAccept, defaultAcceptType, hasRejected);

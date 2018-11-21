@@ -71,7 +71,7 @@ public class StatisticsController extends AbstractRestHandler {
             @ApiParam(value = "Identifier", required = true)
             @RequestParam(value = "identifier", required = true, defaultValue = Configure.DEFAULT_PROJECT_ID) String identifier,
             HttpServletRequest request, HttpServletResponse response) {
-        VennData vennData = this.statisticsService.findVennData(identifier);
+        VennData vennData = this.statisticsService.findVennDataByProjectId(identifier);
         return vennData;
     }
     @RequestMapping(value = "/venndatalist",

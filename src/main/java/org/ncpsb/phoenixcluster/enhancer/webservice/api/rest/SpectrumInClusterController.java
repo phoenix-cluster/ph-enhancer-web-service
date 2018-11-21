@@ -85,7 +85,6 @@ public class SpectrumInClusterController extends AbstractRestHandler {
 
         List<SpectrumInCluster> spectraInCluster = this.spectrumInClusterService.findSpectraInClusterByTitles(titles);
 //        checkResourceFound(cluster);
-        //todo: http://goo.gl/6iNAkz
         return spectraInCluster;
     }
 

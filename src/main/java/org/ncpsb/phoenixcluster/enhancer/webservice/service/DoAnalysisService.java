@@ -1,7 +1,7 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.service;
 
 import org.apache.commons.io.input.ReversedLinesFileReader;
-import org.ncpsb.phoenixcluster.enhancer.webservice.dao.jpa.HBaseDao;
+import org.ncpsb.phoenixcluster.enhancer.webservice.dao.mysql.AnalysisJobDaoMysqlImpl;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.AnalysisJob;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.PageOfFile;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.util.Collections;
 public class DoAnalysisService {
 
     @Autowired
-    private HBaseDao hBaseDao;
+    private AnalysisJobDaoMysqlImpl analysisJobDao;
 
     @Autowired
     MailService mailService;
@@ -35,7 +35,7 @@ public class DoAnalysisService {
      */
     public String doAnalysis(Integer myAnalysisId, Integer minClusterSize, String userEmailAdd, Boolean isPublic){
         AnalysisJob analysisJob = fileUploadService.getAnalysisJob(myAnalysisId);
-        fileUploadService.updateAnalysisJobMore(myAnalysisId, userEmailAdd, isPublic);
+        analysisJobDao.updateAnalysisJobMore(myAnalysisId, userEmailAdd, isPublic);
         Process proc = null;
         File analysisJobFilePath = new File(analysisJob.getFilePath());
         File workingDir = analysisJobFilePath.getParentFile();
@@ -48,7 +48,7 @@ public class DoAnalysisService {
                 return "The analysis job has been started";
             }
             String pythonPath = "/usr/bin/python3 ";
-            String pipelinePath = "/home/ubuntu/mingze/tools/spectra-library-analysis/analysis_pipeline_new.py ";
+            String pipelinePath = "/home/ubuntu/mingze/tools/spectra-library-analysis/analysis_pipeline.py ";
             String parameterAccessionId = "-p " + accessionId + " ";
             String parameterClusterSize = "-s " + minClusterSize + " ";
             String parameterQuiet= "-t y ";
@@ -142,7 +142,7 @@ public class DoAnalysisService {
      * @return
      */
     public AnalysisJob getAnalysisJobByToken(String token) {
-        return this.fileUploadService.findAnalysisJobByToken(token);
+        return analysisJobDao.findAnalysisJobByToken(token);
     }
 
 

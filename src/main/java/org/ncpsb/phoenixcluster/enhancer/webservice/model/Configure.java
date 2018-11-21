@@ -19,7 +19,7 @@ public class Configure {
     public static final String NEW_PSM_VIEW= "V_PXD000021_NEW_PSM";
     public static final String CLUSTER_TABLE = "V_CLUSTER";
     public static final String SPECTRUM_TABLE = "V_CLUSTER_SPEC";
-    public static final String PROJECT_RECORD_TABLE = "T_PROJECT_ANALYSIS_RECORD";
+    public static final String PROJECT_RESULT_TABLE = "T_PROJECT_ANALYSIS_RESULT";
     public static final String ANALYSIS_DATA_PATH = "/data/phoenix_enhancer";
 
     public static final HashMap<String, String> COLUMN_MAP = new HashMap<String, String>() {{

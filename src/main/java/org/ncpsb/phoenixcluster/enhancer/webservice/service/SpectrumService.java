@@ -1,19 +1,15 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.service;
 
 
-import org.apache.avro.data.Json;
-import org.mortbay.util.ajax.JSON;
-import org.ncpsb.phoenixcluster.enhancer.webservice.dao.jpa.HBaseDao;
+import org.ncpsb.phoenixcluster.enhancer.webservice.dao.mysql.SpectrumDaoMysqlImpl;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.Spectrum;
-import org.ncpsb.phoenixcluster.enhancer.webservice.model.SpectrumRowMapper;
-import org.ncpsb.phoenixcluster.enhancer.webservice.utils.ClusterUtils;
+import org.ncpsb.phoenixcluster.enhancer.webservice.utils.TableName;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -23,121 +19,53 @@ import java.util.List;
 
 @Service
 public class SpectrumService{
-    private String spectrumTableNamePrefix = "T_SPECTRUM";
 
     @Autowired
-    private HBaseDao hBaseDao;
-
-
-//    public List<Spectrum> getSpectra(Integer page, Integer size, String clusterID) {
-//
-//        StringBuffer querySql = new StringBuffer("SELECT * FROM " + spectrumTableName);
-//        querySql.append(" LIMIT " + size);
-//        querySql.append(" OFFSET " + (page - 1) * size);
-//
-//        System.out.println("Going to execute: " + querySql);
-//        List<Spectrum> scoredPSMs = (List<Spectrum>) hBaseDao.getSpectra(querySql.toString(), null, new RowMapper<Spectrum>() {
-//            @Override
-//            public Spectrum mapRow(ResultSet rs, int rowNum) throws SQLException {
-//                Spectrum spectrum = new Spectrum();
-//                spectrum.setTitle(rs.getString(""));
-//                spectrum.setClusterId(rs.getString("CLUSTER_FK"));
-//                spectrum.setPrecursorMz(rs.getFloat(""));
-//                spectrum.setCharge(rs.getInt(""));
-//                spectrum.setSequence(rs.getString(""));
-//
-//                return spectrum;
-//            }
-//        });
-//        return (scoredPSMs != null && scoredPSMs.size() > 0) ? (List) scoredPSMs : null;
-//    }
+    private SpectrumDaoMysqlImpl spectrumDao;
 
     public Spectrum getSpectrumByTitle(String title) {
-        String spectrumTableName = getSpectrumTableName(title);
-        StringBuffer querySql = new StringBuffer("SELECT * FROM \"" + spectrumTableName + "\" WHERE ");
-        title = title.trim();
-        querySql.append("SPECTRUM_TITLE = '" + title + "'");
-        System.out.println(querySql);
-
-        Spectrum spectrum = (Spectrum) hBaseDao.getSpectrum(querySql.toString(), null, new RowMapper<Spectrum>() {
-            @Override
-            public Spectrum mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Spectrum spectrum = new Spectrum();
-                spectrum.setTitle(rs.getString("SPECTRUM_TITLE"));
-                spectrum.setCharge(rs.getInt("CHARGE"));
-                spectrum.setPrecursorMz(rs.getFloat("PRECURSOR_MZ"));
-                spectrum.setPrecursorIntens(rs.getFloat("PRECURSOR_INTENS"));
-                spectrum.setPeaklistMz(ClusterUtils.getFloatListFromString(rs.getString("PEAKLIST_MZ"), ","));
-                spectrum.setPeaklistIntens(ClusterUtils.getFloatListFromString(rs.getString("PEAKLIST_INTENS"), ","));
-                return spectrum;
-            }
-        });
-        return spectrum;
+        return spectrumDao.findSpectrumByTitle(title);
     }
 
-//    public Integer totalSpectrum(String clusterID) {
-//        StringBuffer querySql = new StringBuffer("SELECT COUNT(*) AS total FROM " + spectrumTableName + "WHERE CLUSTER_FK='" + clusterID + "'");
-//        Integer totalElement = (Integer) hBaseDao.queryTotal(querySql.toString());
-//        return totalElement;
-//    }
+    public String findSpecPeptideSeqByTitle(String title){
+        return spectrumDao.findSpecPeptideSeqByTitle(title);
+    }
 
-    /***
-     * Dao
-     * @param titlesStr
-     * @return
-     */
     public List<Spectrum> findSpectraByTitles(String titlesStr) {
         String[] titles = titlesStr.split("\\|\\|");
-        String spectrumTableName = getSpectrumTableName(titles[0]);
-        StringBuffer querySql = new StringBuffer("SELECT * FROM \"" + spectrumTableName + "\" WHERE SPECTRUM_TITLE in (");
-        for (String title : titles){
-            title = title.trim();
-            querySql.append("'" + title + "',");
+        List<String> titleList = new ArrayList<String>(Arrays.asList(titles));
+        HashMap<String, ArrayList<String>> projectTitlesMap = new HashMap<>();
+        for (String title : titleList) {
+            String projectId = TableName.getProjectId(title);
+            if (projectTitlesMap.containsKey(projectId)) {
+                ArrayList<String> titlesInProject = projectTitlesMap.get(projectId);
+                titlesInProject.add(title);
+                projectTitlesMap.put(projectId, titlesInProject);
+            }
+            else{
+                ArrayList<String> titlesInProject = new ArrayList<>();
+                titlesInProject.add(title);
+                projectTitlesMap.put(projectId, titlesInProject);
+            }
+
         }
-        querySql.setLength(querySql.length() - 1);
-        querySql.append(")");
 
-        System.out.println("Going to execute: " + querySql);
-        List<Spectrum> spectra = (List<Spectrum>) hBaseDao.getJdbcTemplate().query(querySql.toString(), new SpectrumRowMapper());
-        return (spectra != null && spectra.size() > 0) ? (List) spectra: null;
-    }
+        ArrayList<Spectrum> spectraInCluster = new ArrayList<>();
 
-    /***
-     * Dao
-     * @param title
-     * @return
-     */
-    public String findSpecPeptideSeqByTitle(String title){
-        String projectId = title.substring(0,title.indexOf(";"));
-        String psmTableName = "T_"+projectId+"_PSM";
-        StringBuffer querySql = new StringBuffer("SELECT * FROM " + psmTableName + " WHERE ");
-        title = title.trim();
-        querySql.append("SPECTRUM_TITLE = ? ");
-        System.out.println(querySql);
-        String peptideSequence = hBaseDao.getJdbcTemplate().queryForObject(querySql.toString(), new Object[]{title}, (rs, rowNum)->rs.getString("PEPTIDE_SEQUENCE"));
-        return peptideSequence;
-    }
-
-    /***
-     *
-     * @param title
-     * @return
-     */
-    private String getSpectrumTableName(String title){
-        //todo to modify this for Mysql Dao
-        String spectrumTableName = "";
-        if(title.startsWith("PXD") || title.startsWith("PRD")) {
-            spectrumTableName = this.spectrumTableNamePrefix;
-        }else {
-            if (title.startsWith("E")){
-                spectrumTableName = this.spectrumTableNamePrefix + "_TEST";
-            }else{
-                System.out.println("ERROR, the spectrum title neither starts with P?D nor E");
-                return null;
+        for (String projectId : projectTitlesMap.keySet()) {
+            List<String> titleListTemp = projectTitlesMap.get(projectId);
+            String tableName = "T_SPECTRUM_" + projectId;
+            List<Spectrum> spectrums = spectrumDao.findSpectraByTitles(titleListTemp, tableName);
+            if (spectrums != null) {
+                System.out.println("Got " + spectrums.size() + " spectra for " + projectId);
+                spectraInCluster.addAll(spectrums);
             }
         }
-        return spectrumTableName;
+
+        return  spectraInCluster;
+//        return spectrumInClusterDao.findSpectraInClusterByTitles(titleList, );
     }
+
 }
 
 

@@ -57,7 +57,7 @@ public class FileController extends AbstractRestHandler{
             System.out.println("making dir: " + file);
             file.mkdirs();
         }
-        fileUploadService.insertAnalysisJob(jobId, pathname, dateString, 0, "initialed", accessionId);
+        fileUploadService.updateAnalysisJob(jobId, pathname, dateString, 0, "initialed", accessionId);
 
         MultipartHttpServletRequest muti = (MultipartHttpServletRequest) request;
         System.out.println(muti.getMultiFileMap().size());

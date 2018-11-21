@@ -1,16 +1,18 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.service;
 
 
-import org.ncpsb.phoenixcluster.enhancer.webservice.dao.jpa.HBaseDao;
+import org.jcodings.util.Hash;
+import org.ncpsb.phoenixcluster.enhancer.webservice.dao.mysql.SpectrumInClusterDaoMysqlImpl;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.SpectrumInCluster;
-import org.ncpsb.phoenixcluster.enhancer.webservice.model.SpectrumInClusterRowMapper;
+import org.ncpsb.phoenixcluster.enhancer.webservice.utils.TableName;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Created by baimi on 2017/10/11.
@@ -19,13 +21,47 @@ import java.util.List;
 
 @Service
 public class SpectrumInClusterService {
-    private String clusterTableName = "V_CLUSTER";
-    private String spectrumTableName = "V_CLUSTER_SPEC";
 
     @Autowired
-    private HBaseDao hBaseDao;
+    private SpectrumInClusterDaoMysqlImpl spectrumInClusterDao;
 
 
+    public List<SpectrumInCluster> findSpectraInClusterByTitles(String titlesStr) {
+        String[] titles = titlesStr.split("\\|\\|");
+        List<String> titleList = new ArrayList<String>(Arrays.asList(titles));
+        HashMap<String, ArrayList<String>> projectTitlesMap = new HashMap<>();
+        for (String title : titleList) {
+            String projectId = TableName.getProjectId(title);
+            if (projectTitlesMap.containsKey(projectId)) {
+                ArrayList<String> titlesInProject = projectTitlesMap.get(projectId);
+                titlesInProject.add(title);
+                projectTitlesMap.put(projectId, titlesInProject);
+            }
+            else{
+                ArrayList<String> titlesInProject = new ArrayList<>();
+                titlesInProject.add(title);
+                projectTitlesMap.put(projectId, titlesInProject);
+            }
+
+        }
+
+        ArrayList<SpectrumInCluster> spectraInCluster = new ArrayList<>();
+
+        for (String projectId : projectTitlesMap.keySet()) {
+            List<String> titleListTemp = projectTitlesMap.get(projectId);
+            String tableName = "T_CLUSTER_SPEC_" + projectId;
+            spectraInCluster.addAll(spectrumInClusterDao.findSpectraInClusterByTitles(titleListTemp, tableName));
+        }
+
+        return  spectraInCluster;
+//        return spectrumInClusterDao.findSpectraInClusterByTitles(titleList, );
+    }
+
+
+    public SpectrumInCluster findSpectrumInClusterByTitle(String title) {
+        String tableName = TableName.getSpectrumTableName(title, "T_CLUSTER_SPEC_");
+        return spectrumInClusterDao.findSpectrumInClusterByTitle(title, tableName);
+    }
 //    public List<Spectrum> getSpectraInCluster(Integer page, Integer size, String clusterID) {
 //
 //        StringBuffer querySql = new StringBuffer("SELECT * FROM " + spectrumTableName);
@@ -49,51 +85,7 @@ public class SpectrumInClusterService {
 //        return (scoredPSMs != null && scoredPSMs.size() > 0) ? (List) scoredPSMs : null;
 //    }
 
-    /***
-     * Dao
-     * @param title
-     * @return
-     */
-    public SpectrumInCluster findSpectrumInClusterByTitle(String title) {
-        StringBuffer querySql = new StringBuffer("SELECT * FROM \"" + spectrumTableName + "\" WHERE ");
-        title = title.trim();
-        querySql.append("SPEC_TITLE = ? ");
-        System.out.println(querySql);
-        SpectrumInCluster scoredPSM = (SpectrumInCluster) hBaseDao.getJdbcTemplate().queryForObject(querySql.toString(),
-                new Object[] {title}, new SpectrumInClusterRowMapper());
-        return scoredPSM;
-    }
 
-    /***
-     * Dao
-     * @param clusterID
-     * @return
-     */
-    public Integer findTotalSpectrumInCluster(String clusterID) {
-        StringBuffer querySql = new StringBuffer("SELECT COUNT(*) AS total FROM " + spectrumTableName + "WHERE CLUSTER_FK= ?");
-        Integer totalElement = (Integer) hBaseDao.getJdbcTemplate().queryForObject(querySql.toString(), new Object[]{clusterID}, Integer.class);
-        return totalElement;
-    }
-
-    /***
-     * Dao
-     * @param titlesStr
-     * @return
-     */
-    public List<SpectrumInCluster> findSpectraInClusterByTitles(String titlesStr) {
-        StringBuffer querySql = new StringBuffer("SELECT * FROM \"" + spectrumTableName + "\" WHERE SPEC_TITLE in (");
-        String[] titles = titlesStr.split("\\|\\|");
-        for (String title : titles){
-            title = title.trim();
-            querySql.append("'" + title + "',");
-        }
-        querySql.setLength(querySql.length() - 1);
-        querySql.append(")");
-        System.out.println("Going to execute: " + querySql);
-        List<SpectrumInCluster> spectra = (List<SpectrumInCluster>) hBaseDao.getJdbcTemplate().query(querySql.toString(),
-                                     new SpectrumInClusterRowMapper());
-        return (spectra != null && spectra.size() > 0) ? (List) spectra: null;
-    }
 }
 
 

@@ -105,4 +105,20 @@ public class AnalysisJob {
     public void setAccessionId(String accessionId) {
         this.accessionId = accessionId;
     }
+
+    @Override
+    public String toString() {
+        return "AnalysisJob{" +
+                "id=" + id +
+                ", filePath='" + filePath + '\'' +
+                ", uploadDate='" + uploadDate + '\'' +
+                ", userId=" + userId +
+                ", status='" + status + '\'' +
+                ", isPublic=" + isPublic +
+                ", token='" + token + '\'' +
+                ", emailAdd='" + emailAdd + '\'' +
+                ", isEmailSent=" + isEmailSent +
+                ", accessionId='" + accessionId + '\'' +
+                '}';
+    }
 }

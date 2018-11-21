@@ -10,6 +10,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.ncpsb.phoenixcluster.enhancer.webservice.dao.mysql.AnalysisJobDaoMysqlImpl;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.AnalysisJob;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,11 +19,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class MailService {
 
-
     @Autowired
-    DoAnalysisService doAnalysisService;
-    @Autowired
-    FileUploadService fileUploadService;
+    private AnalysisJobDaoMysqlImpl analysisJobDao ;
 
     @Value("${mail.user}")
     String username ;
@@ -34,7 +32,7 @@ public class MailService {
     String mailSmtpPort;
 
     public String checkAnalysisToSendEmail() {
-        List<AnalysisJob> analysisJobs =fileUploadService.getAnalysisJobsToSentEmail();
+        List<AnalysisJob> analysisJobs = analysisJobDao.getAnalysisJobsToSentEmail();
         if (analysisJobs == null || analysisJobs.size() <=0){
             return null;
         }
@@ -42,7 +40,7 @@ public class MailService {
             System.out.println(analysisJob.getId());
             String sentFlag = prepareAndSendEmail(analysisJob.getEmailAdd(), analysisJob.getStatus(), analysisJob.getId(), analysisJob.getToken());
             if (sentFlag.equalsIgnoreCase("done")) {
-                fileUploadService.updateAnalysisRecordEmailSentStatus(analysisJob.getId(), true);
+                analysisJobDao.updateAnalysisRecordEmailSentStatus(analysisJob.getId(), true);
             }
         }
 //        while (analysisJob.getStatus()!="finished" && analysisJob.getStatus() !="finished_with_error") {

@@ -1,5 +1,6 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.service;
 
+import org.ncpsb.phoenixcluster.enhancer.webservice.dao.mysql.AnalysisJobDaoMysqlImpl;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.AnalysisJob;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,14 +10,14 @@ import java.util.regex.Pattern;
 @Service
 public class IdentifierService {
     @Autowired
-    private FileUploadService fileUploadService;
+    private AnalysisJobDaoMysqlImpl analysisJobDao;
     public String getJobAccession(String identifier) {
         String idType = getIdType(identifier);
         String accessionId = null;
         Integer analysisJobId = 0;
         if (idType.equalsIgnoreCase("ex")) {
             analysisJobId = Integer.valueOf(identifier.substring(1, identifier.length()));
-            AnalysisJob analysisJob = this.fileUploadService.getAnalysisJob(analysisJobId);
+            AnalysisJob analysisJob = analysisJobDao.getAnalysisJob(analysisJobId);
             if (!analysisJob.getPublic()) {
                 return null;
             }
@@ -24,7 +25,7 @@ public class IdentifierService {
         }
 
         if (idType.equalsIgnoreCase("token")) {
-            AnalysisJob analysisJob = this.fileUploadService.findAnalysisJobByToken(identifier);
+            AnalysisJob analysisJob = analysisJobDao.findAnalysisJobByToken(identifier);
             analysisJobId = analysisJob.getId();
             accessionId = String.format("E%06d", analysisJobId);
         }
