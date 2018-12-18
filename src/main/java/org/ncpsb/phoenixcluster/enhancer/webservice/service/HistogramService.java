@@ -33,8 +33,14 @@ public class HistogramService {
     public List<HistogramBin> getHistDataForDifferenetScAndFiled(String identifier, String type, String fieldType, Integer numBins) {
         String psmTableName = "";
         String accessionId = this.identifierService.getJobAccession(identifier);
+        if(accessionId == null){
+            System.out.println("Null accessionId");
+            return null;
+        }
         switch (type) {
             case ("negscore"): {
+                System.out.println(Configure.DEFAULT_PROJECT_ID);
+                System.out.println(accessionId);
                 psmTableName = Configure.NEG_SCORE_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID, accessionId);
                 break;
             }

@@ -38,7 +38,8 @@ public class MailService {
         }
         for (AnalysisJob analysisJob : analysisJobs) {
             System.out.println(analysisJob.getId());
-            String sentFlag = prepareAndSendEmail(analysisJob.getEmailAdd(), analysisJob.getStatus(), analysisJob.getId(), analysisJob.getToken());
+            String longJobId = String.format("E%06d", analysisJob.getId());
+            String sentFlag = prepareAndSendEmail(analysisJob.getEmailAdd(), analysisJob.getStatus(), longJobId, analysisJob.getToken());
             if (sentFlag.equalsIgnoreCase("done")) {
                 analysisJobDao.updateAnalysisRecordEmailSentStatus(analysisJob.getId(), true);
             }
@@ -49,9 +50,9 @@ public class MailService {
         return null;
     }
 
-    private String prepareAndSendEmail(String toAddress, String analysisJobFinalStatus, Integer analysisJobId, String analysisJobToken) {
+    private String prepareAndSendEmail(String toAddress, String analysisJobFinalStatus, String longJobId, String analysisJobToken) {
         String subject = "Phoenix Enhancer Analysis Job Finished";
-        String emailContent = prepareEmailContent(analysisJobFinalStatus, analysisJobId, analysisJobToken);
+        String emailContent = prepareEmailContent(analysisJobFinalStatus, longJobId, analysisJobToken);
         return (sendEmail(toAddress, subject, emailContent));
     }
 
@@ -91,23 +92,24 @@ public class MailService {
         }
     }
 
-    public String prepareEmailContent(String analysisJobFinalStatus, Integer analysisJobId, String analysisJobToken) {
+    public String prepareEmailContent(String analysisJobFinalStatus, String longJobId, String analysisJobToken) {
         StringBuffer mailContent = new StringBuffer();
         mailContent.append("Dear User, \n\n");
         if (analysisJobFinalStatus.equalsIgnoreCase("finished")) {
             mailContent.append("Your analysis job on Phenix Ehnacer was finished, please go to " + "http://enhancer.ncpsb.org/job_progress/" + analysisJobToken + " for details\n");
-            mailContent.append("and to http://enhancer.ncpsb.org/high_conf/" + analysisJobId + " for checking your results." + "\n");
+            mailContent.append("and to http://enhancer.ncpsb.org/high_conf/" + analysisJobToken + " for checking your results." + "\n");
+            mailContent.append("if your analysis job is public, you and other people can access it by http://enhancer.ncpsb.org/high_conf/" + longJobId + "." + "\n");
         }
         else {
             if(analysisJobFinalStatus.equalsIgnoreCase("finished_with_error")) {
                 mailContent.append("Your analysis job on Phenix Ehnacer was finished, but with error, please go to " + "http://enhancer.ncpsb.org/job_progress/" + analysisJobToken + " for details\n");
             }
             else {
-                System.out.println("The status of analysis job " + analysisJobId + "error, neither 'finished' nor 'finished_with_error'");
+                System.out.println("The status of analysis job " + longJobId + "error, neither 'finished' nor 'finished_with_error'");
                 return null;
             }
         }
-        mailContent.append("Your analysis job's Id is " + analysisJobId +" and token is " + analysisJobToken +".\n");
+        mailContent.append("Your analysis job's Id is " + longJobId +" and token is " + analysisJobToken +".\n");
         mailContent.append("If you have any questions, please contact our supporting group by replying this email." +"\n");
         mailContent.append("\n\n");
         mailContent.append("Best regards," + "\n");

@@ -134,7 +134,7 @@ public class FileController extends AbstractRestHandler{
         AnalysisJob analysisJob = fileUploadService.getAnalysisJob(jobId);
         boolean correctFlag = fileUploadService.isFileListCorrect(resultFileList, jobId, fileUploadResponse, analysisJob);
         if (correctFlag) {
-            System.out.println("you got " + resultFileList.getFileListLength() + ": " + resultFileList.getFileList() + " file in AnalysisJob " + jobId);
+            System.out.println("you got " + resultFileList.getFileListLength() + ": " + resultFileList.getFileNameList() + " file in AnalysisJob " + jobId);
             fileUploadResponse.setStatus("success");
             fileUploadService.writeToResultFile(analysisJob.getFilePath(), resultFileList);
             fileUploadService.updateAnalysisJobStatus(jobId, "uploaded");

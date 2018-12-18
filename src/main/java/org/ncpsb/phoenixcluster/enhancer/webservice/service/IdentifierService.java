@@ -19,6 +19,7 @@ public class IdentifierService {
             analysisJobId = Integer.valueOf(identifier.substring(1, identifier.length()));
             AnalysisJob analysisJob = analysisJobDao.getAnalysisJob(analysisJobId);
             if (!analysisJob.getPublic()) {
+                System.out.println("This analysis job " + analysisJobId + " is not public!");
                 return null;
             }
             accessionId = identifier;

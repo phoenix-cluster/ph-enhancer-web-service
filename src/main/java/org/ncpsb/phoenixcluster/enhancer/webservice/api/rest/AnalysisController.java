@@ -10,6 +10,7 @@ import org.apache.catalina.servlet4preview.ServletContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("example/v1/analysis")
@@ -63,9 +64,14 @@ public class AnalysisController {
         @RequestParam(value = "token", required = true, defaultValue = "8kmv54bhed") String analysisJobToken,
         @RequestParam(value = "startLineNo", required = true, defaultValue = "1")
         @ApiParam(value = "start line No.", required = true)Integer startLine
-    ) throws FileNotFoundException {
+    ) {
         AnalysisJob analysisJob = this.doAnalysisService.getAnalysisJobByToken(analysisJobToken);
-        PageOfFile pageOfLogFile = doAnalysisService.getPageFromLog(analysisJob, startLine);
+        PageOfFile pageOfLogFile;
+        try {
+            pageOfLogFile = doAnalysisService.getPageFromLog(analysisJob, startLine);
+        } catch (FileNotFoundException e) {
+            return new PageOfFile(new ArrayList<String>(), 0, 0, 0);
+        }
         return pageOfLogFile;
     }
 

@@ -69,6 +69,10 @@ public class ExportController extends AbstractRestHandler {
             HttpServletRequest request, HttpServletResponse response) {
 
         String accessionId = this.identifierService.getJobAccession(identifier);
+        if(accessionId == null){
+            System.out.println("Null accessionId");
+            return "{\"error\":\" Null accessionId or not public \"}";
+        }
         System.out.println("identifier " + identifier  + " ---> " + accessionId + "(accessionId)");
         List<ScoredPSM> exportedRecommBetterPsms = this.exportService.getExportedPsmSingleType(accessionId, "negscore", recommendScRange,
                 hasAccept, defaultAcceptType, hasRejected);

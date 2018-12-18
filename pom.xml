@@ -6,8 +6,8 @@
 	<groupId>org.ncpsb</groupId>
 	<artifactId>phoenix-cluster-enhancer-webservice</artifactId>
 	<version>0.4.0</version>
-	<packaging>war</packaging>
-	<description>Example project demonstrating REST APIs implemented using Spring Boot, in-memory database, embedded Tomcat, Swagger, JsonPath, Hamcrest and MockMVC</description>
+	<packaging>jar</packaging>
+	<description>Phoenix Enhancer Web Service </description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -40,10 +40,10 @@
 		</dependency>
 
 		<!-- Spring security -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>org.springframework.boot</groupId>-->
+			<!--<artifactId>spring-boot-starter-security</artifactId>-->
+		<!--</dependency>-->
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -219,6 +219,12 @@
 			<version>2.2.2</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>springloaded</artifactId>
+			<version>1.2.5.RELEASE</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -246,6 +252,15 @@
 					<addResources>false</addResources>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<mainClass>org.ncpsb.phoenixcluster.enhancer.webservice.Application</mainClass>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 </project>

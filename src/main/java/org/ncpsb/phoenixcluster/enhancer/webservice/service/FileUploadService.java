@@ -5,6 +5,7 @@ import org.apache.commons.text.RandomStringGenerator;
 import org.ncpsb.phoenixcluster.enhancer.webservice.dao.mysql.AnalysisJobDaoMysqlImpl;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.FileUploadResponse;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.AnalysisJob;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.ResultFile;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.ResultFileList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -99,7 +100,7 @@ public class FileUploadService {
             return isCorrect;
         }
 
-        for (String fileName : resultFileList.getFileList()) {
+        for (String fileName : resultFileList.getFileNameList()) {
             File file = new File(analysisJob.getFilePath() + File.separator + fileName);
             if (!file.exists() || !file.isFile() || file.length() < 1) {
                 System.out.println("Error, the file in analysis job " + myAnalysisId + " does not exist or is empty: " + file);
@@ -120,8 +121,11 @@ public class FileUploadService {
         PrintWriter writer = null;
         try {
             writer = new PrintWriter(targetFile, "UTF-8");
-            for (String fileName:resultFileList.getFileList()) {
-                writer.println(fileName);
+            writer.println("fileName" + "\t" + "fileType");
+            for (int i=0; i<resultFileList.getFileNameList().size(); i++) {
+                String fileName = resultFileList.getFileNameList().get(i);
+                String fileType = resultFileList.getFileTypeList().get(i);
+                writer.println(fileName + "\t" + fileType);
             }
             writer.close();
         } catch (FileNotFoundException e) {

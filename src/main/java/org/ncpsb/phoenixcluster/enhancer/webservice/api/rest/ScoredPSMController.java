@@ -58,6 +58,10 @@ public class ScoredPSMController extends AbstractRestHandler {
 //        return this.clusterService.getAllClusterIDs(page, size,null, null);
 //        List<ScoredPSM> scoredPSMs = this.scoredPSMService.getScoredPSMs(page, size,null, null);
         String accessionId = this.identifierService.getJobAccession(identifier);
+        if(accessionId == null){
+            System.out.println("Null accessionId");
+            return null;
+        }
         List<ScoredPSMForWeb> scoredPSMsForWeb = this.scoredPSMService.getScoredPSMsForWeb(accessionId, page, size, sortField, sortDirection, "negscore");
         Integer totalElements = this.scoredPSMService.findTotalScoredPSM(accessionId, "negscore");
         Integer totalPages = (int) Math.ceil((totalElements + 0.0) / size);
@@ -101,6 +105,10 @@ public class ScoredPSMController extends AbstractRestHandler {
 //        return this.clusterService.getAllClusterIDs(page, size,null, null);
 //        List<ScoredPSM> scoredPSMs = this.scoredPSMService.getScoredPSMs(page, size,null, null);
         String accessionId = this.identifierService.getJobAccession(identifier);
+        if(accessionId == null){
+            System.out.println("Null accessionId");
+            return null;
+        }
         System.out.println("identifier " + identifier  + " ---> " + accessionId + "(accessionId)");
         List<ScoredPSMForWeb> scoredPSMsForWeb = this.scoredPSMService.getScoredPSMsForWeb(accessionId, page, size, sortField, sortDirection, "posscore");
         Integer totalElements = this.scoredPSMService.findTotalScoredPSM(accessionId, "posscore");
@@ -146,6 +154,10 @@ public class ScoredPSMController extends AbstractRestHandler {
 //        return this.clusterService.getAllClusterIDs(page, size,null, null);
 //        List<ScoredPSM> scoredPSMs = this.scoredPSMService.getScoredPSMs(page, size,null, null);
         String accessionId = this.identifierService.getJobAccession(identifier);
+        if(accessionId == null){
+            System.out.println("Null accessionId");
+            return null;
+        }
         List<ScoredPSMForWeb> scoredPSMsForWeb = this.scoredPSMService.getScoredPSMsForWeb(accessionId, page, size, sortField, sortDirection, "newid");
         Integer totalElements = this.scoredPSMService.findTotalScoredPSM(accessionId, "newid");
         Integer totalPages = (int) Math.ceil((totalElements + 0.0) / size);
@@ -195,6 +207,10 @@ public class ScoredPSMController extends AbstractRestHandler {
             return new ResponseEntity<String>("Empty acceptance map.", HttpStatus.BAD_REQUEST);
         }
         String accessionId = this.identifierService.getJobAccession(identifier);
+        if(accessionId == null){
+            System.out.println("Null accessionId");
+            return null;
+        }
         return (this.scoredPSMService.updateUserAcceptance(accessionId, psmtype, acceptanceMap));
     }
 
