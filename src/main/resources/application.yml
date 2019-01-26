@@ -2,37 +2,6 @@
 ### This file is in Yaml format but you can also configure spring boot using the traditional
 ### Java properties file format. 
 
-spring.jmx:
-   enabled: false
-
-spring.datasource:
-#    driverClassName: org.h2.Driver
-#    url: jdbc:h2:mem:bootexample;MODE=MySQL
-#    driver-class-name: org.apache.phoenix.jdbc.PhoenixDriver
-#    url: jdbc:phoenix:192.168.6.20:2181:/hbase
-#    type: com.alibaba.druid.pool.DruidDataSource
-#    type: org.ncpsb.phoenixcluster.enhancer.webservice.model.PhoenixNoPoolingDatasource
-
-    driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.6.20:3309/phoenix_enhancer
-    username: phoenix_enhancer
-    password: enhancer123
-    type: com.alibaba.druid.pool.DruidDataSource
-
-server:
-  port: 8098
-
-#no nned to enable security in production
-security:
-  basic:
-    enabled: false
-
-#management endpoints on a separate port
-management:
-#  port: 8091
-  port: 8099
-  security:
-    enabled: false # management port is internal only. no need to secure it.
 
 #default project info followed by actual injected pom-specified values.
 project:
@@ -48,34 +17,50 @@ info:
     version: ${project.version}
 
 spring:
-  http:
-    multipart:
-      max-file-size: 1000MB
-      max-request-size: 10000MB
-
-#  jpa:
-#    hibernate.ddl-auto: create-drop
-#---
-#spring:
-#  profiles: test
-#  h2:
-#    console:
-#      enabled: true
-#  http:
-#    multipart:
-#      max-file-size: 100MB
-#      max-request-size: 1000MB
-#
-#spring.jpa:
-#    hibernate.ddl-auto: create-drop
-#
-
-
+  profiles:
+    active: dev
 
 ---
 spring:
-  profiles: test
+  profiles: dev
+spring.datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.6.20:3309/phoenix_enhancer
+    username: xxxxxxxxx
+    password: xxxxxxxxx
+    type: com.alibaba.druid.pool.DruidDataSource
+spring.http:
+    multipart:
+      max-file-size: 1000MB
+      max-request-size: 10000MB
+server:
+  port: 8070
 
+spring.jmx:
+   enabled: false
+ #no nned to enable security in production
+security:
+  basic:
+    enabled: false
+#management endpoints on a separate port
+management:
+  port: 8071
+  security:
+    enabled: false # management port is internal only. no need to secure it.
+#mail service for sending analysis report to users
+mail:
+  smtp:
+    auth: true
+    starttls.enable: true
+    host: smtp.gmail.com
+    port: 587
+  user: XXXXXXXXXXXX@gmail.com
+  password: XXXXXXXXXXXXXXX
+logging.path : ~/logs
+
+---
+spring:
+  profiles: hbase_test
   datasource:
     url: jdbc:phoenix:192.168.6.20:2181:/hbase
     type: com.alibaba.druid.pool.DruidDataSource
@@ -83,13 +68,7 @@ spring:
     username: //phoenix's default user name is null
     password: //phoenix's default pass word is null
     default-auto-commit: true
+server:
+  port: 8098
+logging.path : ~/logs
 
-#  jpa:
-#    hibernate:
-#      dialect: org.hibernate.dialect.MySQLInnoDBDialect
-#      ddl-auto: update # todo: in non-dev environments, comment this out:
-
-
-logging:
-  file: phoenix-enhancer-webservice.log
-#  org.hibernate: INFO

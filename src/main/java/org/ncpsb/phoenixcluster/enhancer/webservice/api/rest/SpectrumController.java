@@ -19,7 +19,7 @@ import java.util.List;
  */
 
 @RestController
-@RequestMapping(value = "/example/v1/spectrum")
+@RequestMapping(value = "/v1/spectrum")
 @CrossOrigin(origins = "*")
 @Api(tags = {"spectrum"})
 public class SpectrumController extends AbstractRestHandler {

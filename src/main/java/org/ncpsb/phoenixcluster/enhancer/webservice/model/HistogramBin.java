@@ -16,6 +16,14 @@ public class HistogramBin {
         this.value = value;
     }
 
+    public void setLowerBound(Double lowerBound) {
+        this.lowerBound = lowerBound;
+    }
+
+    public void setUpperBound(Double upperBound) {
+        this.upperBound = upperBound;
+    }
+
     public Integer getRank() {
         return rank;
     }

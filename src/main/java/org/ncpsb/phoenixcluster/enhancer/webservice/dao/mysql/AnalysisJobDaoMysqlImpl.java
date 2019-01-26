@@ -113,14 +113,21 @@ public class AnalysisJobDaoMysqlImpl {
         StringBuffer sqlString = new StringBuffer("SELECT * FROM  " + analysisRecoredTableName + " ORDER BY ID DESC LIMIT 1");
 
         //getLastAnalysisRecordId
-        Integer analysisRecordId = (Integer) jdbcTemplate.queryForObject(sqlString.toString(),
-                (rs, rowNum) -> new Integer(rs.getInt("ID")));
-        AnalysisJob analysisJob = new AnalysisJob(analysisRecordId +1, null, null, null, "initialized", false, token);
+        AnalysisJob analysisJob = null;
+        Integer analysisRecordId = 0;
+        try {
+            analysisRecordId = (Integer) jdbcTemplate.queryForObject(sqlString.toString(),
+                    (rs, rowNum) -> new Integer(rs.getInt("ID")));
+        }catch (EmptyResultDataAccessException e){
+            analysisRecordId = 0;
+        }finally {
+            analysisJob = new AnalysisJob(analysisRecordId + 1, null, null, null, "initialized", false, token);
+        }
         this.upsertAnalysisRecord(analysisJob);
         return analysisJob;
     }
 
-        /***
+     /***
      * insert a new analysis record
      * @param analysisJob
      */

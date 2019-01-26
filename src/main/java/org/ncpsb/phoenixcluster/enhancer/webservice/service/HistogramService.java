@@ -111,13 +111,19 @@ public class HistogramService {
 
         Integer onePercentile = StatisticsUtils.getIntPercentileFromSorted(1, integerList);
         Integer lastOnePercentile = StatisticsUtils.getIntPercentileFromSorted(99, integerList);
+        System.out.println("test 1/99 percentile");
+        System.out.println(integerList);
+        System.out.println(onePercentile);
+        System.out.println(lastOnePercentile);
+
+        Double upperBoud = Double.valueOf(integerList.get(integerList.size() - 1));
 
         HistogramBin firstBin = new HistogramBin(1, (double) 0, (double)onePercentile,  0);
-        HistogramBin lastBin =  new HistogramBin(numBins, (double) lastOnePercentile, (double) Integer.MAX_VALUE, 0);
+        HistogramBin lastBin =  new HistogramBin(numBins, (double) lastOnePercentile, upperBoud, 0);
 
         for (int i=integerList.size()-1; i>=0; i--) {
             Integer itemI = integerList.get(i);
-            if (itemI > lastBin.getLowerBound() && itemI <= lastBin.getUpperBound()) {
+            if (itemI >= lastBin.getLowerBound() && itemI <= lastBin.getUpperBound()) {
                 lastBin.addOne();
                 integerList.remove(itemI);
             }
@@ -160,14 +166,14 @@ public class HistogramService {
         Double onePercentile = StatisticsUtils.getPercentileFromSorted(1, doubleList);
         Double lastOnePercentile = StatisticsUtils.getPercentileFromSorted(99, doubleList);
 
-        Double lowerBoud = doubleList.get(0) <0.0 ? -1.0 : 0.0 ;
+        Double lowerBoud = doubleList.get(0) <0.0 ? -1.0 : 0.0 ;  //check is confident score(-1~1) or cluster ratio(0~1)
         Double upperBoud = doubleList.get(doubleList.size() - 1) > 0.0 ? 1.0 : 0.0 ;
         HistogramBin firstBin = new HistogramBin(1, lowerBoud, onePercentile,  0);
         HistogramBin lastBin =  new HistogramBin(numBins, lastOnePercentile, upperBoud, 0);
 
         for (int i=doubleList.size()-1; i>=0; i--) {
             Double itemF = doubleList.get(i);
-            if (itemF > lastBin.getLowerBound() && itemF <= lastBin.getUpperBound()) {
+            if (itemF >= lastBin.getLowerBound() && itemF <= lastBin.getUpperBound()) {
                 lastBin.addOne();
                 doubleList.remove(itemF);
             }
@@ -176,6 +182,9 @@ public class HistogramService {
                 doubleList.remove(itemF);
             }
         }
+
+        System.out.println(doubleList);
+
         if (doubleList.size() <= 0) {
             List<HistogramBin> binList = new ArrayList<HistogramBin>();
             binList.add(0, firstBin);

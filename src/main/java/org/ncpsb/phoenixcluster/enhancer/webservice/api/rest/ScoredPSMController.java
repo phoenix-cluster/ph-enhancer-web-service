@@ -24,7 +24,7 @@ import static org.ncpsb.phoenixcluster.enhancer.webservice.model.Configure.*;
  */
 
 @RestController
-@RequestMapping(value = "/example/v1/scoredpsms")
+@RequestMapping(value = "/v1/scoredpsms")
 @CrossOrigin(origins = "*")
 @Api(tags = {"scoredPSMs"})
 public class ScoredPSMController extends AbstractRestHandler {

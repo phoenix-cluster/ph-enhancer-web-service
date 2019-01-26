@@ -19,7 +19,7 @@ import java.util.List;
  */
 
 @RestController
-@RequestMapping(value = "/example/v1/clusters")
+@RequestMapping(value = "/v1/clusters")
 @CrossOrigin(origins = "*")
 @Api(tags = {"clusters"})
 public class ClusterController extends AbstractRestHandler {

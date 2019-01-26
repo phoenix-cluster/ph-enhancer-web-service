@@ -22,7 +22,7 @@ import java.util.List;
  */
 
 @RestController
-@RequestMapping(value = "/example/v1/statistics")
+@RequestMapping(value = "/v1/statistics")
 @CrossOrigin(origins = "*")
 @Api(tags = {"statistics"})
 public class StatisticsController extends AbstractRestHandler {

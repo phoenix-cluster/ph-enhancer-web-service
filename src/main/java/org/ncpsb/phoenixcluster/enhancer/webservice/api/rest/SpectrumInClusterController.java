@@ -18,7 +18,7 @@ import java.util.List;
  */
 
 @RestController
-@RequestMapping(value = "/example/v1/spectrumInCluster")
+@RequestMapping(value = "/v1/spectrumInCluster")
 @CrossOrigin(origins = "*")
 @Api(tags = {"spectrumInCluster"})
 public class SpectrumInClusterController extends AbstractRestHandler {

@@ -15,8 +15,6 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
-import static org.apache.commons.text.CharacterPredicates.ASCII_LOWERCASE_LETTERS;
-import static org.apache.commons.text.CharacterPredicates.DIGITS;
 
 /**
  * Created by baimi on 2017/10/11.
@@ -28,26 +26,26 @@ public class FileUploadService {
     @Autowired
     private AnalysisJobDaoMysqlImpl analysisJobDao;
 
-    /***
-     * generate randam 10 char string, with digits(0-9), an 'a-z' in lower case.
-     * @return
-     */
-    private String generateToken() {
-        RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange('0', 'z').filteredBy(ASCII_LOWERCASE_LETTERS, DIGITS).build();
-        String token = generator.generate(10);
-        return token;
-    }
+//    /***
+//     * generate randam 10 char string, with digits(0-9), an 'a-z' in lower case.
+//     * @return
+//     */
+//    private String generateToken() {
+//        RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange('0', 'z').filteredBy(ASCII_LOWERCASE_LETTERS, DIGITS).build();
+//        String token = generator.generate(10);
+//        return token;
+//    }
 
 
     /***
      * initialize a new analysis job
      * @return
      */
-    public AnalysisJob initAnalysisJob() {
-        String token = generateToken();
-        AnalysisJob analysisJob = analysisJobDao.initAnalysisJob(token);
-        return analysisJob;
-    }
+//    public AnalysisJob initAnalysisJob() {
+//        String token = generateToken();
+//        AnalysisJob analysisJob = analysisJobDao.initAnalysisJob(token);
+//        return analysisJob;
+//    }
 
 
     /***
@@ -73,14 +71,14 @@ public class FileUploadService {
     }
 
 
-     /***
-     *
-     * @param myAnalysisId
-     * @return
-     */
-    public AnalysisJob getAnalysisJob(Integer myAnalysisId){
-        return analysisJobDao.getAnalysisJob(myAnalysisId);
-    }
+//     /***
+//     *
+//     * @param myAnalysisId
+//     * @return
+//     */
+//    public AnalysisJob getAnalysisJob(Integer myAnalysisId){
+//        return analysisJobDao.getAnalysisJob(myAnalysisId);
+//    }
 
     /***
      * to check if all the files uploaded by user are list in the right path

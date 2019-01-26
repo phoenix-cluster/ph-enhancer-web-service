@@ -33,7 +33,7 @@ import java.util.List;
  */
 
 @RestController
-@RequestMapping(value = "/example/v1/export")
+@RequestMapping(value = "/v1/export")
 @CrossOrigin(origins = "*")
 @Api(tags = {"export"})
 public class ExportController extends AbstractRestHandler {

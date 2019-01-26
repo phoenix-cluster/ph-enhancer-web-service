@@ -31,119 +31,119 @@ import java.util.*;
  * Created by baimi on 2017/10/13.
  */
 @RestController
-@RequestMapping("example/v1/file")
+@RequestMapping("/v1/file")
 @CrossOrigin(origins = "*")
 public class FileController extends AbstractRestHandler{
 
 
-    @Autowired FileUploadService fileUploadService;
-    @RequestMapping(value = "/upload", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public FileUploadResponse uploadFiles(HttpServletRequest request,
-//    @ApiParam(value = "The analysis id", required = true)
-//    @RequestParam(value = "myid", required = true) Integer jobId)
-    @RequestHeader("jobId") Integer jobId,
-    @RequestHeader("accessionId") String accessionId
-    )
-    {
-//        String uploadFilePath = fileUploadPath.getUploadFilePath();
-//        Integer jobId = 1;
-        String baseFilePath = Configure.ANALYSIS_DATA_PATH;
-        DateFormat df = new SimpleDateFormat("yyyyMMdd");
-        String dateString = df.format(new Date());
-        String pathname = baseFilePath + File.separator
-                + dateString + File.separator + accessionId + File.separator;
-        File file = new File(pathname);
-        if (!file.exists()) {
-            System.out.println("making dir: " + file);
-            file.mkdirs();
-        }
-        fileUploadService.updateAnalysisJob(jobId, pathname, dateString, 0, "initialed", accessionId);
-
-        MultipartHttpServletRequest muti = (MultipartHttpServletRequest) request;
-        System.out.println(muti.getMultiFileMap().size());
-
-        MultiValueMap<String, MultipartFile> map = muti.getMultiFileMap();
-        for (Map.Entry<String, List<MultipartFile>> entry : map.entrySet()) {
-
-            List<MultipartFile> list = entry.getValue();
-            for (MultipartFile multipartFile : list) {
-                try {
-                    multipartFile.transferTo(new File(pathname
-                            + multipartFile.getOriginalFilename()));
-                    System.out.println("File" + multipartFile.getOriginalFilename()+ "  has benn uploaded");
-                } catch (IllegalStateException | IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            System.out.println("File" + pathname + "  has benn uploaded");
-        }
-        fileUploadService.updateAnalysisJobStatus(jobId, "uploading");
-
-        FileUploadResponse fileUploadResponse = new FileUploadResponse("success", jobId, "NULL");
-        return fileUploadResponse;
-    }
-
-
-    @RequestMapping(value = "/download", method = RequestMethod.GET)
-    public ResponseEntity<ByteArrayResource> download(
-            @ApiParam(value = "The file url path", required = true)
-                                      @RequestParam(value = "filepath", required = true) String filepath
-            ) throws IOException {
-
-//        String uploadFilePath = fileUploadPath.getUploadFilePath();
-        String baseFilePath = context.getRealPath("");
-
-        String pathname = baseFilePath + File.separator
-                + filepath;
-        File file = new File(pathname);
-
-        Path path = Paths.get(file.getAbsolutePath());
-        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
-        headers.add("Pragma", "no-cache");
-        headers.add("Expires", "0");
-        headers.add("content-disposition", "attachment; filename=\"" + filepath+"\"");
-
-        return ResponseEntity.ok()
-                .headers(headers)
-                .contentLength(file.length())
-                .contentType(MediaType.parseMediaType("application/octet-stream"))
-                .body(resource);
-    }
+//    @Autowired FileUploadService fileUploadService;
+//    @RequestMapping(value = "/upload", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public FileUploadResponse uploadFiles(HttpServletRequest request,
+////    @ApiParam(value = "The analysis id", required = true)
+////    @RequestParam(value = "myid", required = true) Integer jobId)
+//    @RequestHeader("jobId") Integer jobId,
+//    @RequestHeader("accessionId") String accessionId
+//    )
+//    {
+////        String uploadFilePath = fileUploadPath.getUploadFilePath();
+////        Integer jobId = 1;
+//        String baseFilePath = Configure.ANALYSIS_DATA_PATH;
+//        DateFormat df = new SimpleDateFormat("yyyyMMdd");
+//        String dateString = df.format(new Date());
+//        String pathname = baseFilePath + File.separator
+//                + dateString + File.separator + accessionId + File.separator;
+//        File file = new File(pathname);
+//        if (!file.exists()) {
+//            System.out.println("making dir: " + file);
+//            file.mkdirs();
+//        }
+//        fileUploadService.updateAnalysisJob(jobId, pathname, dateString, 0, "initialed", accessionId);
+//
+//        MultipartHttpServletRequest muti = (MultipartHttpServletRequest) request;
+//        System.out.println(muti.getMultiFileMap().size());
+//
+//        MultiValueMap<String, MultipartFile> map = muti.getMultiFileMap();
+//        for (Map.Entry<String, List<MultipartFile>> entry : map.entrySet()) {
+//
+//            List<MultipartFile> list = entry.getValue();
+//            for (MultipartFile multipartFile : list) {
+//                try {
+//                    multipartFile.transferTo(new File(pathname
+//                            + multipartFile.getOriginalFilename()));
+//                    System.out.println("File" + multipartFile.getOriginalFilename()+ "  has benn uploaded");
+//                } catch (IllegalStateException | IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            System.out.println("File" + pathname + "  has benn uploaded");
+//        }
+//        fileUploadService.updateAnalysisJobStatus(jobId, "uploading");
+//
+//        FileUploadResponse fileUploadResponse = new FileUploadResponse("success", jobId, "NULL");
+//        return fileUploadResponse;
+//    }
 
 
-    @RequestMapping(value = "/apply", method = RequestMethod.GET, produces = {"application/json"})
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public AnalysisJob applyForAnalysisJob(
-            ) throws IOException {
-        AnalysisJob analysisJob = fileUploadService.initAnalysisJob();
-        return analysisJob;
-    }
+//    @RequestMapping(value = "/download", method = RequestMethod.GET)
+//    public ResponseEntity<ByteArrayResource> download(
+//            @ApiParam(value = "The file url path", required = true)
+//                                      @RequestParam(value = "filepath", required = true) String filepath
+//            ) throws IOException {
+//
+////        String uploadFilePath = fileUploadPath.getUploadFilePath();
+//        String baseFilePath = context.getRealPath("");
+//
+//        String pathname = baseFilePath + File.separator
+//                + filepath;
+//        File file = new File(pathname);
+//
+//        Path path = Paths.get(file.getAbsolutePath());
+//        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+//        headers.add("Pragma", "no-cache");
+//        headers.add("Expires", "0");
+//        headers.add("content-disposition", "attachment; filename=\"" + filepath+"\"");
+//
+//        return ResponseEntity.ok()
+//                .headers(headers)
+//                .contentLength(file.length())
+//                .contentType(MediaType.parseMediaType("application/octet-stream"))
+//                .body(resource);
+//    }
 
-    @RequestMapping(value = "/confirmFiles", method = RequestMethod.POST, produces = {"application/json"})
-    public FileUploadResponse confirmFiles(HttpServletRequest request,
-    @RequestHeader("jobId") Integer jobId,
-//    @RequestBody String resultFileList
-    @RequestBody ResultFileList resultFileList
-    )
-    {
-        FileUploadResponse fileUploadResponse = new FileUploadResponse("null", jobId, "");
-        AnalysisJob analysisJob = fileUploadService.getAnalysisJob(jobId);
-        boolean correctFlag = fileUploadService.isFileListCorrect(resultFileList, jobId, fileUploadResponse, analysisJob);
-        if (correctFlag) {
-            System.out.println("you got " + resultFileList.getFileListLength() + ": " + resultFileList.getFileNameList() + " file in AnalysisJob " + jobId);
-            fileUploadResponse.setStatus("success");
-            fileUploadService.writeToResultFile(analysisJob.getFilePath(), resultFileList);
-            fileUploadService.updateAnalysisJobStatus(jobId, "uploaded");
-        }else {
-            fileUploadResponse.setStatus("error");
-        }
-        return fileUploadResponse;
-    }
 
-    @Autowired
-    ServletContext context;
+//    @RequestMapping(value = "/apply", method = RequestMethod.GET, produces = {"application/json"})
+//    @ResponseStatus(HttpStatus.OK)
+//    @ResponseBody
+//    public AnalysisJob applyForAnalysisJob(
+//            ) throws IOException {
+//        AnalysisJob analysisJob = fileUploadService.initAnalysisJob();
+//        return analysisJob;
+//    }
+
+//    @RequestMapping(value = "/confirmFiles", method = RequestMethod.POST, produces = {"application/json"})
+//    public FileUploadResponse confirmFiles(HttpServletRequest request,
+//    @RequestHeader("jobId") Integer jobId,
+////    @RequestBody String resultFileList
+//    @RequestBody ResultFileList resultFileList
+//    )
+//    {
+//        FileUploadResponse fileUploadResponse = new FileUploadResponse("null", jobId, "");
+//        AnalysisJob analysisJob = fileUploadService.getAnalysisJob(jobId);
+//        boolean correctFlag = fileUploadService.isFileListCorrect(resultFileList, jobId, fileUploadResponse, analysisJob);
+//        if (correctFlag) {
+//            System.out.println("you got " + resultFileList.getFileListLength() + ": " + resultFileList.getFileNameList() + " file in AnalysisJob " + jobId);
+//            fileUploadResponse.setStatus("success");
+//            fileUploadService.writeToResultFile(analysisJob.getFilePath(), resultFileList);
+//            fileUploadService.updateAnalysisJobStatus(jobId, "uploaded");
+//        }else {
+//            fileUploadResponse.setStatus("error");
+//        }
+//        return fileUploadResponse;
+//    }
+//
+//    @Autowired
+//    ServletContext context;
 }

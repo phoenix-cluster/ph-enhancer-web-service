@@ -1,6 +1,7 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.service;
 
 import org.apache.commons.io.input.ReversedLinesFileReader;
+import org.apache.commons.text.RandomStringGenerator;
 import org.ncpsb.phoenixcluster.enhancer.webservice.dao.mysql.AnalysisJobDaoMysqlImpl;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.AnalysisJob;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.PageOfFile;
@@ -10,6 +11,9 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
+
+import static org.apache.commons.text.CharacterPredicates.ASCII_LOWERCASE_LETTERS;
+import static org.apache.commons.text.CharacterPredicates.DIGITS;
 
 @Service
 public class DoAnalysisService {
@@ -34,7 +38,7 @@ public class DoAnalysisService {
      * @return
      */
     public String doAnalysis(Integer myAnalysisId, Integer minClusterSize, String userEmailAdd, Boolean isPublic){
-        AnalysisJob analysisJob = fileUploadService.getAnalysisJob(myAnalysisId);
+        AnalysisJob analysisJob = getAnalysisJob(myAnalysisId);
         analysisJobDao.updateAnalysisJobMore(myAnalysisId, userEmailAdd, isPublic);
         Process proc = null;
         File analysisJobFilePath = new File(analysisJob.getFilePath());
@@ -116,7 +120,7 @@ public class DoAnalysisService {
      * @return
      */
     private boolean isAnalysisStarted(Integer analysisJobId) {
-        AnalysisJob analysisJob = fileUploadService.getAnalysisJob(analysisJobId);
+        AnalysisJob analysisJob = getAnalysisJob(analysisJobId);
         String status = analysisJob.getStatus();
         System.out.println("get analysis job's status: " + status);
         if (status.equalsIgnoreCase("started") || status.equalsIgnoreCase("finished") || status.equalsIgnoreCase("finished_with_error")) {
@@ -126,6 +130,28 @@ public class DoAnalysisService {
         }
     }
 
+     /***
+     * generate randam 10 char string, with digits(0-9), an 'a-z' in lower case.
+     * @return
+     */
+    private String generateToken() {
+        RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange('0', 'z').filteredBy(ASCII_LOWERCASE_LETTERS, DIGITS).build();
+        String token = generator.generate(10);
+        return token;
+    }
+
+
+
+    /***
+     * initialize a new analysis job
+     * @return
+     */
+    public AnalysisJob initAnalysisJob() {
+        String token = generateToken();
+        AnalysisJob analysisJob = analysisJobDao.initAnalysisJob(token);
+        return analysisJob;
+    }
+
 
     /***
      * get analysis job by invock the method in service
@@ -133,7 +159,8 @@ public class DoAnalysisService {
      * @return
      */
     public AnalysisJob getAnalysisJob(Integer analysisId) {
-        return this.fileUploadService.getAnalysisJob(analysisId);
+        return analysisJobDao.getAnalysisJob(analysisId);
+//        return this.fileUploadService.getAnalysisJob(analysisId);
     }
 
     /***
@@ -203,6 +230,7 @@ public class DoAnalysisService {
         }
         return pageOfFile;
     }
+
 
     /***
      * get the No. of lines of a file
