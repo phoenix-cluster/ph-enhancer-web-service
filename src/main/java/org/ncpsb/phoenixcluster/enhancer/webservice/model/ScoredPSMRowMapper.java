@@ -4,6 +4,8 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
 
 public class ScoredPSMRowMapper implements  RowMapper{
     private String resultType;
@@ -30,6 +32,7 @@ public class ScoredPSMRowMapper implements  RowMapper{
                     scoredPSM.setConfidentScore(rs.getFloat("CONF_SC"));
                 }
 
+                scoredPSM.setTaxIds(taxidString2List(rs.getString("SEQ_TAXIDS")));
                 scoredPSM.setSpectraNum(rs.getInt("NUM_SPEC"));
                 scoredPSM.setClusterRatioStr(rs.getString("CLUSTER_RATIO_STR"));
                 scoredPSM.setSpectraTitles(ClusterUtils.getStringListFromString(rs.getString("SPECTRA"),"\\|\\|"));
@@ -37,5 +40,17 @@ public class ScoredPSMRowMapper implements  RowMapper{
 
                 return scoredPSM;
 
+    }
+
+    /**
+     * convert from string to list of ids
+     * @param taxidString
+     * @return
+     */
+    private List<String> taxidString2List(String taxidString) {
+        //remove the "[]" and split to strings
+        String withoutBracketString = taxidString.substring(1, -1);
+        List<String> taxidStrings = Arrays.asList(withoutBracketString.split(",", 0));
+        return taxidStrings;
     }
 }

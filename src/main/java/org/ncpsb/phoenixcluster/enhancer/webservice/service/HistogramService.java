@@ -121,17 +121,25 @@ public class HistogramService {
         HistogramBin firstBin = new HistogramBin(1, (double) 0, (double)onePercentile,  0);
         HistogramBin lastBin =  new HistogramBin(numBins, (double) lastOnePercentile, upperBoud, 0);
 
+        ArrayList<Integer> toRemoveList = new ArrayList<>();
         for (int i=integerList.size()-1; i>=0; i--) {
             Integer itemI = integerList.get(i);
             if (itemI >= lastBin.getLowerBound() && itemI <= lastBin.getUpperBound()) {
                 lastBin.addOne();
-                integerList.remove(itemI);
+                toRemoveList.add(itemI);
+//                integerList.remove(itemI);
             }
             if (itemI >= firstBin.getLowerBound() && itemI <= firstBin.getUpperBound()) {
                 firstBin.addOne();
-                integerList.remove(itemI);
+                toRemoveList.add(itemI);
+//                integerList.remove(itemI);
             }
         }
+
+        for (Integer toRemoveItem : toRemoveList) {
+                integerList.remove(toRemoveItem);
+        }
+
         if (integerList.size() <= 0) {
             List<HistogramBin> binList = new ArrayList<HistogramBin>();
             binList.add(0, firstBin);
@@ -171,16 +179,24 @@ public class HistogramService {
         HistogramBin firstBin = new HistogramBin(1, lowerBoud, onePercentile,  0);
         HistogramBin lastBin =  new HistogramBin(numBins, lastOnePercentile, upperBoud, 0);
 
-        for (int i=doubleList.size()-1; i>=0; i--) {
+        ArrayList<Double> toRemoveList = new ArrayList<>();
+        for (int i=(doubleList.size()-1); i>=0; i--) {
             Double itemF = doubleList.get(i);
             if (itemF >= lastBin.getLowerBound() && itemF <= lastBin.getUpperBound()) {
                 lastBin.addOne();
-                doubleList.remove(itemF);
+                toRemoveList.add(itemF);
+                continue;//to avoid a item in both lastBin and firstBin
+//                doubleList.remove(itemF);
             }
             if (itemF >= firstBin.getLowerBound() && itemF <= firstBin.getUpperBound()) {
                 firstBin.addOne();
-                doubleList.remove(itemF);
+//                doubleList.remove(itemF);
+                toRemoveList.add(itemF);
             }
+        }
+
+        for (Double toDeleteItem : toRemoveList) {
+            doubleList.remove(toDeleteItem);
         }
 
         System.out.println(doubleList);

@@ -24,7 +24,18 @@ public class ScoredPSM {
     private String recommendPepModsStr;
 
     private Integer spectraNum;
+
     private List<String> spectraTitles;
+
+    public List<String> getTaxIds() {
+        return taxIds;
+    }
+
+    public void setTaxIds(List<String> taxIds) {
+        this.taxIds = taxIds;
+    }
+
+    private List<String>  taxIds;
 
     private Integer acceptance;
 
@@ -159,6 +170,7 @@ public class ScoredPSM {
                 ", recommendPepModsStr='" + recommendPepModsStr + '\'' +
                 ", spectraNum=" + spectraNum +
                 ", spectraTitles=" + spectraTitles +
+                ", taxIds=" + taxIds +
                 ", acceptance=" + acceptance +
                 '}';
     }

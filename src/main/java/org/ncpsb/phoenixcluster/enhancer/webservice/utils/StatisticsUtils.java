@@ -51,12 +51,17 @@ public class StatisticsUtils {
     }
 
     public static List<HistogramBin> calcIntHistogram(List<Integer> data, int min, int max, int numBins) {
+        //in case of the int values between min-max is smaller than numBins
+        if (max - min < numBins - 1) {
+            numBins= (max - min) ;
+        }
         int[] result = new int[numBins];
         List<HistogramBin> binList = new ArrayList<HistogramBin>();
         double binSize = (max - min)/numBins;
         Boolean isBinEQNumBin = false;
         Double valueBinEQNumBin = null;
         System.out.println("max " + max + "- min" + min + "/numBins" + numBins + "got binsize" + binSize);
+
 
 
         for (double d : data) {
