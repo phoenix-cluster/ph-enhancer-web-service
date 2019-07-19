@@ -3,6 +3,7 @@ package org.ncpsb.phoenixcluster.enhancer.webservice.dao.mysql;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.Configure;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.ScoredPSM;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.ScoredPSMRowMapper;
+import org.ncpsb.phoenixcluster.enhancer.webservice.utils.TaxonomyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.session.SessionProperties;
 import org.springframework.http.HttpStatus;
@@ -63,7 +64,7 @@ public class ScoredPSMDaoMysqlImpl {
      * @param resultType
      * @return
      */
-        public List<ScoredPSM> findScoredPSMs(String psmTableName, Integer page, Integer size, String sortField, String sortDirection, String resultType) {
+        public List<ScoredPSM> findScoredPSMs(String psmTableName, Integer page, Integer size, String sortField, String sortDirection, String filterByTaxonomyId, String resultType) {
         StringBuffer querySql = new StringBuffer("SELECT * FROM " + psmTableName);
         if (sortField.equals("confidentScore") ||
                 sortField.equals("recommConfidentScore") ||
@@ -72,6 +73,9 @@ public class ScoredPSMDaoMysqlImpl {
                 sortField.equals("acceptance")
                 ) {
             querySql.append(" ORDER BY " + Configure.COLUMN_MAP.get(sortField) + " " + sortDirection + " ");
+        }
+        if (!filterByTaxonomyId.equalsIgnoreCase("null")){
+            querySql.append(" WHERE seq_taxids like '%" + filterByTaxonomyId + "%'");
         }
         querySql.append(" LIMIT " + size);
         querySql.append(" OFFSET " + (page - 1) * size);
@@ -137,7 +141,7 @@ public class ScoredPSMDaoMysqlImpl {
 
     }
 
-    public Integer findTotalScoredPSM(String projectId, String type) {
+    public Integer findTotalScoredPSM(String projectId, String filterByTaxonomyId, String type) {
         String psmTableName = "";
         switch (type) {
             case ("negscore"): {
@@ -158,6 +162,11 @@ public class ScoredPSMDaoMysqlImpl {
         }
 
         StringBuffer querySql = new StringBuffer("SELECT COUNT(*) AS total FROM " + psmTableName);
+
+        if (!filterByTaxonomyId.equalsIgnoreCase("null")){
+            querySql.append(" WHERE seq_taxids like '%" + filterByTaxonomyId + "%'");
+        }
+
         Integer totalElement = (Integer) jdbcTemplate.queryForObject(querySql.toString(), Integer.class);
         return totalElement;
     }

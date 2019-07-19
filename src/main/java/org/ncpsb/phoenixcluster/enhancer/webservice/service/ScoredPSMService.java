@@ -25,6 +25,8 @@ public class ScoredPSMService {
     @Autowired
     private ScoredPSMDaoMysqlImpl scoredPSMDao;
 
+    @Autowired
+    private TaxonomyService taxonomyService;
     /***
      * DAO
      * find scored PSMs for web
@@ -36,19 +38,23 @@ public class ScoredPSMService {
      * @param resultType
      * @return
      */
-    public  List<ScoredPSMForWeb> findScoredPSMsForWeb(String psmTableName, Integer page, Integer size, String sortField, String sortDirection, String resultType) {
-        List<ScoredPSM> scoredPSMs = scoredPSMDao.findScoredPSMs(psmTableName, page, size, sortField, sortDirection, resultType);
+    public  List<ScoredPSMForWeb> findScoredPSMsForWeb(String psmTableName, Integer page, Integer size, String sortField, String sortDirection, String filterByTaxonomyId, String resultType) {
+        List<ScoredPSM> scoredPSMs = scoredPSMDao.findScoredPSMs(psmTableName, page, size, sortField, sortDirection, filterByTaxonomyId, resultType);
         List<ScoredPSMForWeb> scoredPSMsForWeb = new ArrayList<>();
         for (ScoredPSM scoredPSM : scoredPSMs) {
             ScoredPSMForWeb scoredPSMForWeb = (ScoredPSMForWeb) scoredPSM;
             scoredPSMForWeb.setPTMs();
             scoredPSMsForWeb.add(scoredPSMForWeb);
+            List<String> taxidWithNameList = taxonomyService.addNameForTaxidStringList(scoredPSM.getTaxIds());
+            if (taxidWithNameList != null) {
+                scoredPSMForWeb.setTaxIds(taxidWithNameList);
+            }
         }
         return scoredPSMsForWeb;
     }
 
 
-    public List<ScoredPSMForWeb> getScoredPSMsForWeb(String projectId, Integer page, Integer size, String sortField, String sortDirection, String resultType) {
+    public List<ScoredPSMForWeb> getScoredPSMsForWeb(String projectId, Integer page, Integer size, String sortField, String sortDirection, String filterByTaxonomyId, String resultType) {
         String psmTableName = "";
         switch (resultType) {
             case ("negscore"): {
@@ -83,13 +89,13 @@ public class ScoredPSMService {
             sortDirection = "DESC";
         }
 
-        List<ScoredPSMForWeb> scoredPSMsForWeb = findScoredPSMsForWeb(psmTableName, page, size, sortField, sortDirection, resultType);
+        List<ScoredPSMForWeb> scoredPSMsForWeb = findScoredPSMsForWeb(psmTableName, page, size, sortField, sortDirection, filterByTaxonomyId, resultType);
         return (scoredPSMsForWeb != null && scoredPSMsForWeb.size() > 0) ? (List) scoredPSMsForWeb : null;
     }
 
 
-    public Integer findTotalScoredPSM(String projectId, String type) {
-        return scoredPSMDao.findTotalScoredPSM(projectId, type);
+    public Integer findTotalScoredPSM(String projectId, String filterByTaxonomyId, String type) {
+        return scoredPSMDao.findTotalScoredPSM(projectId, filterByTaxonomyId, type);
     }
 
 

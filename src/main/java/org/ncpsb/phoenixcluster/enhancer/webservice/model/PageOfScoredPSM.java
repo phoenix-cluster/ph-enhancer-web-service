@@ -13,6 +13,7 @@ public class PageOfScoredPSM {
     private Integer totalPages;
     private String sortField;
     private String sortDirection;
+    private String filterByTaxonomyId;
     private List<ScoredPSMForWeb> scoredPSMs;
 
     public String getSortField() {
@@ -31,13 +32,14 @@ public class PageOfScoredPSM {
         this.sortDirection = sortDirection;
     }
 
-    public PageOfScoredPSM(String projectId, Integer pageSize, Integer page, Integer totalElements, Integer totalPages, String sortField, String sortDirection, List<ScoredPSMForWeb> scoredPSMsForWeb) {
+    public PageOfScoredPSM(String projectId, Integer pageSize, Integer page, Integer totalElements, Integer totalPages, String sortField, String sortDirection, String filterByTaxonomyId, List<ScoredPSMForWeb> scoredPSMsForWeb) {
         this.pageSize = pageSize;
         this.page = page;
         this.totalElements = totalElements;
         this.totalPages = totalPages;
         this.sortField = sortField;
         this.sortDirection = sortDirection;
+        this.filterByTaxonomyId = filterByTaxonomyId;
         this.scoredPSMs = scoredPSMsForWeb;
     }
 

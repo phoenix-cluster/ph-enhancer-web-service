@@ -1,14 +1,22 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.model;
+import org.ncpsb.phoenixcluster.enhancer.webservice.service.TaxonomyService;
 import org.ncpsb.phoenixcluster.enhancer.webservice.utils.ClusterUtils;
+import org.ncpsb.phoenixcluster.enhancer.webservice.utils.TaxonomyUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class ScoredPSMRowMapper implements  RowMapper{
+
     private String resultType;
+
+    @Autowired
+    private TaxonomyUtils taxonomyUtils;
 
     public ScoredPSMRowMapper(String resultType) {
         this.resultType = resultType;
@@ -31,8 +39,8 @@ public class ScoredPSMRowMapper implements  RowMapper{
                     scoredPSM.setPeptideModsStr(rs.getString("PRE_MODS"));
                     scoredPSM.setConfidentScore(rs.getFloat("CONF_SC"));
                 }
-
-                scoredPSM.setTaxIds(taxidString2List(rs.getString("SEQ_TAXIDS")));
+                String taxIdsString = rs.getString("SEQ_TAXIDS");
+                scoredPSM.setTaxIds(taxonomyUtils.taxidString2List(taxIdsString));
                 scoredPSM.setSpectraNum(rs.getInt("NUM_SPEC"));
                 scoredPSM.setClusterRatioStr(rs.getString("CLUSTER_RATIO_STR"));
                 scoredPSM.setSpectraTitles(ClusterUtils.getStringListFromString(rs.getString("SPECTRA"),"\\|\\|"));
@@ -42,15 +50,5 @@ public class ScoredPSMRowMapper implements  RowMapper{
 
     }
 
-    /**
-     * convert from string to list of ids
-     * @param taxidString
-     * @return
-     */
-    private List<String> taxidString2List(String taxidString) {
-        //remove the "[]" and split to strings
-        String withoutBracketString = taxidString.substring(1, -1);
-        List<String> taxidStrings = Arrays.asList(withoutBracketString.split(",", 0));
-        return taxidStrings;
-    }
+
 }
