@@ -19,13 +19,21 @@ public class ClusterService {
     @Autowired
     private ClusterDaoMysqlImpl clusterDao;
 
+    @Autowired
+    private TaxonomyService taxonomyService;
+
     /***
      * find a cluster by clusterId
      * @param clusterId
      * @return
      */
     public Cluster findByClusterId(String clusterId) {
-        return clusterDao.findByClusterId(clusterId);
+        Cluster cluster = clusterDao.findByClusterId(clusterId);
+        List<String> taxidWithNameList = taxonomyService.addNameForTaxidStringList(cluster.getTaxIds());
+            if (taxidWithNameList != null) {
+                cluster.setTaxIds(taxidWithNameList);
+            }
+        return cluster;
 //        return (clusters != null && clusters.size() > 0) ? clusters : null;
     }
 

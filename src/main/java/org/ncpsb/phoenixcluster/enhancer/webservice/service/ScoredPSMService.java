@@ -5,6 +5,7 @@ import org.ncpsb.phoenixcluster.enhancer.webservice.dao.mysql.ScoredPSMDaoMysqlI
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.ScoredPSM;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.ScoredPSMForWeb;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.Configure;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.SpeciesInProject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -73,7 +74,7 @@ public class ScoredPSMService {
             }
             case ("newid"): {
                 psmTableName = Configure.NEW_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID,projectId);
-                if (sortField.equals("RECOMM_SEQ_SC") && sortDirection == null) {
+                if (sortField.equals("recommConfidentScore") && sortDirection == null) {
                     sortDirection = "DESC";
                 }
                 break;
@@ -101,6 +102,10 @@ public class ScoredPSMService {
 
     public ResponseEntity<String> updateUserAcceptance(String projectId, String psmType, Map<Integer, Integer> acceptanceMap) {
         return scoredPSMDao.updateUserAcceptance(projectId, psmType, acceptanceMap);
+    }
+
+    public List<SpeciesInProject> getSpeciesList(String identifier, String scoreType) {
+        return taxonomyService.getSpeciesList(identifier, scoreType);
     }
 }
 

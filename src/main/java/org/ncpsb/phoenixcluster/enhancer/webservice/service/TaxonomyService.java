@@ -9,6 +9,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.ncpsb.phoenixcluster.enhancer.webservice.dao.mysql.TaxonomyDaoMysqlImpl;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.SpeciesInProject;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.Taxonomy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,9 @@ public class TaxonomyService {
 
     public List<String> addNameForTaxidStringList(List<String> taxids) {
         List<String> taxidAndNameList = new ArrayList<>();
+        if (taxids == null) {
+            return null;
+        }
         for(String taxid: taxids) {
             Taxonomy taxonomy = getTaxonomyById(taxid);
             if (taxonomy == null) {
@@ -50,7 +54,9 @@ public class TaxonomyService {
         Taxonomy taxonomy = taxonomyDao.findByTaxonomyId(id);
         if (taxonomy == null){
             taxonomy = getTaxonomyOnline(id);
-            taxonomyDao.insertTaxonomy(taxonomy);
+            if (taxonomyDao != null) {
+                taxonomyDao.insertTaxonomy(taxonomy);
+            }
         }
         return taxonomy;
     }
@@ -58,27 +64,28 @@ public class TaxonomyService {
     private Taxonomy getTaxonomyOnline(String id) {
         CloseableHttpClient httpClient = getHttpClient();
         try {
+
+            if(id==null || id.equals("") || id.length()<1){
+                return null;
+            }
             //用get方法发送http请求
             String urlString = "https://rest.ensembl.org/taxonomy/id/" + id + "?content-type=application/json";
             HttpGet get = new HttpGet(urlString);
-            System.out.println("执行get请求:...."+get.getURI());
+            System.out.println("getting:...."+get.getURI());
             CloseableHttpResponse httpResponse = null;
-            //发送get请求
+            //get from url
             httpResponse = httpClient.execute(get);
             try{
-                //response实体
+                //response entity
                 HttpEntity entity = httpResponse.getEntity();
                 if (null != entity){
-                    System.out.println("响应状态码:"+ httpResponse.getStatusLine());
+                    System.out.println("response status:"+ httpResponse.getStatusLine());
                     if(httpResponse.getStatusLine().getStatusCode() != 200){
                         System.out.println("ERROR! Failed to get scientific name from :" + urlString );
                         throw new IOException("ERROR! Failed to get scientific name from :" + urlString );
                     }
 
                     String scientificName = getScientificNameFromString(EntityUtils.toString(entity));
-//                    System.out.println("-------------------------------------------------");
-//                    System.out.println("响应内容:" + EntityUtils.toString(entity));
-//                    System.out.println("-------------------------------------------------");
                     return new Taxonomy(id, scientificName);
                 }
             }
@@ -115,6 +122,18 @@ public class TaxonomyService {
         return HttpClients.createDefault();
     }
 
+    public List<SpeciesInProject> getSpeciesList(String identifier, String scoreType) {
+        List<SpeciesInProject> speciesInProjectList = taxonomyDao.findSpeciesInProject(identifier, scoreType);
+        for (SpeciesInProject speciesInProject : speciesInProjectList) {
+            Taxonomy taxonomy = getTaxonomyById(speciesInProject.getId());
+            if (taxonomy == null) {
+                System.out.println("ERROR, failed to get taxonomy name for id" + speciesInProject.getId());
+                continue;
+            }
+            speciesInProject.setName(taxonomy.getName());
+        }
+        return speciesInProjectList;
+    }
 }
 
 

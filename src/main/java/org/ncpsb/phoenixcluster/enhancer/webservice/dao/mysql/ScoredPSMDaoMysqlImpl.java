@@ -66,6 +66,10 @@ public class ScoredPSMDaoMysqlImpl {
      */
         public List<ScoredPSM> findScoredPSMs(String psmTableName, Integer page, Integer size, String sortField, String sortDirection, String filterByTaxonomyId, String resultType) {
         StringBuffer querySql = new StringBuffer("SELECT * FROM " + psmTableName);
+        if (!filterByTaxonomyId.equalsIgnoreCase("ALL")){
+                querySql.append(" WHERE seq_taxids like '%" + filterByTaxonomyId + "%'");
+            }
+            System.out.println("sortField:" + sortField);
         if (sortField.equals("confidentScore") ||
                 sortField.equals("recommConfidentScore") ||
                 sortField.equals("clusterRatio") ||
@@ -74,13 +78,9 @@ public class ScoredPSMDaoMysqlImpl {
                 ) {
             querySql.append(" ORDER BY " + Configure.COLUMN_MAP.get(sortField) + " " + sortDirection + " ");
         }
-        if (!filterByTaxonomyId.equalsIgnoreCase("null")){
-            querySql.append(" WHERE seq_taxids like '%" + filterByTaxonomyId + "%'");
-        }
         querySql.append(" LIMIT " + size);
         querySql.append(" OFFSET " + (page - 1) * size);
 
-        System.out.println("Going to execute: " + querySql);
         List<ScoredPSM> scoredPSMs = (List<ScoredPSM>) jdbcTemplate.query(querySql.toString(), new ScoredPSMRowMapper(resultType));
         return scoredPSMs;
     }
@@ -163,7 +163,7 @@ public class ScoredPSMDaoMysqlImpl {
 
         StringBuffer querySql = new StringBuffer("SELECT COUNT(*) AS total FROM " + psmTableName);
 
-        if (!filterByTaxonomyId.equalsIgnoreCase("null")){
+        if (!filterByTaxonomyId.equalsIgnoreCase("ALL")){
             querySql.append(" WHERE seq_taxids like '%" + filterByTaxonomyId + "%'");
         }
 

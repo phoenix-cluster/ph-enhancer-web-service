@@ -55,7 +55,7 @@ public class ScoredPSMController extends AbstractRestHandler {
             @ApiParam(value = "The sort direction", required = true)
             @RequestParam(value = "sortDirection", required = true, defaultValue = Configure.DEFAULT_SORT_DIRECTION) String sortDirection,
             @ApiParam(value = "Filter by species", required = true)
-            @RequestParam(value = "Filter by species", required = true, defaultValue = "null") String filterByTaxonomyId,
+            @RequestParam(value = "FilterBySpecies", required = true, defaultValue = "ALL") String filterByTaxonomyId,
             HttpServletRequest request, HttpServletResponse response) {
         return getScoredPSMs(identifier, page, size, sortField, sortDirection, filterByTaxonomyId, "negscore");
     }
@@ -92,7 +92,7 @@ public class ScoredPSMController extends AbstractRestHandler {
             @ApiParam(value = "The sort direction", required = true)
             @RequestParam(value = "sortDirection", required = true, defaultValue = DEFAULT_SORT_DIRECTION) String sortDirection,
             @ApiParam(value = "Filter by species", required = true)
-            @RequestParam(value = "Filter by species", required = true, defaultValue = "null") String filterByTaxonomyId,
+            @RequestParam(value = "FilterBySpecies", required = true, defaultValue = "ALL") String filterByTaxonomyId,
             HttpServletRequest request, HttpServletResponse response) {
         return getScoredPSMs(identifier, page, size, sortField, sortDirection, filterByTaxonomyId, "posscore");
     }
@@ -126,11 +126,11 @@ public class ScoredPSMController extends AbstractRestHandler {
             @ApiParam(value = "Tha page size", required = true)
             @RequestParam(value = "size", required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size,
             @ApiParam(value = "The sortField", required = true)
-            @RequestParam(value = "sortField", required = true, defaultValue = "RECOMM_SEQ_SC") String sortField,
+            @RequestParam(value = "sortField", required = true, defaultValue = "recommConfidentScore") String sortField,
             @ApiParam(value = "The sort direction", required = true)
             @RequestParam(value = "sortDirection", required = true, defaultValue = DEFAULT_SORT_DIRECTION) String sortDirection,
             @ApiParam(value = "Filter by species", required = true)
-            @RequestParam(value = "Filter by species", required = true, defaultValue = "null") String filterByTaxonomyId,
+            @RequestParam(value = "FilterBySpecies", required = true, defaultValue = "ALL") String filterByTaxonomyId,
             HttpServletRequest request, HttpServletResponse response) {
         return getScoredPSMs(identifier, page, size, sortField, sortDirection, filterByTaxonomyId, "newid");
     }
@@ -183,13 +183,33 @@ public class ScoredPSMController extends AbstractRestHandler {
         return (this.scoredPSMService.updateUserAcceptance(accessionId, psmtype, acceptanceMap));
     }
 
+    @RequestMapping(value = "/species",
+            method = RequestMethod.GET
+            , produces = {"application/json"}
+    )
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get a species list of this project.", notes = "")
+    public
+    @ResponseBody
+    List<SpeciesInProject> getpeciesList(
+            @ApiParam(value = "The Project ID, given by PX ID or Phoenix ID", required = true)
+            @RequestParam(value = "identifier", required = true, defaultValue = DEFAULT_PROJECT_ID) String identifier,
+            @ApiParam(value = "Score type, newid/negscore/posscore", required = true)
+            @RequestParam(value = "Score type", required = true, defaultValue = "all") String scoreType,
+            HttpServletRequest request, HttpServletResponse response) {
+        return scoredPSMService.getSpeciesList(identifier, scoreType);
+    }
+
+
+
+
     private PageOfScoredPSM getScoredPSMs(String identifier, Integer page, Integer size, String sortField, String sortDirection, String filterByTaxonomyId, String type) {
         String accessionId = this.identifierService.getJobAccession(identifier);
         if(accessionId == null){
             System.out.println("Null accessionId");
             return null;
         }
-        List<ScoredPSMForWeb> scoredPSMsForWeb = this.scoredPSMService.getScoredPSMsForWeb(accessionId, page, size, sortField, sortDirection, filterByTaxonomyId,"negscore");
+        List<ScoredPSMForWeb> scoredPSMsForWeb = this.scoredPSMService.getScoredPSMsForWeb(accessionId, page, size, sortField, sortDirection, filterByTaxonomyId,type);
         Integer totalElements = this.scoredPSMService.findTotalScoredPSM(accessionId, filterByTaxonomyId, type);
         Integer totalPages = (int) Math.ceil((totalElements + 0.0) / size);
         PageOfScoredPSM pageOfScoredPSM = new PageOfScoredPSM(accessionId, size, page, totalElements, totalPages, sortField, sortDirection, filterByTaxonomyId, scoredPSMsForWeb);

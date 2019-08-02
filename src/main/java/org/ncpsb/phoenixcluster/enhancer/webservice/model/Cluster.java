@@ -13,6 +13,16 @@ public class Cluster {
 	private List<Float> consensusIntens;
 	private List<String> spectraTitles;
 	private String sequencesRatios;
+	private List<String>  taxIds;
+
+	public List<String> getTaxIds() {
+		return taxIds;
+	}
+
+	public void setTaxIds(List<String> taxIds) {
+		this.taxIds = taxIds;
+	}
+
 
 	public Cluster() {
 	}

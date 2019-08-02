@@ -19,7 +19,6 @@ public class StatisticsUtils {
         Double valueBinEQNumBin = null;
         for (double d : data) {
             int bin = (int) ((d - min) / binSize); // changed this from numBins
-            System.out.println(d + "--->" + bin);
             if (bin < 0) { /* this data is smaller than min */ }
             else if (bin > numBins) { /* this data point is bigger than max */ }
             else if (bin == numBins) {
@@ -66,7 +65,6 @@ public class StatisticsUtils {
 
         for (double d : data) {
             int bin = (int) ((d - min) / binSize); // changed this from numBins
-            System.out.println(d + "--->" + bin);
             if (bin < 0) { /* this data is smaller than min */ }
             else if (bin > numBins) { /* this data point is bigger than max */ }
             else if (bin == numBins) {
