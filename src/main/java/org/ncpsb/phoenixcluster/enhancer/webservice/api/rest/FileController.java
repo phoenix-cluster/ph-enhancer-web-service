@@ -84,35 +84,35 @@ public class FileController extends AbstractRestHandler{
 //    }
 
 
-//    @RequestMapping(value = "/download", method = RequestMethod.GET)
-//    public ResponseEntity<ByteArrayResource> download(
-//            @ApiParam(value = "The file url path", required = true)
-//                                      @RequestParam(value = "filepath", required = true) String filepath
-//            ) throws IOException {
-//
-////        String uploadFilePath = fileUploadPath.getUploadFilePath();
-//        String baseFilePath = context.getRealPath("");
-//
-//        String pathname = baseFilePath + File.separator
-//                + filepath;
-//        File file = new File(pathname);
-//
-//        Path path = Paths.get(file.getAbsolutePath());
-//        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
-//        headers.add("Pragma", "no-cache");
-//        headers.add("Expires", "0");
-//        headers.add("content-disposition", "attachment; filename=\"" + filepath+"\"");
-//
-//        return ResponseEntity.ok()
-//                .headers(headers)
-//                .contentLength(file.length())
-//                .contentType(MediaType.parseMediaType("application/octet-stream"))
-//                .body(resource);
-//    }
+    @RequestMapping(value = "/download", method = RequestMethod.GET)
+    public ResponseEntity<ByteArrayResource> download(
+            @ApiParam(value = "The file url path", required = true)
+                                      @RequestParam(value = "filepath", required = true) String filepath
+            ) throws IOException {
 
+//        String uploadFilePath = fileUploadPath.getUploadFilePath();
+        String baseFilePath = context.getRealPath("");
+
+        String pathname = baseFilePath + File.separator
+                + filepath;
+        File file = new File(pathname);
+
+        Path path = Paths.get(file.getAbsolutePath());
+        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
+        headers.add("content-disposition", "attachment; filename=\"" + filepath+"\"");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(file.length())
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
+                .body(resource);
+    }
+//
 
 //    @RequestMapping(value = "/apply", method = RequestMethod.GET, produces = {"application/json"})
 //    @ResponseStatus(HttpStatus.OK)
@@ -144,6 +144,6 @@ public class FileController extends AbstractRestHandler{
 //        return fileUploadResponse;
 //    }
 //
-//    @Autowired
-//    ServletContext context;
+    @Autowired
+    ServletContext context;
 }
