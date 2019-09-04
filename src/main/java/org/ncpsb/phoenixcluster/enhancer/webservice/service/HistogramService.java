@@ -30,7 +30,11 @@ public class HistogramService {
      * @param numBins
      * @return
      */
-    public List<HistogramBin> getHistDataForDifferenetScAndFiled(String identifier, String type, String fieldType, Integer numBins) {
+    public List<HistogramBin> getHistDataForDifferenetScAndFiled(String identifier,
+                                                                 String type,
+                                                                 String fieldType,
+                                                                 Integer numBins,
+                                                                 String filterByTaxonomyId) {
         String psmTableName = "";
         String accessionId = this.identifierService.getJobAccession(identifier);
         if(accessionId == null){
@@ -39,8 +43,6 @@ public class HistogramService {
         }
         switch (type) {
             case ("negscore"): {
-                System.out.println(Configure.DEFAULT_PROJECT_ID);
-                System.out.println(accessionId);
                 psmTableName = Configure.NEG_SCORE_PSM_VIEW.replace(Configure.DEFAULT_PROJECT_ID, accessionId);
                 break;
             }
@@ -61,16 +63,16 @@ public class HistogramService {
 
         switch (fieldType){
             case ("confScore"):{
-                return getConfidentScoreHistData(psmTableName, numBins);
+                return getConfidentScoreHistData(psmTableName, numBins, filterByTaxonomyId);
             }
             case ("recommConfScore"):{
-                return getRecommConfidentScoreHistData(psmTableName, numBins);
+                return getRecommConfidentScoreHistData(psmTableName, numBins, filterByTaxonomyId);
             }
             case ("clusterRatio"):{
-                return getClusterRatioHistData(psmTableName, numBins);
+                return getClusterRatioHistData(psmTableName, numBins, filterByTaxonomyId);
             }
             case ("clusterSize"):{
-                return getClusterSizeHistData(psmTableName, numBins);
+                return getClusterSizeHistData(psmTableName, numBins, filterByTaxonomyId);
             }
         }
         return  null;
@@ -79,23 +81,23 @@ public class HistogramService {
 
 
 
-    private List<HistogramBin>getRecommConfidentScoreHistData(String psmTableName, Integer numBins) {
-        List<Double> scoreList = scoredPSMDao.findRecommConfidentScore(psmTableName);
+    private List<HistogramBin>getRecommConfidentScoreHistData(String psmTableName, Integer numBins, String filterByTaxonomyId) {
+        List<Double> scoreList = scoredPSMDao.findRecommConfidentScore(psmTableName, filterByTaxonomyId);
         return getDoubleHistList(scoreList, numBins);
     }
 
-    private List<HistogramBin>getConfidentScoreHistData(String psmTableName, Integer numBins) {
-        List<Double> scoreList = scoredPSMDao.findConfidentScore(psmTableName);
+    private List<HistogramBin>getConfidentScoreHistData(String psmTableName, Integer numBins, String filterByTaxonomyId) {
+        List<Double> scoreList = scoredPSMDao.findConfidentScore(psmTableName, filterByTaxonomyId);
         return getDoubleHistList(scoreList, numBins);
     }
 
-    private List<HistogramBin>getClusterRatioHistData(String psmTableName, Integer numBins) {
-        List<Double> sizeList = scoredPSMDao.findClusterRatio(psmTableName);
+    private List<HistogramBin>getClusterRatioHistData(String psmTableName, Integer numBins, String filterByTaxonomyId) {
+        List<Double> sizeList = scoredPSMDao.findClusterRatio(psmTableName, filterByTaxonomyId);
         return getDoubleHistList(sizeList, numBins);
     }
 
-    private List<HistogramBin>getClusterSizeHistData(String psmTableName, Integer numBins) {
-        List<Integer> sizeList = scoredPSMDao.findClusterSize(psmTableName);
+    private List<HistogramBin>getClusterSizeHistData(String psmTableName, Integer numBins, String filterByTaxonomyId) {
+        List<Integer> sizeList = scoredPSMDao.findClusterSize(psmTableName, filterByTaxonomyId);
         return getIntHistList(sizeList, numBins);
     }
 
@@ -111,10 +113,10 @@ public class HistogramService {
 
         Integer onePercentile = StatisticsUtils.getIntPercentileFromSorted(1, integerList);
         Integer lastOnePercentile = StatisticsUtils.getIntPercentileFromSorted(99, integerList);
-        System.out.println("test 1/99 percentile");
-        System.out.println(integerList);
-        System.out.println(onePercentile);
-        System.out.println(lastOnePercentile);
+//        System.out.println("test 1/99 percentile");
+//        System.out.println(integerList);
+//        System.out.println(onePercentile);
+//        System.out.println(lastOnePercentile);
 
         Double upperBoud = Double.valueOf(integerList.get(integerList.size() - 1));
 
@@ -199,7 +201,7 @@ public class HistogramService {
             doubleList.remove(toDeleteItem);
         }
 
-        System.out.println(doubleList);
+//        System.out.println(doubleList);
 
         if (doubleList.size() <= 0) {
             List<HistogramBin> binList = new ArrayList<HistogramBin>();

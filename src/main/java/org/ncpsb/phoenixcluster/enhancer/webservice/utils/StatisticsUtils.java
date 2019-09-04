@@ -14,7 +14,7 @@ public class StatisticsUtils {
         int[] result = new int[numBins];
         List<HistogramBin> binList = new ArrayList<HistogramBin>();
         double binSize = (max - min)/numBins;
-        System.out.println("max " + max + "- min" + min + "/numBins" + numBins + "got binsize" + binSize);
+//        System.out.println("max " + max + "- min" + min + "/numBins" + numBins + "got binsize" + binSize);
         Boolean isBinEQNumBin = false;
         Double valueBinEQNumBin = null;
         for (double d : data) {
@@ -31,9 +31,9 @@ public class StatisticsUtils {
             }
         }
         Double binWidth = (max - min)/(double) numBins;
-        for (int x : result) {
-            System.out.println(x);
-        }
+//        for (int x : result) {
+//            System.out.println(x);
+//        }
         for(int i=0; i<result.length; i++) {
             HistogramBin bin = new HistogramBin(i+2, min+i*binWidth, min + (i+1)*binWidth, result[i]);//rank start from 2;
             binList.add(bin);
@@ -42,9 +42,9 @@ public class StatisticsUtils {
         if(isBinEQNumBin){
             binList.get(binList.size() - 1).setUpperBound(valueBinEQNumBin);
         }
-        for (HistogramBin bin : binList) {
-            System.out.println(bin.getRank() + ":" + bin.getLowerBound() + "-" + bin.getUpperBound() + ":" + bin.getValue());
-        }
+//        for (HistogramBin bin : binList) {
+//            System.out.println(bin.getRank() + ":" + bin.getLowerBound() + "-" + bin.getUpperBound() + ":" + bin.getValue());
+//        }
 
         return binList;
     }
@@ -59,7 +59,7 @@ public class StatisticsUtils {
         double binSize = (max - min)/numBins;
         Boolean isBinEQNumBin = false;
         Double valueBinEQNumBin = null;
-        System.out.println("max " + max + "- min" + min + "/numBins" + numBins + "got binsize" + binSize);
+//        System.out.println("max " + max + "- min" + min + "/numBins" + numBins + "got binsize" + binSize);
 
 
 
@@ -86,9 +86,9 @@ public class StatisticsUtils {
         if(isBinEQNumBin){
             binList.get(binList.size()-1).setUpperBound(valueBinEQNumBin);
         }
-        for (HistogramBin bin : binList) {
-            System.out.println(bin.getRank() + ":" + bin.getLowerBound() + "-" + bin.getUpperBound() + ":" + bin.getValue());
-        }
+//        for (HistogramBin bin : binList) {
+//            System.out.println(bin.getRank() + ":" + bin.getLowerBound() + "-" + bin.getUpperBound() + ":" + bin.getValue());
+//        }
         return binList;
     }
 

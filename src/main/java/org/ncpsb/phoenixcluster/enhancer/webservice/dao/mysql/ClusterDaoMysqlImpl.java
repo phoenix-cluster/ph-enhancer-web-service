@@ -3,6 +3,7 @@ package org.ncpsb.phoenixcluster.enhancer.webservice.dao.mysql;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.Cluster;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.ClusterRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -24,8 +25,13 @@ public class ClusterDaoMysqlImpl {
 //        clusterSql.append("\"ROW\" = '" + clusterId + "'");
         StringBuffer clusterSql = new StringBuffer("SELECT * FROM  " + clusterTableName + " WHERE ");
         clusterSql.append("CLUSTER_ID = ? ");
-
-        Cluster cluster = (Cluster) jdbcTemplate.queryForObject(clusterSql.toString(), new Object[] {clusterId},new ClusterRowMapper());
+        System.out.println("Execute sql: " + clusterSql + clusterId);
+        Cluster cluster = null;
+        try {
+            cluster = (Cluster) jdbcTemplate.queryForObject(clusterSql.toString(), new Object[] {clusterId},new ClusterRowMapper());
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+        }
         return cluster;
 //        return (clusters != null && clusters.size() > 0) ? clusters : null;
     }

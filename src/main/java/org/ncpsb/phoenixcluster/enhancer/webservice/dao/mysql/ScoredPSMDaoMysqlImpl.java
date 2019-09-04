@@ -26,29 +26,41 @@ public class ScoredPSMDaoMysqlImpl {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public List<Double> findRecommConfidentScore(String psmTableName){
+    public List<Double> findRecommConfidentScore(String psmTableName, String filterByTaxonomyId){
         StringBuffer querySql = new StringBuffer("SELECT RECOMM_SEQ_SC FROM " + psmTableName);
+        if (!filterByTaxonomyId.equalsIgnoreCase("ALL")){
+            querySql.append(" WHERE seq_taxids like '%" + filterByTaxonomyId + "%'");
+        }
         System.out.println(querySql);
         List<Double> scoreList = (List<Double>) jdbcTemplate.query(querySql.toString(), (rs, rowNum) -> rs.getDouble("RECOMM_SEQ_SC"));
         return scoreList;
     }
 
-    public List<Double> findConfidentScore(String psmTableName) {
+    public List<Double> findConfidentScore(String psmTableName, String filterByTaxonomyId) {
         StringBuffer querySql = new StringBuffer("SELECT CONF_SC FROM " + psmTableName);
+        if (!filterByTaxonomyId.equalsIgnoreCase("ALL")){
+            querySql.append(" WHERE seq_taxids like '%" + filterByTaxonomyId + "%'");
+        }
         System.out.println(querySql);
         List<Double> scoreList = (List<Double>) jdbcTemplate.query(querySql.toString(), (rs, rowNum) -> rs.getDouble("CONF_SC"));
         return scoreList;
     }
 
-    public List<Double> findClusterRatio(String psmTableName) {
+    public List<Double> findClusterRatio(String psmTableName, String filterByTaxonomyId) {
         StringBuffer querySql = new StringBuffer("SELECT CLUSTER_RATIO FROM " + psmTableName);
+        if (!filterByTaxonomyId.equalsIgnoreCase("ALL")){
+            querySql.append(" WHERE seq_taxids like '%" + filterByTaxonomyId + "%'");
+        }
         System.out.println(querySql);
         List<Double> scoreList = (List<Double>) jdbcTemplate.query(querySql.toString(), (rs, rowNum) -> rs.getDouble("CLUSTER_RATIO"));
         return scoreList;
     }
 
-    public List<Integer> findClusterSize(String psmTableName) {
+    public List<Integer> findClusterSize(String psmTableName, String filterByTaxonomyId) {
         StringBuffer querySql = new StringBuffer("SELECT CLUSTER_SIZE FROM " + psmTableName);
+        if (!filterByTaxonomyId.equalsIgnoreCase("ALL")){
+            querySql.append(" WHERE seq_taxids like '%" + filterByTaxonomyId + "%'");
+        }
         System.out.println(querySql);
         List<Integer> scoreList = (List<Integer>) jdbcTemplate.query(querySql.toString(), (rs, rowNum) -> rs.getInt("CLUSTER_SIZE"));
         return scoreList;
@@ -69,7 +81,6 @@ public class ScoredPSMDaoMysqlImpl {
         if (!filterByTaxonomyId.equalsIgnoreCase("ALL")){
                 querySql.append(" WHERE seq_taxids like '%" + filterByTaxonomyId + "%'");
             }
-            System.out.println("sortField:" + sortField);
         if (sortField.equals("confidentScore") ||
                 sortField.equals("recommConfidentScore") ||
                 sortField.equals("clusterRatio") ||
@@ -120,26 +131,26 @@ public class ScoredPSMDaoMysqlImpl {
     }
 
 
-    /***
-     * Dao??? the table name is wrong?
-     * find PSM by title
-     */
-    public ScoredPSM findPSMByTitle(String projectId, Integer id) {
-        //todo need to check on this method, what for???
-
-        StringBuffer querySql = new StringBuffer("SELECT * FROM compare_5_clusters WHERE ");
-        querySql.append("ROW = ? ");
-
-        ScoredPSM scoredPSM = (ScoredPSM) jdbcTemplate.queryForObject(querySql.toString(), null, new RowMapper<ScoredPSM>() {
-            @Override
-            public ScoredPSM mapRow(ResultSet rs, int rowNum) throws SQLException {
-                ScoredPSM scoredPSM = new ScoredPSM();
-                return scoredPSM;
-            }
-        });
-        return scoredPSM;
-
-    }
+//    /***
+//     * Dao??? the table name is wrong?
+//     * find PSM by title
+//     */
+//    public ScoredPSM findPSMByTitle(String projectId, Integer id) {
+//        //todo need to check on this method, what for???
+//
+//        StringBuffer querySql = new StringBuffer("SELECT * FROM compare_5_clusters WHERE ");
+//        querySql.append("ROW = ? ");
+//
+//        ScoredPSM scoredPSM = (ScoredPSM) jdbcTemplate.queryForObject(querySql.toString(), null, new RowMapper<ScoredPSM>() {
+//            @Override
+//            public ScoredPSM mapRow(ResultSet rs, int rowNum) throws SQLException {
+//                ScoredPSM scoredPSM = new ScoredPSM();
+//                return scoredPSM;
+//            }
+//        });
+//        return scoredPSM;
+//
+//    }
 
     public Integer findTotalScoredPSM(String projectId, String filterByTaxonomyId, String type) {
         String psmTableName = "";

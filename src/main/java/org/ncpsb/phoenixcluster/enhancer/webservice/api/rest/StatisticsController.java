@@ -51,9 +51,11 @@ public class StatisticsController extends AbstractRestHandler {
             @RequestParam(value = "psmType", required = true, defaultValue = "newid")  String psmType,
             @ApiParam(value = "fieldType", required = true)
             @RequestParam(value = "fieldType", required = true, defaultValue = "confScore")  String fieldType,
+            @ApiParam(value = "Filter by species", required = true)
+            @RequestParam(value = "FilterBySpecies", required = true, defaultValue = "ALL") String filterByTaxonomyId,
             HttpServletRequest request, HttpServletResponse response) {
         assert (numBins>0);
-        List<HistogramBin> histogramBins = this.histogramService.getHistDataForDifferenetScAndFiled(identifier, psmType, fieldType, numBins);
+        List<HistogramBin> histogramBins = this.histogramService.getHistDataForDifferenetScAndFiled(identifier, psmType, fieldType, numBins, filterByTaxonomyId);
         return histogramBins;
     }
 

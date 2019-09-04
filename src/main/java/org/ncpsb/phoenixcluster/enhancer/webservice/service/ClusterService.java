@@ -29,6 +29,9 @@ public class ClusterService {
      */
     public Cluster findByClusterId(String clusterId) {
         Cluster cluster = clusterDao.findByClusterId(clusterId);
+        if (cluster==null){
+            return null;
+        }
         List<String> taxidWithNameList = taxonomyService.addNameForTaxidStringList(cluster.getTaxIds());
             if (taxidWithNameList != null) {
                 cluster.setTaxIds(taxidWithNameList);
