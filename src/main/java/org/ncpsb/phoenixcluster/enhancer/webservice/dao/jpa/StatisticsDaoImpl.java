@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 @Repository
 public class StatisticsDaoImpl {
-    private String spectrumTableName = "V_CLUSTER_SPEC";
+    private String spectrumTableName = Configure.SPECTRUM_TABLE;
     @Autowired
     private JdbcTemplate jdbcTemplate;
     public Integer findTotalSpectrumInCluster(String clusterID) {

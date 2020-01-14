@@ -2,6 +2,7 @@ package org.ncpsb.phoenixcluster.enhancer.webservice.dao.jpa;
 
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.AnalysisJob;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.AnalysisJobRowMapper;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.Configure;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,7 +14,7 @@ import java.util.List;
 public class AnalysisJobDaoImpl {
     @Autowired
     private JdbcTemplate jdbcTemplate;
-    String analysisRecoredTableName = "T_ANALYSIS_RECORD";
+    String analysisRecoredTableName = Configure.ANALYSIS_RECORD_TABLE;
         /***
      *
      * @param myAnalysisId

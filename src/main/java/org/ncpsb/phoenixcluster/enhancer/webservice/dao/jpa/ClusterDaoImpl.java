@@ -2,6 +2,7 @@ package org.ncpsb.phoenixcluster.enhancer.webservice.dao.jpa;
 
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.Cluster;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.ClusterRowMapper;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.Configure;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -10,7 +11,7 @@ import java.util.List;
 
 @Repository("hbaseClusterDao")
 public class ClusterDaoImpl {
-    private String clusterTableName ="V_CLUSTER";
+    private String clusterTableName = Configure.CLUSTER_TABLE;
     @Autowired
     private JdbcTemplate jdbcTemplate;
 

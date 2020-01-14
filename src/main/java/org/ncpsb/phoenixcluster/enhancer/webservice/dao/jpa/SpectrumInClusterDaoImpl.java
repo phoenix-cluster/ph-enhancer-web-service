@@ -1,5 +1,6 @@
 package org.ncpsb.phoenixcluster.enhancer.webservice.dao.jpa;
 
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.Configure;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.SpectrumInCluster;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.SpectrumInClusterRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import java.util.List;
 public class SpectrumInClusterDaoImpl {
     @Autowired
     private JdbcTemplate jdbcTemplate;
-    private String spectrumTableName = "V_CLUSTER_SPEC";
+    private String spectrumTableName = Configure.SPECTRUM_TABLE;
         /***
      * Dao
      * @param title

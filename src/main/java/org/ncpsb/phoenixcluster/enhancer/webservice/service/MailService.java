@@ -30,6 +30,8 @@ public class MailService {
     String mailSmtpHost;
     @Value("${mail.smtp.port}")
     String mailSmtpPort;
+    @Value("${mail.ccadd}")
+    String ccAddress;
 
     public String checkAnalysisToSendEmail() {
         List<AnalysisJob> analysisJobs = analysisJobDao.getAnalysisJobsToSentEmail();
@@ -83,6 +85,10 @@ public class MailService {
                     InternetAddress.parse(toAddress));
             message.setSubject(subject);
             message.setText(mailContent);
+            if(ccAdd!=null && ccAdd.length() > 0){
+                message.setRecipients(Message.RecipientType.CC, parseAddress(cc));
+            }
+
             Transport.send(message);
             System.out.println("Done sending email to " + toAddress);
             return("Done");
@@ -91,6 +97,7 @@ public class MailService {
             throw new RuntimeException(e);
         }
     }
+
 
     public String prepareEmailContent(String analysisJobFinalStatus, String longJobId, String analysisJobToken) {
         StringBuffer mailContent = new StringBuffer();

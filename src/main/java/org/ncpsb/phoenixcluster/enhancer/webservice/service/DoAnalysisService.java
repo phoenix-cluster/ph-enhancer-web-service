@@ -4,6 +4,7 @@ import org.apache.commons.io.input.ReversedLinesFileReader;
 import org.apache.commons.text.RandomStringGenerator;
 import org.ncpsb.phoenixcluster.enhancer.webservice.dao.mysql.AnalysisJobDaoMysqlImpl;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.AnalysisJob;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.Configure;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.PageOfFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class DoAnalysisService {
     @Autowired
     MailService mailService;
 
-    String analysisRecoredTableName = "T_ANALYSIS_RECORD";
+    String analysisRecoredTableName = Configure.ANALYSIS_RECORD_TABLE;
     //todo: checkTheFiles
     @Autowired
     FileUploadService fileUploadService;

@@ -2,6 +2,7 @@ package org.ncpsb.phoenixcluster.enhancer.webservice.dao.mysql;
 
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.Cluster;
 import org.ncpsb.phoenixcluster.enhancer.webservice.model.ClusterRowMapper;
+import org.ncpsb.phoenixcluster.enhancer.webservice.model.Configure;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,7 +12,7 @@ import java.util.List;
 
 @Repository
 public class ClusterDaoMysqlImpl {
-    private String clusterTableName ="V_CLUSTER";
+    private String clusterTableName = Configure.CLUSTER_TABLE;
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
