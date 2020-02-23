@@ -85,10 +85,9 @@ public class MailService {
                     InternetAddress.parse(toAddress));
             message.setSubject(subject);
             message.setText(mailContent);
-            if(ccAdd!=null && ccAdd.length() > 0){
-                message.setRecipients(Message.RecipientType.CC, parseAddress(cc));
+            if(ccAddress!=null && ccAddress.length() > 0){
+                message.setRecipients(Message.RecipientType.CC, InternetAddress.parse(ccAddress));
             }
-
             Transport.send(message);
             System.out.println("Done sending email to " + toAddress);
             return("Done");
